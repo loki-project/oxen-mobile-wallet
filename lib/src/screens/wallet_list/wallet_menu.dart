@@ -70,16 +70,19 @@ class WalletMenu {
             return;
           }
 
-          try {
-            auth.changeProcessText(
-                S.of(context).wallet_list_removing_wallet(wallet.name));
-            await _walletListStore.remove(wallet);
-            auth.close();
-          } catch (e) {
-            auth.changeProcessText(S
-                .of(context)
-                .wallet_list_failed_to_remove(wallet.name, e.toString()));
-          }
+          await Navigator.of(context).pushNamed(Routes.dangerzoneRemoveWallet, arguments:
+            () async {
+              try {
+                auth.changeProcessText(
+                    S.of(context).wallet_list_removing_wallet(wallet.name));
+                await _walletListStore.remove(wallet);
+                auth.close();
+              } catch (e) {
+                auth.changeProcessText(S
+                    .of(context)
+                    .wallet_list_failed_to_remove(wallet.name, e.toString()));
+              }
+            });
         });
         break;
       case 3:
