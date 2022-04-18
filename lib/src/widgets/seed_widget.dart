@@ -269,6 +269,8 @@ class SeedWidgetState extends State<SeedWidget> {
                       style: TextStyle(fontSize: 14.0),
                       controller: _seedController,
                       textInputAction: TextInputAction.done,
+                      autocorrect: false,
+                      enableSuggestions: false,
                       decoration: InputDecoration(
                           suffixIcon: GestureDetector(
                             behavior: HitTestBehavior.opaque,
@@ -281,21 +283,6 @@ class SeedWidgetState extends State<SeedWidget> {
                                       '${items.length}/${SeedWidgetState.maxLength}',
                                       style: TextStyle(
                                           color: Colors.grey, fontSize: 12)),
-                                  SizedBox(width: 10),
-                                  InkWell(
-                                    onTap: () async =>
-                                        Clipboard.getData('text/plain').then(
-                                            (clipboard) => replaceText(clipboard?.text ?? '')),
-                                    child: Container(
-                                        height: 35,
-                                        padding: EdgeInsets.all(7),
-                                        decoration: BoxDecoration(
-                                            color:
-                                                Palette.wildDarkBlueWithOpacity,
-                                            borderRadius:
-                                                BorderRadius.circular(10.0)),
-                                        child: Text(t.paste)),
-                                  )
                                 ],
                               ),
                             ),
@@ -311,7 +298,6 @@ class SeedWidgetState extends State<SeedWidget> {
                               borderSide: BorderSide(
                                   color: Theme.of(context).focusColor,
                                   width: 1.0))),
-                      enableInteractiveSelection: false,
                     ),
                   ]),
                   Padding(
