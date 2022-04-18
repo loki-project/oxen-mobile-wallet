@@ -4,11 +4,12 @@ import 'package:oxen_wallet/src/widgets/nav_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:oxen_wallet/themes.dart';
 import 'package:oxen_wallet/theme_changer.dart';
+import 'package:oxen_wallet/l10n.dart';
 
 enum AppBarStyle { regular, withShadow }
 
 abstract class BasePage extends StatelessWidget {
-  String get title => null;
+  String? getTitle(AppLocalizations t) { return null; }
 
   bool get isModalBackButton => false;
 
@@ -20,8 +21,8 @@ abstract class BasePage extends StatelessWidget {
 
   void onClose(BuildContext context) => Navigator.of(context).pop();
 
-  Widget leading(BuildContext context) {
-    if (ModalRoute.of(context).isFirst) {
+  Widget? leading(BuildContext context) {
+    if (ModalRoute.of(context)?.isFirst ?? false) {
       return null;
     }
 
@@ -43,7 +44,8 @@ abstract class BasePage extends StatelessWidget {
     );
   }
 
-  Widget middle(BuildContext context) {
+  Widget? middle(BuildContext context) {
+    final title = getTitle(tr(context));
     return title == null
         ? null
         : Text(
@@ -51,13 +53,13 @@ abstract class BasePage extends StatelessWidget {
             style: TextStyle(
                 fontSize: 16.0,
                 fontWeight: FontWeight.w600,
-                color: Theme.of(context).primaryTextTheme.headline6.color),
+                color: Theme.of(context).primaryTextTheme.headline6?.color),
           );
   }
 
-  Widget trailing(BuildContext context) => null;
+  Widget? trailing(BuildContext context) => null;
 
-  Widget floatingActionButton(BuildContext context) => null;
+  Widget? floatingActionButton(BuildContext context) => null;
 
   ObstructingPreferredSizeWidget appBar(BuildContext context) {
     final _themeChanger = Provider.of<ThemeChanger>(context);
@@ -98,7 +100,7 @@ abstract class BasePage extends StatelessWidget {
 
   Widget body(BuildContext context);
 
-  Widget bottomNavigationBar(BuildContext context) => null;
+  Widget? bottomNavigationBar(BuildContext context) => null;
 
   @override
   Widget build(BuildContext context) {

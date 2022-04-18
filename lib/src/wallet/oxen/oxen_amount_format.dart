@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
 import 'package:oxen_wallet/src/wallet/crypto_amount_format.dart';
 
-const oxenAmountDivider = 1000000000;
+const oxenAmountDivisor = 1000000000;
 
 String oxenAmountToString(int amount,
     {AmountDetail detail = AmountDetail.ultra}) {
@@ -11,5 +11,4 @@ String oxenAmountToString(int amount,
   return oxenAmountFormat.format(oxenAmountToDouble(amount));
 }
 
-double oxenAmountToDouble(int amount) =>
-    cryptoAmountToDouble(amount: amount, divider: oxenAmountDivider);
+double oxenAmountToDouble(int amount) => amount.toDouble() / oxenAmountDivisor;

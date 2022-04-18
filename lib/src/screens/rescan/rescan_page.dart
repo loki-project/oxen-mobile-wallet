@@ -5,12 +5,12 @@ import 'package:oxen_wallet/src/screens/base_page.dart';
 import 'package:oxen_wallet/src/widgets/blockchain_height_widget.dart';
 import 'package:oxen_wallet/src/widgets/primary_button.dart';
 import 'package:oxen_wallet/src/stores/rescan/rescan_wallet_store.dart';
-import 'package:oxen_wallet/generated/l10n.dart';
+import 'package:oxen_wallet/l10n.dart';
 
 class RescanPage extends BasePage {
   final blockchainKey = GlobalKey<BlockchainHeightState>();
   @override
-  String get title => S.current.rescan;
+  String getTitle(AppLocalizations t) => t.rescan;
 
   @override
   Widget body(BuildContext context) {
@@ -25,16 +25,17 @@ class RescanPage extends BasePage {
             builder: (_) => LoadingPrimaryButton(
                 isLoading:
                     rescanWalletStore.state == RescanWalletState.rescaning,
-                text: S.of(context).rescan,
+                text: tr(context).rescan,
                 onPressed: () async {
-                  await rescanWalletStore.rescanCurrentWallet(
-                      restoreHeight: blockchainKey.currentState.height);
+                  if (blockchainKey.currentState != null)
+                    await rescanWalletStore.rescanCurrentWallet(
+                        restoreHeight: blockchainKey.currentState!.height);
                   Navigator.of(context).pop();
                 },
                 color:
-                    Theme.of(context).primaryTextTheme.button.backgroundColor,
+                    Theme.of(context).primaryTextTheme.button?.backgroundColor,
                 borderColor:
-                    Theme.of(context).primaryTextTheme.button.decorationColor))
+                    Theme.of(context).primaryTextTheme.button?.decorationColor))
       ]),
     );
   }

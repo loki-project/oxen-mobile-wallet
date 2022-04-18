@@ -3,15 +3,14 @@ import 'package:oxen_coin/account_list.dart' as account_list;
 import 'package:oxen_wallet/src/wallet/oxen/account.dart';
 
 class AccountList {
-  AccountList() {
-    _isRefreshing = false;
-    _isUpdating = false;
+  AccountList() :
+    _isRefreshing = false,
+    _isUpdating = false,
     _accounts = BehaviorSubject<List<Account>>();
-  }
 
-  Observable<List<Account>> get accounts => _accounts.stream;
+  Stream<List<Account>> get accounts => _accounts.stream;
 
-  BehaviorSubject<List<Account>> _accounts;
+  final BehaviorSubject<List<Account>> _accounts;
   bool _isRefreshing;
   bool _isUpdating;
 
@@ -39,12 +38,12 @@ class AccountList {
         .toList();
   }
 
-  Future addAccount({String label}) async {
+  Future addAccount({required String label}) async {
     await account_list.addAccount(label: label);
     await update();
   }
 
-  Future setLabelSubaddress({int accountIndex, String label}) async {
+  Future setLabelSubaddress({required int accountIndex, required String label}) async {
     await account_list.setLabelForAccount(
         accountIndex: accountIndex, label: label);
     await update();

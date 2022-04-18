@@ -2,13 +2,13 @@ import 'package:ffi/ffi.dart';
 import 'package:flutter/foundation.dart';
 import 'package:oxen_coin/src/native/wallet_manager.dart' as wallet_manager;
 
-void loadWallet({String path, String password, int nettype = 0}) {
-  final pathPointer = Utf8.toUtf8(path);
-  final passwordPointer = Utf8.toUtf8(password);
+void loadWallet({required String path, required String password, int nettype = 0}) {
+  final pathPointer = path.toNativeUtf8();
+  final passwordPointer = password.toNativeUtf8();
 
   wallet_manager.loadWalletNative(pathPointer, passwordPointer, nettype);
-  free(pathPointer);
-  free(passwordPointer);
+  calloc.free(pathPointer);
+  calloc.free(passwordPointer);
 }
 
 void _createWallet(Map<String, dynamic> args) {
@@ -58,21 +58,21 @@ void _restoreFromKeys(Map<String, dynamic> args) {
 }
 
 Future<void> _openWallet(Map<String, String> args) async =>
-    loadWallet(path: args['path'], password: args['password']);
+    loadWallet(path: args['path'] as String, password: args['password'] as String);
 
 bool _isWalletExist(String path) =>
     wallet_manager.isWalletExistSync(path: path);
 
-void openWallet({String path, String password, int nettype = 0}) async =>
+void openWallet({required String path, required String password, int nettype = 0}) async =>
     loadWallet(path: path, password: password, nettype: nettype);
 
 Future<void> openWalletAsync(Map<String, String> args) async =>
     compute(_openWallet, args);
 
 Future<void> createWallet(
-        {String path,
-        String password,
-        String language,
+        {required String path,
+        required String password,
+        required String language,
         int nettype = 0}) async =>
     compute(_createWallet, {
       'path': path,
@@ -82,9 +82,9 @@ Future<void> createWallet(
     });
 
 Future restoreFromSeed(
-        {String path,
-        String password,
-        String seed,
+        {required String path,
+        required String password,
+        required String seed,
         int nettype = 0,
         int restoreHeight = 0}) async =>
     compute<Map<String, Object>, void>(_restoreFromSeed, {
@@ -96,12 +96,12 @@ Future restoreFromSeed(
     });
 
 Future restoreFromKeys(
-        {String path,
-        String password,
-        String language,
-        String address,
-        String viewKey,
-        String spendKey,
+        {required String path,
+        required String password,
+        required String language,
+        required String address,
+        required String viewKey,
+        required String spendKey,
         int nettype = 0,
         int restoreHeight = 0}) async =>
     compute<Map<String, Object>, void>(_restoreFromKeys, {
@@ -115,4 +115,4 @@ Future restoreFromKeys(
       'restoreHeight': restoreHeight
     });
 
-Future<bool> isWalletExist({String path}) => compute(_isWalletExist, path);
+Future<bool> isWalletExist({required String path}) => compute(_isWalletExist, path);

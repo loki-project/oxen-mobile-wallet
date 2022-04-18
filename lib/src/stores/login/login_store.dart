@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:mobx/mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:oxen_wallet/src/domain/services/wallet_list_service.dart';
@@ -14,7 +13,7 @@ class LoadingCurrentWallet extends LoginState {}
 class LoadedCurrentWalletSuccessfully extends LoginState {}
 
 class LoadedCurrentWalletFailure extends LoginState {
-  LoadedCurrentWalletFailure({this.errorMessage});
+  LoadedCurrentWalletFailure({required this.errorMessage});
   
   final String errorMessage;
 }
@@ -23,9 +22,8 @@ class LoginStore = LoginStoreBase with _$LoginStore;
 
 abstract class LoginStoreBase with Store {
   LoginStoreBase(
-      {@required this.sharedPreferences, @required this.walletsService}) {
-    state = InitialLoginState();
-  }
+      {required this.sharedPreferences, required this.walletsService})
+    : state = InitialLoginState();
 
   final SharedPreferences sharedPreferences;
   final WalletListService walletsService;
@@ -39,7 +37,7 @@ abstract class LoginStoreBase with Store {
 
     try {
       state = LoadingCurrentWallet();
-      final walletName = sharedPreferences.getString('current_wallet_name');
+      final walletName = sharedPreferences.getString('current_wallet_name') ?? '';
       await walletsService.openWallet(walletName);
       state = LoadedCurrentWalletSuccessfully();
     } catch (e) {

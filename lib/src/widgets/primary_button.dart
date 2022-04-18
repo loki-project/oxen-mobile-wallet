@@ -4,17 +4,17 @@ import 'package:oxen_wallet/palette.dart';
 
 class PrimaryButton extends StatelessWidget {
   const PrimaryButton(
-      {@required this.onPressed,
-      @required this.text,
-      @required this.color,
-      @required this.borderColor,
+      {required this.onPressed,
+      required this.text,
+      this.color,
+      this.borderColor,
       this.isDisabled = false,
       this.onDisabledPressed});
 
   final VoidCallback onPressed;
-  final VoidCallback onDisabledPressed;
-  final Color color;
-  final Color borderColor;
+  final VoidCallback? onDisabledPressed;
+  final Color? color;
+  final Color? borderColor;
   final String text;
   final bool isDisabled;
 
@@ -27,32 +27,32 @@ class PrimaryButton extends StatelessWidget {
           onPressed: isDisabled
               ? onDisabledPressed
               : onPressed,
-          color: isDisabled ? Colors.transparent : color,
+          color: isDisabled ? Colors.transparent : color ?? OxenPalette.tealWithOpacity,
           shape: RoundedRectangleBorder(
-              side: BorderSide(color: borderColor),
+              side: BorderSide(color: borderColor ?? OxenPalette.teal),
               borderRadius: BorderRadius.circular(10.0)),
           child: Text(text,
               style: TextStyle(
                   fontSize: 16.0,
                   color: isDisabled
                       ? Palette.darkGrey
-                      : Theme.of(context).primaryTextTheme.button.color)),
+                      : Theme.of(context).primaryTextTheme.button?.color)),
         ));
   }
 }
 
 class LoadingPrimaryButton extends StatelessWidget {
   const LoadingPrimaryButton(
-      {@required this.onPressed,
-      @required this.text,
-      @required this.color,
-      @required this.borderColor,
+      {required this.onPressed,
+      required this.text,
+      this.color,
+      this.borderColor,
       this.isDisabled = false,
       this.isLoading = false});
 
   final VoidCallback onPressed;
-  final Color color;
-  final Color borderColor;
+  final Color? color;
+  final Color? borderColor;
   final bool isLoading;
   final bool isDisabled;
   final String text;
@@ -64,37 +64,37 @@ class LoadingPrimaryButton extends StatelessWidget {
         height: 56.0,
         child: FlatButton(
           onPressed: (isLoading || isDisabled) ? null : onPressed,
-          color: color,
+          color: color ?? OxenPalette.tealWithOpacity,
           shape: RoundedRectangleBorder(
-              side: BorderSide(color: borderColor),
+              side: BorderSide(color: borderColor ?? OxenPalette.teal),
               borderRadius: BorderRadius.circular(10.0)),
           child: isLoading
               ? CupertinoActivityIndicator(animating: true)
               : Text(text,
                   style: TextStyle(
                       fontSize: 16.0,
-                      color: Theme.of(context).primaryTextTheme.button.color)),
+                      color: Theme.of(context).primaryTextTheme.button?.color)),
         ));
   }
 }
 
 class PrimaryIconButton extends StatelessWidget {
   const PrimaryIconButton({
-    @required this.onPressed,
-    @required this.iconData,
-    @required this.text,
-    @required this.color,
-    @required this.borderColor,
-    @required this.iconColor,
-    @required this.iconBackgroundColor,
+    required this.onPressed,
+    required this.iconData,
+    required this.text,
+    this.color,
+    this.borderColor,
+    this.iconColor,
+    this.iconBackgroundColor,
   });
 
   final VoidCallback onPressed;
   final IconData iconData;
-  final Color color;
-  final Color borderColor;
-  final Color iconColor;
-  final Color iconBackgroundColor;
+  final Color? color;
+  final Color? borderColor;
+  final Color? iconColor;
+  final Color? iconBackgroundColor;
   final String text;
 
   @override
@@ -104,9 +104,9 @@ class PrimaryIconButton extends StatelessWidget {
         height: 56.0,
         child: FlatButton(
           onPressed: onPressed,
-          color: color,
+          color: color ?? OxenPalette.tealWithOpacity,
           shape: RoundedRectangleBorder(
-              side: BorderSide(color: borderColor),
+              side: BorderSide(color: borderColor ?? OxenPalette.teal),
               borderRadius: BorderRadius.circular(10.0)),
           child: Stack(
             children: <Widget>[
@@ -129,7 +129,7 @@ class PrimaryIconButton extends StatelessWidget {
                       style: TextStyle(
                           fontSize: 16.0,
                           color:
-                              Theme.of(context).primaryTextTheme.button.color)),
+                              Theme.of(context).primaryTextTheme.button?.color ?? OxenPalette.tealWithOpacity)),
                 ),
               )
             ],
@@ -140,9 +140,9 @@ class PrimaryIconButton extends StatelessWidget {
 
 class PrimaryImageButton extends StatelessWidget {
   const PrimaryImageButton(
-      {@required this.onPressed,
-      @required this.image,
-      @required this.text,
+      {required this.onPressed,
+      required this.image,
+      required this.text,
       this.color = Palette.purple,
       this.borderColor = Palette.deepPink,
       this.iconColor = Colors.black});
@@ -187,7 +187,7 @@ class PrimaryImageButton extends StatelessWidget {
                                 color: Theme.of(context)
                                     .primaryTextTheme
                                     .button
-                                    .color)),
+                                    ?.color)),
                       ),
                     )
                   ]))

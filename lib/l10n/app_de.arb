@@ -20,6 +20,12 @@
   "contact_name" : "Name des Ansprechpartners",
   "reset" : "Zurücksetzen",
   "save" : "Speichern",
+  "remove_contact" : "Kontakt entfernen",
+  "remove_contact_confirm" : "Bist du sicher dass du den ausgewählten Kontakt entfernen möchtest?",
+
+
+  "remove_wallet_confirmation": "Bist du sicher dass du dieses Wallet löschen möchtest?",
+  "dangerzone_remove_wallet_warning": "Wenn du deine Seed-Phrase nicht gespeichert hast, wird alles Kapital dass zu diesem Wallet gesendet wurde für immer verloren sein.",
 
 
   "authenticated" : "Authentifiziert",
@@ -28,7 +34,7 @@
 
 
   "wallet_menu" : "Wallet-Menü",
-  "Blocks_remaining" : "{status} verbleibende Blöcke",
+  "blocks_remaining" : "{status} verbleibende Blöcke",
   "please_try_to_connect_to_another_node" : "Bitte versuchen Sie, eine Verbindung zu einem anderen Knoten herzustellen",
   "oxen_hidden" : "OXEN versteckt",
   "oxen_available_balance" : "OXEN verfügbares Guthaben",
@@ -44,6 +50,7 @@
   "yesterday" : "Gestern",
   "received" : "Empfangen",
   "sent" : "Geschickt",
+  "stake" : "Stake",
   "pending" : " (steht aus)",
   "rescan" : "Erneut scannen",
   "reconnect" : "Erneut verbinden",
@@ -67,7 +74,8 @@
   "status" : "Status: ",
   "confirm" : "Bestätigen",
   "confirm_sending" : "Bestätigen Sie das Senden",
-  "commit_transaction_amount_fee" : "Transaktion festschreiben\nMenge: {amount}\nGebühr: {fee}",
+  "confirm_stake" : "Bestätigen Sie der Stake",
+  "confirm_transaction_amount_fee" : "Menge: {amount} OXEN\nGebühr: {fee} OXEN",
   "sending" : "Senden",
   "transaction_sent" : "Transaktion gesendet!",
   "send_oxen" : "OXEN Senden",
@@ -101,8 +109,7 @@
   "delete" : "Löschen",
 
 
-  "use" : "Wechseln zu ",
-  "digit_pin" : "-stelliger PIN",
+  "use_n_digit_pin" : "Wechseln zu {n}-stelliger PIN",
 
 
   "share_address" : "Adresse teilen ",
@@ -118,7 +125,7 @@
   "restore_description_from_backup" : "Sie können die gesamte Oxen Wallet-App aus ihrer Sicherungsdatei wiederherstellen.",
   "restore_seed_keys_restore" : "Seed / Schlüssel wiederherstellen",
   "restore_title_from_seed" : "Aus Seed wiederherstellen",
-  "restore_description_from_seed" : "Stellen Sie Ihr Wallet aus den 25 Wörtern wieder her oder 13-Wort-Kombinationscode",
+  "restore_description_from_seed" : "Stellen Sie Ihr Wallet aus dem 25-Wörter-Kombinationscode",
   "restore_title_from_keys" : "Wiederherstellen von Schlüsseln",
   "restore_description_from_keys" : "Stellen Sie Ihr Wallet von generiert wieder her Tastenanschläge, die von Ihren privaten Schlüsseln gespeichert wurden",
   "restore_wallet_name" : "Walletname",
@@ -251,25 +258,20 @@
   "router_no_route" : "Keine Route definiert für {name}",
 
 
-  "error_text_account_name" : "Der Kontoname darf nur Buchstaben und Zahlen enthalten\nund muss zwischen 1 und 15 Zeichen lang sein",
-  "error_text_contact_name" : "Im Kontaktname könne die Symbole ` , ' \" nicht enthalten sein\nund muss zwischen 1 und 32 Zeichen lang sein",
+  "error_text_empty": "Kann nicht leer sein",
   "error_text_address" : "Die Walletadresse muss dem Typ der Kryptowährung\nentsprechen",
-  "error_text_node_address" : "Bitte geben Sie eine iPv4-Adresse ein",
+  "error_text_node_address" : "Bitte geben Sie eine IP-Adresse ein",
   "error_text_node_port" : "Der Knotenport kann nur Nummern zwischen 0 und 65535 enthalten",
   "error_text_payment_id" : "Die Zahlungs-ID kann nur 16 bis 64 hexadezimale Zeichen enthalten",
-  "error_text_oxen" : "Der OXEN-Wert kann das verfügbare Guthaben nicht überschreiten.\nDie Anzahl der Nachkommastellen muss kleiner oder gleich 12 sein",
+  "error_text_oxen" : "Der OXEN-Wert kann das verfügbare Guthaben nicht überschreiten.\nDie Anzahl der Nachkommastellen muss kleiner oder gleich 9 sein",
   "error_text_fiat" : "Der Wert des Betrags darf den verfügbaren Kontostand nicht überschreiten.\nDie Anzahl der Nachkommastellen muss kleiner oder gleich 2 sein",
-  "error_text_subaddress_name" : "Im Namen der Unteradresse könne die Symbole ` , ' \" nicht enthalten sein\nund muss zwischen 1 und 20 Zeichen lang sein",
   "error_text_amount" : "Betrag kann nur Zahlen enthalten",
-  "error_text_wallet_name" : "Der Walletname darf nur Buchstaben und Zahlen enthalten\nund muss zwischen 1 und 15 Zeichen lang sein",
   "error_text_keys" : "Walletschlüssel können nur 64 hexadezimale Zeichen enthalten",
-  "error_text_crypto_currency" : "Die Anzahl der Nachkommastellen\nmuss kleiner oder gleich 12 sein.",
+  "error_text_crypto_currency" : "Die Anzahl der Nachkommastellen\nmuss kleiner oder gleich 9 sein.",
   "error_text_service_node": "Service Node Schlüssel können nur 64 hexadezimale Zeichen enthalten",
 
 
-  "auth_store_ban_timeout" : "Auszeit verbieten",
-  "auth_store_banned_for" : "Gebannt für ",
-  "auth_store_banned_minutes" : " Protokoll",
+  "auth_store_banned_for" : "{mins} Minuten gebannt.",
   "auth_store_incorrect_password" : "Falsches PIN",
   "wallet_restoration_store_incorrect_seed_length" : "Falsche Seed-länge",
 

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flutter/foundation.dart';
 import 'package:mobx/mobx.dart';
 import 'package:oxen_wallet/src/wallet/wallet.dart';
 import 'package:oxen_wallet/src/wallet/oxen/oxen_wallet.dart';
@@ -13,11 +12,11 @@ part 'subaddress_list_store.g.dart';
 class SubaddressListStore = SubaddressListStoreBase with _$SubaddressListStore;
 
 abstract class SubaddressListStoreBase with Store {
-  SubaddressListStoreBase({@required WalletService walletService}) {
-    subaddresses = ObservableList<Subaddress>();
-
+  SubaddressListStoreBase({required WalletService walletService}) :
+      subaddresses = ObservableList<Subaddress>()
+  {
     if (walletService.currentWallet != null) {
-      _onWalletChanged(walletService.currentWallet);
+      _onWalletChanged(walletService.currentWallet!);
     }
 
     _onWalletChangeSubscription =
@@ -27,11 +26,11 @@ abstract class SubaddressListStoreBase with Store {
   @observable
   ObservableList<Subaddress> subaddresses;
 
-  SubaddressList _subaddressList;
-  StreamSubscription<Wallet> _onWalletChangeSubscription;
-  StreamSubscription<List<Subaddress>> _onSubaddressesChangeSubscription;
-  StreamSubscription<Account> _onAccountChangeSubscription;
-  Account _account;
+  SubaddressList _subaddressList = SubaddressList();
+  late StreamSubscription<Wallet> _onWalletChangeSubscription;
+  StreamSubscription<List<Subaddress>>? _onSubaddressesChangeSubscription;
+  StreamSubscription<Account>? _onAccountChangeSubscription;
+  Account _account = Account(id: 0);
 
 //  @override
 //  void dispose() {
@@ -47,14 +46,14 @@ abstract class SubaddressListStoreBase with Store {
 //    super.dispose();
 //  }
 
-  Future<void> _updateSubaddressList({int accountIndex}) async {
+  Future<void> _updateSubaddressList({required int accountIndex}) async {
     await _subaddressList.refresh(accountIndex: accountIndex);
     subaddresses = ObservableList.of(_subaddressList.getAll());
   }
 
   Future<void> _onWalletChanged(Wallet wallet) async {
     if (_onSubaddressesChangeSubscription != null) {
-      await _onSubaddressesChangeSubscription.cancel();
+      await _onSubaddressesChangeSubscription!.cancel();
     }
 
     if (wallet is OxenWallet) {

@@ -1,50 +1,50 @@
 [
   {
     "question" : "Was ist der Unterschied zwischen verfügbarem Guthaben und vollständigem Guthaben?",
-    "answer" : "Nachdem Sie eine Transaktion getätigt oder Oxen erhalten haben, muss die Transaktion noch bestätigt werden. In ungefähr 20 Minuten sollte Ihr \"verfügbares Guthaben\" aktualisiert werden!\nWenn Sie Oxen senden, verringert sich manchmal Ihr verfügbares Guthaben um mehr als den Betrag, den Sie gesendet haben. Dies ist normal und zum Schutz Ihrer Privatsphäre erforderlich. Ihr \"vollständiges Gleichgewicht\" sollte in 20 Minuten wieder normal sein.\n"
+    "answer" : "Nachdem Sie eine Transaktion getätigt oder Oxen erhalten haben, muss die Transaktion noch bestätigt werden. In ungefähr 20 Minuten sollte Ihr \"verfügbares Guthaben\" aktualisiert werden!\n\nWenn Sie Oxen senden, verringert sich manchmal Ihr verfügbares Guthaben um mehr als den Betrag, den Sie gesendet haben. Dies ist normal und zum Schutz Ihrer Privatsphäre erforderlich. Ihr \"vollständiges Gleichgewicht\" sollte in 20 Minuten wieder normal sein."
   },
   {
     "question" : "Was bedeuten \"Seed\" und \"Schlüssel\"?",
-    "answer" : "Ihre Schlüssel verschlüsseln die privaten Informationen in Ihres Wallets und ermöglichen es Ihnen, Coins auszugeben und eingehende Transaktionen anzuzeigen.\nIhr Seed ist nur eine Version Ihres privaten Schlüssels, die so geschrieben wurde, dass Sie sie leichter notieren können. Ihr Seed und Schlüssel sind tatsächlich dasselbe, nur in verschiedenen Formen!\nGeben Sie niemals Ihren Seed oder Schlüssel an jemanden weiter. Ihr Geld wird gestohlen, wenn Sie Ihren Seed oder Schlüssel herausgeben. Bitte notieren Sie sich jedoch Ihren Seed und bewahren Sie ihn an einem sicheren Ort auf (so können Sie Ihr Wallet wiederherstellen, wenn Sie Ihr Telefon verlieren.)\n"
+    "answer" : "Ihre Schlüssel verschlüsseln die privaten Informationen in Ihres Wallets und ermöglichen es Ihnen, Coins auszugeben und eingehende Transaktionen anzuzeigen.\n\nIhr Seed ist nur eine Version Ihres privaten Schlüssels, die so geschrieben wurde, dass Sie sie leichter notieren können. Ihr Seed und Schlüssel sind tatsächlich dasselbe, nur in verschiedenen Formen!\n\nGeben Sie niemals Ihren Seed oder Schlüssel an jemanden weiter. Ihr Geld wird gestohlen, wenn Sie Ihren Seed oder Schlüssel herausgeben. Bitte notieren Sie sich jedoch Ihren Seed und bewahren Sie ihn an einem sicheren Ort auf (so können Sie Ihr Wallet wiederherstellen, wenn Sie Ihr Telefon verlieren.)"
   },
   {
     "question" : "Wie viele Wallets kann ich erstellen?",
-    "answer" : "Es gibt keine Grenzen! Sie können so viele Wallets erstellen, wie Sie möchten.\n"
+    "answer" : "Es gibt keine Grenzen! Sie können so viele Wallets erstellen, wie Sie möchten."
   },
   {
     "question" : "Wie kann ich mein Wallet wiederherstellen?",
-    "answer" : "Tippen Sie auf das Profil Icon auf ihrem Dashboard (oben rechts), wählen Sie „Wallets“ und dann „Wallet wiederherstellen“. Geben Sie dann Ihren Seed (oder Ihre Schlüssel) und optional ein Datum vor der ersten Transaktion in Ihrer Brieftasche ein (dies beschleunigt den Synchronisierungsvorgang) .) Möglicherweise müssen Sie die App 15 bis 30 Minuten geöffnet lassen, um Ihr Wallet vollständig wiederherzustellen.\n"
+    "answer" : "Tippen Sie auf das Profil Icon auf ihrem Dashboard (oben rechts), wählen Sie „Wallets“ und dann „Wallet wiederherstellen“. Geben Sie dann Ihren Seed (oder Ihre Schlüssel) und optional ein Datum vor der ersten Transaktion in Ihrer Brieftasche ein (dies beschleunigt den Synchronisierungsvorgang) .) Möglicherweise müssen Sie die App 15 bis 30 Minuten geöffnet lassen, um Ihr Wallet vollständig wiederherzustellen."
   },
   {
     "question" : "Was kann ich tun, wenn ich meinen Seed verliere?",
-    "answer" : "Wenn Sie Ihren Seed vergessen haben, haben Sie ihn wahrscheinlich irgendwo aufgeschrieben. Bitte überprüfen Sie Ihre Notizen und schauen Sie sich auf Ihrem Computer um. Wenn Sie es nirgendwo finden, haben Sie möglicherweise Oxen Wallet gesichert (in diesem Fall können Sie es aus diesem Backup wiederherstellen.) Wenn keines von beidem der Fall ist, können wir leider nichts tun.\n"
+    "answer" : "Wenn Sie Ihren Seed vergessen haben, haben Sie ihn wahrscheinlich irgendwo aufgeschrieben. Bitte überprüfen Sie Ihre Notizen und schauen Sie sich auf Ihrem Computer um. Wenn Sie es nirgendwo finden, haben Sie möglicherweise Oxen Wallet gesichert (in diesem Fall können Sie es aus diesem Backup wiederherstellen.) Wenn keines von beidem der Fall ist, können wir leider nichts tun."
   },
   {
     "question" : "Sammeln Sie Informationen zu mir oder meinem Wallet?",
-    "answer" : "Oxen Wallet sammelt oder zeichnet keine Informationen über Sie oder Ihr Wallet auf. Ihre Privatsphäre ist uns wichtig.\nIhre Privatsphäre kann aber duch die Verbindung zu einem bösarigem Knoten kompromitiert werden. Deshalb empfehlen wir, die Standart Knoten oder ihren eigenen zu verwenden. "
+    "answer" : "Oxen Wallet sammelt oder zeichnet keine Informationen über Sie oder Ihr Wallet auf. Ihre Privatsphäre ist uns wichtig.\n\nIhre Privatsphäre kann aber duch die Verbindung zu einem bösarigem Knoten kompromitiert werden. Deshalb empfehlen wir, die Standart Knoten oder ihren eigenen zu verwenden. "
   },
   {
     "question" : "Woher die Fiat-Daten?",
-    "answer" : "Die Fiat-Daten werden durch ein Gateway von CoinGecko geladen.\nDer code des Gateways ist open-source und sammelt oder zeichnet keine Informationen auf, durch das Anfragen der Daten durch das Gateway enthüllen sie Ihre IP und Fiat-Währung.\nDie Fiat Umrechnung ist standartmäßig deaktiviert."
+    "answer" : "Die Fiat-Daten werden durch ein Gateway von CoinGecko geladen.\n\nDer code des Gateways ist open-source und sammelt oder zeichnet keine Informationen auf, durch das Anfragen der Daten durch das Gateway enthüllen sie Ihre IP und Fiat-Währung.\n\nDie Fiat Umrechnung ist standartmäßig deaktiviert."
   },
   {
     "question" : "Kann ich eine Transaktion stornieren?",
-    "answer" : "Sobald eine Transaktion an die Blockchain gesendet wurde, kann sie leider nicht mehr rückgängig gemacht werden. Sie können die Transaktion jederzeit abbrechen, bevor sie gesendet wird. Überprüfen Sie die Adresse daher immer, bevor Sie eine Transaktion senden.\n"
+    "answer" : "Sobald eine Transaktion an die Blockchain gesendet wurde, kann sie leider nicht mehr rückgängig gemacht werden. Sie können die Transaktion jederzeit abbrechen, bevor sie gesendet wird. Überprüfen Sie die Adresse daher immer, bevor Sie eine Transaktion senden."
   },
   {
     "question" : "Was sind Subadressen und wie verwende ich sie?",
-    "answer" : "Eine Unteradresse ist im Grunde eine eindeutige Adresse, die Sie jederzeit generieren können. An sie gesendete Coins landen weiterhin in Ihrem Wallet, aber die Person, die die Coins sendet, kann Ihre Hauptadresse nicht ermitteln.\nSie können eine neue Unteradresse im Empfangsbildschirm erstellen, indem Sie auf das „+“ neben der Schaltfläche Unteradressen tippen. Geben Sie einen Namen für die Unteradresse ein und tippen Sie auf \"Hinzufügen\". Dann tippen Sie einfach auf den Namen der Subadresse, wenn Sie ihn verwenden möchten!\nWenn Sie paranoid sind, sollten Sie wahrscheinlich jedes Mal, wenn Sie Oxen erhalten, eine neue Unteradresse erstellen.\n"
+    "answer" : "Eine Unteradresse ist im Grunde eine eindeutige Adresse, die Sie jederzeit generieren können. An sie gesendete Coins landen weiterhin in Ihrem Wallet, aber die Person, die die Coins sendet, kann Ihre Hauptadresse nicht ermitteln.\n\nSie können eine neue Unteradresse im Empfangsbildschirm erstellen, indem Sie auf das „+“ neben der Schaltfläche Unteradressen tippen. Geben Sie einen Namen für die Unteradresse ein und tippen Sie auf \"Hinzufügen\". Dann tippen Sie einfach auf den Namen der Subadresse, wenn Sie ihn verwenden möchten!\n\nWenn Sie paranoid sind, sollten Sie wahrscheinlich jedes Mal, wenn Sie Oxen erhalten, eine neue Unteradresse erstellen."
   },
   {
     "question" : "Ich habe meine OXEN nicht erhalten! Was kann ich tun?",
-    "answer" : "Wenn Sie Ihr Oxen nicht erhalten haben, möchten Sie möglicherweise auf das Synchonisations Icon auf auf ihrem Dashboard (oben links) tippen und auf Reconnect (Neu verbinden) klicken. Wenn dies nicht funktioniert, gehen Sie in das Einstellungsmenü, tippen Sie auf das Feld \"Aktueller Knoten\" und wählen Sie einen Knoten mit einem grünen Punkt daneben aus.\n"
+    "answer" : "Wenn Sie Ihr Oxen nicht erhalten haben, möchten Sie möglicherweise auf das Synchonisations Icon auf auf ihrem Dashboard (oben links) tippen und auf Reconnect (Neu verbinden) klicken. Wenn dies nicht funktioniert, gehen Sie in das Einstellungsmenü, tippen Sie auf das Feld \"Aktueller Knoten\" und wählen Sie einen Knoten mit einem grünen Punkt daneben aus."
   },
   {
     "question" : "Wie kontaktiere ich den Oxen Wallet-Support?",
-    "answer" : "Senden Sie eine E-Mail an team@oxen.io, schließen Sie sich dem Telegram unter @LokiCommunity an oder twittern Sie @Oxen_io!\n"
+    "answer" : "Senden Sie eine E-Mail an team@oxen.io, schließen Sie sich dem Telegram unter @LokiCommunity an oder twittern Sie @Oxen_io!"
   },
   {
     "question" : "Macht mich der Besitz von Oxen zu einem Investor?",
-    "answer" : "Nein, macht es nicht. Es macht sie zu einer coolen Person mit Oxen.\n"
+    "answer" : "Nein, macht es nicht. Es macht sie zu einer coolen Person mit Oxen."
   }
 ]

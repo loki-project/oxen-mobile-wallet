@@ -1,10 +1,17 @@
 import 'package:oxen_wallet/src/domain/common/enumerable_item.dart';
+import 'package:oxen_wallet/l10n.dart';
 
 class FiatCurrency extends EnumerableItem<String> with Serializable<String> {
-  const FiatCurrency({String symbol}) : super(title: symbol, raw: symbol);
+  const FiatCurrency({required String? symbol}) : super(raw: symbol ?? 'USD');
 
   @override
   bool operator ==(Object other) => other is FiatCurrency && other.raw == raw;
+
+  @override
+  String toString() => raw;
+
+  @override
+  String getTitle(AppLocalizations l10n) => raw;
 
   static const all = [
     FiatCurrency.aud,
@@ -77,5 +84,5 @@ class FiatCurrency extends EnumerableItem<String> with Serializable<String> {
   static const vef = FiatCurrency(symbol: 'VEF');
 
   @override
-  int get hashCode => raw.hashCode ^ title.hashCode;
+  int get hashCode => raw.hashCode;
 }

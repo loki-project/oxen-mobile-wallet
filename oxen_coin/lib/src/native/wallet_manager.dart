@@ -1,7 +1,6 @@
 import 'dart:ffi';
 import 'package:ffi/ffi.dart';
 import 'package:oxen_coin/src/oxen_api.dart';
-import 'package:oxen_coin/src/util/convert_utf8_to_string.dart';
 import 'package:oxen_coin/src/util/signatures.dart';
 import 'package:oxen_coin/src/util/types.dart';
 import 'package:oxen_coin/src/exceptions/wallet_creation_exception.dart';
@@ -31,80 +30,69 @@ final loadWalletNative = oxenApi
     .asFunction<LoadWallet>();
 
 void createWalletSync(
-    {String path, String password, String language, int nettype = 0}) {
-  final pathPointer = Utf8.toUtf8(path);
-  final passwordPointer = Utf8.toUtf8(password);
-  final languagePointer = Utf8.toUtf8(language);
-  final errorMessagePointer = allocate<Utf8>();
-  final isWalletCreated = createWalletNative(pathPointer, passwordPointer,
-          languagePointer, nettype, errorMessagePointer) !=
-      0;
+    {required String path, required String password, required String language, int nettype = 0}) {
+  final pathPointer = path.toNativeUtf8();
+  final passwordPointer = password.toNativeUtf8();
+  final languagePointer = language.toNativeUtf8();
+  final result = createWalletNative(pathPointer, passwordPointer, languagePointer, nettype);
 
-  free(pathPointer);
-  free(passwordPointer);
-  free(languagePointer);
+  calloc.free(pathPointer);
+  calloc.free(passwordPointer);
+  calloc.free(languagePointer);
 
-  if (!isWalletCreated) {
-    throw WalletCreationException(
-        message: convertUTF8ToString(pointer: errorMessagePointer));
-  }
+  if (!result.good)
+    throw WalletCreationException(message: result.errorString());
 }
 
-bool isWalletExistSync({String path}) {
-  final pathPointer = Utf8.toUtf8(path);
+bool isWalletExistSync({required String path}) {
+  final pathPointer = path.toNativeUtf8();
   final isExist = isWalletExistNative(pathPointer) != 0;
 
-  free(pathPointer);
+  calloc.free(pathPointer);
 
   return isExist;
 }
 
 void restoreWalletFromSeedSync(
-    {String path,
-    String password,
-    String seed,
+    {required String path,
+    required String password,
+    required String seed,
     int nettype = 0,
     int restoreHeight = 0}) {
-  final pathPointer = Utf8.toUtf8(path);
-  final passwordPointer = Utf8.toUtf8(password);
-  final seedPointer = Utf8.toUtf8(seed);
-  final errorMessagePointer = allocate<Utf8>();
-  final isWalletRestored = restoreWalletFromSeedNative(
+  final pathPointer = path.toNativeUtf8();
+  final passwordPointer = password.toNativeUtf8();
+  final seedPointer = seed.toNativeUtf8();
+  final result = restoreWalletFromSeedNative(
           pathPointer,
           passwordPointer,
           seedPointer,
           nettype,
-          restoreHeight,
-          errorMessagePointer) !=
-      0;
+          restoreHeight);
 
-  free(pathPointer);
-  free(passwordPointer);
-  free(seedPointer);
+  calloc.free(pathPointer);
+  calloc.free(passwordPointer);
+  calloc.free(seedPointer);
 
-  if (!isWalletRestored) {
-    throw WalletRestoreFromSeedException(
-        message: convertUTF8ToString(pointer: errorMessagePointer));
-  }
+  if (!result.good)
+    throw WalletRestoreFromSeedException(message: result.errorString());
 }
 
 void restoreWalletFromKeysSync(
-    {String path,
-    String password,
-    String language,
-    String address,
-    String viewKey,
-    String spendKey,
+    {required String path,
+    required String password,
+    required String language,
+    required String address,
+    required String viewKey,
+    required String spendKey,
     int nettype = 0,
     int restoreHeight = 0}) {
-  final pathPointer = Utf8.toUtf8(path);
-  final passwordPointer = Utf8.toUtf8(password);
-  final languagePointer = Utf8.toUtf8(language);
-  final addressPointer = Utf8.toUtf8(address);
-  final viewKeyPointer = Utf8.toUtf8(viewKey);
-  final spendKeyPointer = Utf8.toUtf8(spendKey);
-  final errorMessagePointer = allocate<Utf8>();
-  final isWalletRestored = restoreWalletFromKeysNative(
+  final pathPointer = path.toNativeUtf8();
+  final passwordPointer = password.toNativeUtf8();
+  final languagePointer = language.toNativeUtf8();
+  final addressPointer = address.toNativeUtf8();
+  final viewKeyPointer = viewKey.toNativeUtf8();
+  final spendKeyPointer = spendKey.toNativeUtf8();
+  final result = restoreWalletFromKeysNative(
           pathPointer,
           passwordPointer,
           languagePointer,
@@ -112,19 +100,15 @@ void restoreWalletFromKeysSync(
           viewKeyPointer,
           spendKeyPointer,
           nettype,
-          restoreHeight,
-          errorMessagePointer) !=
-      0;
+          restoreHeight);
 
-  free(pathPointer);
-  free(passwordPointer);
-  free(languagePointer);
-  free(addressPointer);
-  free(viewKeyPointer);
-  free(spendKeyPointer);
+  calloc.free(pathPointer);
+  calloc.free(passwordPointer);
+  calloc.free(languagePointer);
+  calloc.free(addressPointer);
+  calloc.free(viewKeyPointer);
+  calloc.free(spendKeyPointer);
 
-  if (!isWalletRestored) {
-    throw WalletRestoreFromKeysException(
-        message: convertUTF8ToString(pointer: errorMessagePointer));
-  }
+  if (!result.good)
+    throw WalletRestoreFromKeysException(message: result.errorString());
 }

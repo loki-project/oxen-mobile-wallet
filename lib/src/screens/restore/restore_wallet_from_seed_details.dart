@@ -1,9 +1,8 @@
 import 'package:mobx/mobx.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:oxen_wallet/generated/l10n.dart';
+import 'package:oxen_wallet/l10n.dart';
 import 'package:oxen_wallet/src/stores/wallet_restoration/wallet_restoration_store.dart';
 import 'package:oxen_wallet/src/stores/wallet_restoration/wallet_restoration_state.dart';
 import 'package:oxen_wallet/src/screens/base_page.dart';
@@ -14,7 +13,7 @@ import 'package:oxen_wallet/palette.dart';
 
 class RestoreWalletFromSeedDetailsPage extends BasePage {
   @override
-  String get title => S.current.restore_wallet_restore_description;
+  String getTitle(AppLocalizations t) => t.restore_wallet_restore_description;
 
   @override
   Widget body(BuildContext context) => RestoreFromSeedDetailsForm();
@@ -42,7 +41,7 @@ class _RestoreFromSeedDetailsFormState
       }
 
       if (state is WalletRestorationFailure) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
+        WidgetsBinding.instance?.addPostFrameCallback((_) {
           showDialog<void>(
               context: context,
               builder: (BuildContext context) {
@@ -50,7 +49,7 @@ class _RestoreFromSeedDetailsFormState
                   content: Text(state.error),
                   actions: <Widget>[
                     FlatButton(
-                      child: Text(S.of(context).ok),
+                      child: Text(tr(context).ok),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                   ],
@@ -83,7 +82,7 @@ class _RestoreFromSeedDetailsFormState
                               decoration: InputDecoration(
                                   hintStyle: TextStyle(
                                       color: Theme.of(context).hintColor),
-                                  hintText: S.of(context).restore_wallet_name,
+                                  hintText: tr(context).restore_wallet_name,
                                   focusedBorder: UnderlineInputBorder(
                                       borderSide: BorderSide(
                                           color: OxenPalette.teal,
@@ -94,7 +93,7 @@ class _RestoreFromSeedDetailsFormState
                                           width: 1.0))),
                               validator: (value) {
                                 walletRestorationStore
-                                    .validateWalletName(value);
+                                    .validateWalletName(value ?? '', tr(context));
                                 return walletRestorationStore.errorMessage;
                               },
                             ),
@@ -109,17 +108,17 @@ class _RestoreFromSeedDetailsFormState
       bottomSection: Observer(builder: (_) {
         return LoadingPrimaryButton(
             onPressed: () {
-              if (_formKey.currentState.validate()) {
+              if (_formKey.currentState!.validate()) {
                 walletRestorationStore.restoreFromSeed(
                     name: _nameController.text,
-                    restoreHeight: _blockchainHeightKey.currentState.height);
+                    restoreHeight: _blockchainHeightKey.currentState!.height);
               }
             },
             isLoading: walletRestorationStore.state is WalletIsRestoring,
-            text: S.of(context).restore_recover,
-            color: Theme.of(context).primaryTextTheme.button.backgroundColor,
+            text: tr(context).restore_recover,
+            color: Theme.of(context).primaryTextTheme.button?.backgroundColor,
             borderColor:
-                Theme.of(context).primaryTextTheme.button.decorationColor);
+                Theme.of(context).primaryTextTheme.button?.decorationColor);
       }),
     );
   }

@@ -1,9 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hive/hive.dart';
-import 'package:oxen_wallet/generated/l10n.dart';
 import 'package:oxen_wallet/routes.dart';
+import 'package:oxen_wallet/l10n.dart';
 // MARK: Import domains
 
 import 'package:oxen_wallet/src/domain/common/contact.dart';
@@ -40,7 +39,6 @@ import 'package:oxen_wallet/src/screens/restore/restore_wallet_options_page.dart
 import 'package:oxen_wallet/src/screens/seed/create_seed_page.dart';
 import 'package:oxen_wallet/src/screens/seed_language/seed_language_page.dart';
 import 'package:oxen_wallet/src/screens/send/send_page.dart';
-import 'package:oxen_wallet/src/screens/settings/change_language.dart';
 import 'package:oxen_wallet/src/screens/settings/settings.dart';
 import 'package:oxen_wallet/src/screens/setup_pin_code/setup_pin_code.dart';
 import 'package:oxen_wallet/src/screens/show_keys/show_keys_page.dart';
@@ -72,7 +70,7 @@ import 'package:oxen_wallet/src/stores/wallet/wallet_store.dart';
 import 'package:oxen_wallet/src/stores/wallet_creation/wallet_creation_store.dart';
 import 'package:oxen_wallet/src/stores/wallet_list/wallet_list_store.dart';
 import 'package:oxen_wallet/src/stores/wallet_restoration/wallet_restoration_store.dart';
-import 'package:oxen_wallet/src/wallet/mnemotic_item.dart';
+import 'package:oxen_wallet/src/wallet/mnemonic_item.dart';
 import 'package:oxen_wallet/src/wallet/oxen/account.dart';
 import 'package:oxen_wallet/src/wallet/oxen/subaddress.dart';
 import 'package:oxen_wallet/src/wallet/oxen/transaction/transaction_description.dart';
@@ -82,19 +80,19 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class Router {
   static Route<dynamic> generateRoute(
-      {SharedPreferences sharedPreferences,
-      WalletListService walletListService,
-      WalletService walletService,
-      UserService userService,
-      RouteSettings settings,
-      PriceStore priceStore,
-      WalletStore walletStore,
-      SyncStore syncStore,
-      BalanceStore balanceStore,
-      SettingsStore settingsStore,
-      Box<Contact> contacts,
-      Box<Node> nodes,
-      Box<TransactionDescription> transactionDescriptions}) {
+      {required SharedPreferences sharedPreferences,
+      required WalletListService walletListService,
+      required WalletService walletService,
+      required UserService userService,
+      required RouteSettings settings,
+      required PriceStore priceStore,
+      required WalletStore walletStore,
+      required SyncStore syncStore,
+      required BalanceStore balanceStore,
+      required SettingsStore settingsStore,
+      required Box<Contact> contacts,
+      required Box<Node> nodes,
+      required Box<TransactionDescription> transactionDescriptions}) {
     switch (settings.name) {
       case Routes.welcome:
         return MaterialPageRoute<void>(builder: (_) => WelcomePage());
@@ -125,7 +123,7 @@ class Router {
                             sharedPreferences: sharedPreferences)));
 
       case Routes.setupPin:
-        Function(BuildContext, String) callback;
+        Function(BuildContext, String)? callback;
 
         if (settings.arguments is Function(BuildContext, String)) {
           callback = settings.arguments as Function(BuildContext, String);
@@ -164,7 +162,7 @@ class Router {
             builder: (_) => createSeedPage(
                 settingsStore: settingsStore,
                 walletService: walletService,
-                callback: settings.arguments as void Function()));
+                callback: settings.arguments as void Function()?));
 
       case Routes.restoreWalletFromSeed:
         return MaterialPageRoute<void>(
@@ -218,6 +216,7 @@ class Router {
                       create: (_) => SendStore(
                           walletService: walletService,
                           priceStore: priceStore,
+                          settingsStore: settingsStore,
                           transactionDescriptions: transactionDescriptions)),
                 ], child: SendPage()));
 
@@ -324,7 +323,7 @@ class Router {
         return MaterialPageRoute<String>(builder: (context) {
           return Provider(
               create: (_) => AccountListStore(walletService: walletService),
-              child: AccountPage(account: settings.arguments as Account));
+              child: AccountPage(account: settings.arguments as Account?));
         });
 
       case Routes.addressBook:
@@ -357,12 +356,10 @@ class Router {
         return MaterialPageRoute<void>(builder: (context) {
           return MultiProvider(
             providers: [
-              Provider(
-                  create: (_) =>
-                      AccountListStore(walletService: walletService)),
+              Provider(create: (_) => AccountListStore(walletService: walletService)),
               Provider(create: (_) => AddressBookStore(contacts: contacts))
             ],
-            child: ContactPage(contact: settings.arguments as Contact),
+            child: ContactPage(contact: settings.arguments as Contact?),
           );
         });
 
@@ -413,7 +410,7 @@ class Router {
                         authStore: authStore,
                         sharedPreferences: sharedPreferences,
                         walletListService: walletListService,
-                        seed: settings.arguments as List<MnemoticItem>),
+                        seed: settings.arguments as List<MnemonicItem>),
                     child: RestoreWalletFromSeedDetailsPage()));
 
       case Routes.settings:
@@ -433,9 +430,6 @@ class Router {
 
       case Routes.changelog:
         return MaterialPageRoute<void>(builder: (_) => ChangelogPage());
-
-      case Routes.changeLanguage:
-        return MaterialPageRoute<void>(builder: (_) => ChangeLanguage());
 
       case Routes.profile:
         return MaterialPageRoute<void>(builder: (_) => ProfilePage());
@@ -459,15 +453,16 @@ class Router {
                   Provider(
                       create: (_) => SendStore(
                           walletService: walletService,
+                          settingsStore: settingsStore,
                           priceStore: priceStore,
                           transactionDescriptions: transactionDescriptions)),
                 ], child: NewStakePage()));
 
       default:
         return MaterialPageRoute<void>(
-            builder: (_) => Scaffold(
+            builder: (context) => Scaffold(
                   body: Center(
-                      child: Text(S.current.router_no_route(settings.name))),
+                      child: Text(tr(context).router_no_route(settings.name ?? 'null'))),
                 ));
     }
   }

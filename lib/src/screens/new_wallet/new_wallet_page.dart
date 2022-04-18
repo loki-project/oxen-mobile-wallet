@@ -3,8 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:oxen_wallet/generated/l10n.dart';
+import 'package:oxen_wallet/l10n.dart';
 import 'package:oxen_wallet/src/stores/wallet_creation/wallet_creation_store.dart';
 import 'package:oxen_wallet/src/stores/wallet_creation/wallet_creation_state.dart';
 import 'package:oxen_wallet/src/domain/services/wallet_list_service.dart';
@@ -19,16 +18,16 @@ import 'package:oxen_wallet/src/util/generate_name.dart';
 
 class NewWalletPage extends BasePage {
   NewWalletPage(
-      {@required this.walletsService,
-      @required this.walletService,
-      @required this.sharedPreferences});
+      {required this.walletsService,
+      required this.walletService,
+      required this.sharedPreferences});
 
   final WalletListService walletsService;
   final WalletService walletService;
   final SharedPreferences sharedPreferences;
 
   @override
-  String get title => S.current.new_wallet;
+  String getTitle(AppLocalizations t) => t.new_wallet;
 
   @override
   Widget body(BuildContext context) => WalletNameForm();
@@ -64,7 +63,7 @@ class _WalletNameFormState extends State<WalletNameForm> {
       }
 
       if (state is WalletCreationFailure) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
+        WidgetsBinding.instance?.addPostFrameCallback((_) {
           showDialog<void>(
               context: context,
               builder: (BuildContext context) {
@@ -72,7 +71,7 @@ class _WalletNameFormState extends State<WalletNameForm> {
                   content: Text(state.error),
                   actions: <Widget>[
                     FlatButton(
-                      child: Text(S.of(context).ok),
+                      child: Text(tr(context).ok),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                   ],
@@ -96,12 +95,12 @@ class _WalletNameFormState extends State<WalletNameForm> {
                 child: TextFormField(
                   style: TextStyle(
                       fontSize: 24.0,
-                      color: Theme.of(context).accentTextTheme.subtitle2.color),
+                      color: Theme.of(context).accentTextTheme.subtitle2?.color),
                   controller: nameController,
                   decoration: InputDecoration(
                       hintStyle: TextStyle(
                           fontSize: 24.0, color: Theme.of(context).hintColor),
-                      hintText: S.of(context).wallet_name,
+                      hintText: tr(context).wallet_name,
                       focusedBorder: UnderlineInputBorder(
                           borderSide:
                               BorderSide(color: OxenPalette.teal, width: 2.0)),
@@ -110,14 +109,14 @@ class _WalletNameFormState extends State<WalletNameForm> {
                               color: Theme.of(context).focusColor,
                               width: 1.0))),
                   validator: (value) {
-                    walletCreationStore.validateWalletName(value);
+                    walletCreationStore.validateWalletName(value ?? '', tr(context));
                     return walletCreationStore.errorMessage;
                   },
                 )),
           ),
           Padding(padding: EdgeInsets.only(bottom: 20),
             child: Text(
-              S.of(context).seed_language_choose,
+              tr(context).seed_language_choose,
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 16.0),
             ),
@@ -130,15 +129,15 @@ class _WalletNameFormState extends State<WalletNameForm> {
           builder: (context) {
             return LoadingPrimaryButton(
               onPressed: () {
-                if (_formKey.currentState.validate()) {
+                if (_formKey.currentState?.validate() ?? false) {
                   walletCreationStore.create(name: nameController.text,
                       language: seedLanguageStore.selectedSeedLanguage);
                 }
               },
-              text: S.of(context).continue_text,
-              color: Theme.of(context).primaryTextTheme.button.backgroundColor,
+              text: tr(context).continue_text,
+              color: Theme.of(context).primaryTextTheme.button?.backgroundColor,
               borderColor:
-                  Theme.of(context).primaryTextTheme.button.decorationColor,
+                  Theme.of(context).primaryTextTheme.button?.decorationColor,
               isLoading: walletCreationStore.state is WalletIsCreating,
             );
           },

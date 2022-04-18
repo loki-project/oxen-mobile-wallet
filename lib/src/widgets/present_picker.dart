@@ -1,13 +1,25 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:oxen_wallet/generated/l10n.dart';
+import 'package:oxen_wallet/l10n.dart';
 import 'package:oxen_wallet/src/widgets/primary_button.dart';
 
 import 'oxen_dialog.dart';
 
-Future<T> presentPicker<T extends Object>(
-    BuildContext context, List<T> list) async {
-  var _value = list[0];
+Future<T?> presentPicker<T extends dynamic>(
+    BuildContext context, List<T> list, {T? initial}) async {
+  var initialIndex = 0;
+  if (initial != null) {
+    for (var i = 0; i < list.length; i++) {
+      if (list[i] == initial) {
+        initialIndex = i;
+        break;
+      }
+    }
+  }
+
+  var _value = list[initialIndex];
+
+  final t = tr(context);
 
   return await showDialog(
       context: context,
@@ -19,7 +31,7 @@ Future<T> presentPicker<T extends Object>(
                 children: [
                   Padding(
                       padding: EdgeInsets.all(15),
-                      child: Text(S.of(context).please_select,
+                      child: Text(tr(context).please_select,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: 18,
@@ -27,7 +39,7 @@ Future<T> presentPicker<T extends Object>(
                               color: Theme.of(context)
                                   .primaryTextTheme
                                   .caption
-                                  .color))),
+                                  ?.color))),
                   Padding(
                     padding: EdgeInsets.only(top: 15, bottom: 30),
                     child: Container(
@@ -35,32 +47,33 @@ Future<T> presentPicker<T extends Object>(
                       child: CupertinoPicker(
                           backgroundColor: Theme.of(context).backgroundColor,
                           itemExtent: 45.0,
+                          scrollController: FixedExtentScrollController(initialItem: initialIndex),
                           onSelectedItemChanged: (int index) =>
                               _value = list[index],
                           children: List.generate(
                               list.length,
                               (index) => Center(
                                     child: Text(
-                                      list[index].toString(),
+                                      (list[index] is String ? list[index] : list[index].getTitle(t)) as String,
                                       style: TextStyle(
                                           color: Theme.of(context)
                                               .primaryTextTheme
                                               .caption
-                                              .color),
+                                              ?.color),
                                     ),
                                   ))),
                     ),
                   ),
                   PrimaryButton(
-                    text: S.of(context).ok,
+                    text: tr(context).ok,
                     color: Theme.of(context)
                         .primaryTextTheme
                         .button
-                        .backgroundColor,
+                        ?.backgroundColor,
                     borderColor: Theme.of(context)
                         .primaryTextTheme
                         .button
-                        .decorationColor,
+                        ?.decorationColor,
                     onPressed: () => Navigator.of(context).pop(_value),
                   )
                 ],

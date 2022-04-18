@@ -1,7 +1,7 @@
 import 'package:oxen_coin/oxen_coin_structs.dart';
 
 class Account {
-  Account({this.id, this.label});
+  Account({required this.id, this.label = ''});
 
   Account.fromMap(Map map)
       : id = map['id'] == null ? 0 : int.parse(map['id'] as String),

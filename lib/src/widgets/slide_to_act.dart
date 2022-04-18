@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 
 class SlideToAct extends StatefulWidget {
   const SlideToAct({
-    Key key,
+    Key? key,
     this.sliderButtonIconSize = 24,
     this.sliderButtonIconPadding = 16,
     this.sliderButtonYOffset = 0,
     this.height = 70,
-    this.outerColor,
+    required this.outerColor,
     this.borderRadius = 52,
     this.elevation = 6,
     this.animationDuration = const Duration(milliseconds: 300),
@@ -20,7 +20,7 @@ class SlideToAct extends StatefulWidget {
     this.onSubmit,
     this.child,
     this.innerColor,
-    this.text,
+    required this.text,
     this.sliderButtonIcon,
   }) : super(key: key);
 
@@ -34,18 +34,18 @@ class SlideToAct extends StatefulWidget {
   final double sliderButtonYOffset;
 
   /// The child that is rendered instead of the default Text widget
-  final Widget child;
+  final Widget? child;
 
   /// The height of the component
   final double height;
 
   /// The color of the inner circular button, of the tick icon of the text.
   /// If not set, this attribute defaults to primaryIconTheme.
-  final Color innerColor;
+  final Color? innerColor;
 
   /// The color of the external area and of the arrow icon.
   /// If not set, this attribute defaults to accentColor from your theme.
-  final Color outerColor;
+  final Color? outerColor;
 
   /// The text showed in the default Text widget
   final String text;
@@ -54,17 +54,17 @@ class SlideToAct extends StatefulWidget {
   final double borderRadius;
 
   /// Callback called on submit
-  final Future Function() onFutureSubmit;
-  final VoidCallback onSubmit;
+  final Future Function()? onFutureSubmit;
+  final VoidCallback? onSubmit;
 
   /// Elevation of the component
   final double elevation;
 
   /// The widget to render instead of the default icon
-  final Widget sliderButtonIcon;
+  final Widget? sliderButtonIcon;
 
   /// The widget to render instead of the default submitted icon
-  final Widget submittedIcon;
+  final Widget? submittedIcon;
 
   /// The duration of the animations
   final Duration animationDuration;
@@ -88,13 +88,9 @@ class SlideToActState extends State<SlideToAct> with TickerProviderStateMixin {
 
   double get _progress => _dx == 0 ? 0 : _dx / _maxDx;
   double _endDx = 0;
-  double _dz = 1;
-  double _initialContainerWidth, _containerWidth;
-  double _checkAnimationDx = 0;
+  double? _containerWidth;
   bool submitted = false;
-  AnimationController _checkAnimationController,
-      _shrinkAnimationController,
-      _resizeAnimationController,
+  late AnimationController
       _cancelAnimationController;
 
   @override
@@ -135,15 +131,10 @@ class SlideToActState extends State<SlideToAct> with TickerProviderStateMixin {
                               ),
                           Positioned.fill(
                             right: 0,
-                            child: Transform(
-                              transform: Matrix4.rotationY(
-                                  _checkAnimationDx * (pi / 2)),
-                              alignment: Alignment.centerRight,
-                              child: Container(
+                            child: Container(
                                 color: widget.outerColor ??
                                     Theme.of(context).accentColor,
                               ),
-                            ),
                           ),
                         ],
                       ),
@@ -161,7 +152,7 @@ class SlideToActState extends State<SlideToAct> with TickerProviderStateMixin {
                               Matrix4.rotationY(widget.reversed ? pi : 0),
                           child: widget.child ??
                               Text(
-                                widget.text ?? 'Slide to act',
+                                widget.text,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   color: widget.innerColor ??
@@ -173,56 +164,52 @@ class SlideToActState extends State<SlideToAct> with TickerProviderStateMixin {
                       ),
                       Positioned(
                         left: widget.sliderButtonYOffset,
-                        child: Transform.scale(
-                          scale: _dz,
-                          origin: Offset(_dx, 0),
-                          child: Transform.translate(
-                            offset: Offset(_dx, 0),
-                            child: Container(
-                              key: _sliderKey,
-                              child: GestureDetector(
-                                onHorizontalDragUpdate: onHorizontalDragUpdate,
-                                onHorizontalDragEnd: (details) async {
-                                  _endDx = _dx;
-                                  if (_progress <= 0.8) {
-                                    await _cancelAnimation();
-                                  } else {
-                                    if (widget.onFutureSubmit != null) {
-                                      await widget.onFutureSubmit();
-                                    } else if (widget.onSubmit != null) {
-                                      widget.onSubmit();
-                                    }
-                                    await _cancelAnimation();
+                        child: Transform.translate(
+                          offset: Offset(_dx, 0),
+                          child: Container(
+                            key: _sliderKey,
+                            child: GestureDetector(
+                              onHorizontalDragUpdate: onHorizontalDragUpdate,
+                              onHorizontalDragEnd: (details) async {
+                                _endDx = _dx;
+                                if (_progress <= 0.8) {
+                                  await _cancelAnimation();
+                                } else {
+                                  if (widget.onFutureSubmit != null) {
+                                    await widget.onFutureSubmit!.call();
+                                  } else if (widget.onSubmit != null) {
+                                    widget.onSubmit!.call();
                                   }
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8.0),
-                                  child: Material(
-                                    borderRadius: BorderRadius.circular(
-                                        widget.borderRadius),
-                                    child: Container(
-                                      padding: EdgeInsets.all(
-                                          widget.sliderButtonIconPadding),
-                                      child: Transform.rotate(
-                                        angle: -pi * _progress,
-                                        child: Center(
-                                          child: widget.sliderButtonIcon ??
-                                              Icon(
-                                                Icons.arrow_forward,
-                                                size:
-                                                    widget.sliderButtonIconSize,
-                                                color: widget.outerColor ??
-                                                    Theme.of(context)
-                                                        .accentColor,
-                                              ),
-                                        ),
+                                  await _cancelAnimation();
+                                }
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8.0),
+                                child: Material(
+                                  borderRadius: BorderRadius.circular(
+                                      widget.borderRadius),
+                                  color: widget.innerColor ??
+                                      Theme.of(context)
+                                          .primaryIconTheme
+                                          .color,
+                                  child: Container(
+                                    padding: EdgeInsets.all(
+                                        widget.sliderButtonIconPadding),
+                                    child: Transform.rotate(
+                                      angle: -pi * _progress,
+                                      child: Center(
+                                        child: widget.sliderButtonIcon ??
+                                            Icon(
+                                              Icons.arrow_forward,
+                                              size:
+                                                  widget.sliderButtonIconSize,
+                                              color: widget.outerColor ??
+                                                  Theme.of(context)
+                                                      .accentColor,
+                                            ),
                                       ),
                                     ),
-                                    color: widget.innerColor ??
-                                        Theme.of(context)
-                                            .primaryIconTheme
-                                            .color,
                                   ),
                                 ),
                               ),
@@ -240,89 +227,14 @@ class SlideToActState extends State<SlideToAct> with TickerProviderStateMixin {
 
   void onHorizontalDragUpdate(DragUpdateDetails details) {
     setState(() {
-      _dx = (_dx + details.delta.dx).clamp(0.0, _maxDx) as double;
+      _dx = (_dx + details.delta.dx).clamp(0.0, _maxDx);
     });
   }
 
   /// Call this method to revert the animations
   Future reset() async {
-    await _checkAnimationController.reverse().orCancel;
-
     submitted = false;
-
-    await _shrinkAnimationController.reverse().orCancel;
-
-    await _resizeAnimationController.reverse().orCancel;
-
     await _cancelAnimation();
-  }
-
-  Future _checkAnimation() async {
-    _checkAnimationController.reset();
-
-    final animation = Tween<double>(
-      begin: 0,
-      end: 1,
-    ).animate(CurvedAnimation(
-      parent: _checkAnimationController,
-      curve: Curves.slowMiddle,
-    ));
-
-    animation.addListener(() {
-      if (mounted) {
-        setState(() {
-          _checkAnimationDx = animation.value;
-        });
-      }
-    });
-    await _checkAnimationController.forward().orCancel;
-  }
-
-  Future _shrinkAnimation() async {
-    _shrinkAnimationController.reset();
-
-    final diff = _initialContainerWidth - widget.height;
-    final animation = Tween<double>(
-      begin: 0,
-      end: 1,
-    ).animate(CurvedAnimation(
-      parent: _shrinkAnimationController,
-      curve: Curves.easeOutCirc,
-    ));
-
-    animation.addListener(() {
-      if (mounted) {
-        setState(() {
-          _containerWidth = _initialContainerWidth - (diff * animation.value);
-        });
-      }
-    });
-
-    setState(() {
-      submitted = true;
-    });
-    await _shrinkAnimationController.forward().orCancel;
-  }
-
-  Future _resizeAnimation() async {
-    _resizeAnimationController.reset();
-
-    final animation = Tween<double>(
-      begin: 0,
-      end: 1,
-    ).animate(CurvedAnimation(
-      parent: _resizeAnimationController,
-      curve: Curves.easeInBack,
-    ));
-
-    animation.addListener(() {
-      if (mounted) {
-        setState(() {
-          _dz = 1 - animation.value;
-        });
-      }
-    });
-    await _resizeAnimationController.forward().orCancel;
   }
 
   Future _cancelAnimation() async {
@@ -353,41 +265,22 @@ class SlideToActState extends State<SlideToAct> with TickerProviderStateMixin {
       vsync: this,
       duration: widget.animationDuration,
     );
-    _checkAnimationController = AnimationController(
-      vsync: this,
-      duration: widget.animationDuration,
-    );
-    _shrinkAnimationController = AnimationController(
-      vsync: this,
-      duration: widget.animationDuration,
-    );
 
-    _resizeAnimationController = AnimationController(
-      vsync: this,
-      duration: widget.animationDuration,
-    );
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final containerBox =
-          _containerKey.currentContext.findRenderObject() as RenderBox;
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      final containerBox = _containerKey.currentContext!.findRenderObject() as RenderBox;
       _containerWidth = containerBox.size.width;
-      _initialContainerWidth = _containerWidth;
 
-      final sliderBox =
-          _sliderKey.currentContext.findRenderObject() as RenderBox;
+      final sliderBox = _sliderKey.currentContext!.findRenderObject() as RenderBox;
       final sliderWidth = sliderBox.size.width;
 
       _maxDx =
-          _containerWidth - (sliderWidth / 2) - 40 - widget.sliderButtonYOffset;
+          _containerWidth! - (sliderWidth / 2) - 40 - widget.sliderButtonYOffset;
     });
   }
 
   @override
   void dispose() {
     _cancelAnimationController.dispose();
-    _checkAnimationController.dispose();
-    _shrinkAnimationController.dispose();
-    _resizeAnimationController.dispose();
     super.dispose();
   }
 }

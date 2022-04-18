@@ -11,11 +11,11 @@ import 'package:oxen_wallet/src/stores/wallet/wallet_store.dart';
 import 'package:provider/provider.dart';
 
 Widget createDashboardPage(
-        {@required WalletService walletService,
-        @required PriceStore priceStore,
-        @required Box<TransactionDescription> transactionDescriptions,
-        @required SettingsStore settingsStore,
-        @required WalletStore walletStore}) =>
+        {required WalletService walletService,
+        required PriceStore priceStore,
+        required Box<TransactionDescription> transactionDescriptions,
+        required SettingsStore settingsStore,
+        required WalletStore walletStore}) =>
     Provider(
         create: (_) => ActionListStore(
             walletService: walletService,

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flutter/foundation.dart';
 import 'package:mobx/mobx.dart';
 import 'package:oxen_wallet/src/wallet/wallet.dart';
 import 'package:oxen_wallet/src/wallet/oxen/oxen_wallet.dart';
@@ -7,7 +6,8 @@ import 'package:oxen_wallet/src/wallet/oxen/subaddress_list.dart';
 import 'package:oxen_wallet/src/domain/services/wallet_service.dart';
 import 'package:oxen_wallet/src/stores/subaddress_creation/subaddress_creation_state.dart';
 import 'package:oxen_wallet/src/wallet/oxen/account.dart';
-import 'package:oxen_wallet/generated/l10n.dart';
+import 'package:oxen_wallet/src/util/validators.dart';
+import 'package:oxen_wallet/l10n.dart';
 
 part 'subaddress_creation_store.g.dart';
 
@@ -15,29 +15,24 @@ class SubadrressCreationStore = SubadrressCreationStoreBase
     with _$SubadrressCreationStore;
 
 abstract class SubadrressCreationStoreBase with Store {
-  SubadrressCreationStoreBase({@required WalletService walletService}) {
-    state = SubaddressCreationStateInitial();
-
+  SubadrressCreationStoreBase({required WalletService walletService}) {
     if (walletService.currentWallet != null) {
-      _onWalletChanged(walletService.currentWallet);
+      _onWalletChanged(walletService.currentWallet!);
     }
 
     _onWalletChangeSubscription =
         walletService.onWalletChange.listen(_onWalletChanged);
   }
 
-  SubaddressCreationState state;
+  SubaddressCreationState state = SubaddressCreationStateInitial();
 
   @observable
-  bool isValid;
+  String? errorMessage;
 
-  @observable
-  String errorMessage;
-
-  SubaddressList _subaddressList;
-  StreamSubscription<Wallet> _onWalletChangeSubscription;
-  StreamSubscription<Account> _onAccountChangeSubscription;
-  Account _account;
+  SubaddressList _subaddressList = SubaddressList();
+  late StreamSubscription<Wallet> _onWalletChangeSubscription;
+  StreamSubscription<Account>? _onAccountChangeSubscription;
+  Account _account = Account(id: 0);
 
 //  @override
 //  void dispose() {
@@ -50,7 +45,7 @@ abstract class SubadrressCreationStoreBase with Store {
 //    super.dispose();
 //  }
 
-  Future<void> add({String label}) async {
+  Future<void> add({required String label}) async {
     try {
       state = SubaddressIsCreating();
       await _subaddressList.addSubaddress(
@@ -77,10 +72,7 @@ abstract class SubadrressCreationStoreBase with Store {
     print('Incorrect wallet type for this operation (SubaddressList)');
   }
 
-  void validateSubaddressName(String value) {
-    const pattern = '''^[^`,'"]{1,20}\$''';
-    final regExp = RegExp(pattern);
-    isValid = regExp.hasMatch(value);
-    errorMessage = isValid ? null : S.current.error_text_subaddress_name;
+  void validateSubaddressName(String? value, AppLocalizations l10n) {
+    errorMessage = hasNonWhitespace(value) ? null : l10n.error_text_empty;
   }
 }

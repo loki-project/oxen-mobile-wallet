@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:oxen_wallet/generated/l10n.dart';
+import 'package:oxen_wallet/l10n.dart';
 import 'package:oxen_wallet/palette.dart';
 import 'package:oxen_wallet/src/wallet/transaction/transaction_direction.dart';
 
 class TransactionRow extends StatelessWidget {
   TransactionRow(
-      {this.direction,
-      this.formattedDate,
-      this.formattedAmount,
-      this.formattedFiatAmount,
-      this.isPending,
-      @required this.onTap});
+      {required this.direction,
+      required this.formattedDate,
+      required this.formattedAmount,
+      required this.formattedFiatAmount,
+      required this.isPending,
+      required this.isStake,
+      required this.onTap});
 
   final VoidCallback onTap;
   final TransactionDirection direction;
@@ -18,6 +19,7 @@ class TransactionRow extends StatelessWidget {
   final String formattedAmount;
   final String formattedFiatAmount;
   final bool isPending;
+  final bool isStake;
 
   @override
   Widget build(BuildContext context) {
@@ -35,19 +37,23 @@ class TransactionRow extends StatelessWidget {
             Container(
               height: 27,
               width: 27,
+              decoration: BoxDecoration(
+                color: direction == TransactionDirection.incoming
+                    ? OxenPalette.limeWithOpacity
+                    : isStake
+                      ? OxenPalette.navyWithOpacity
+                      : OxenPalette.lightRedWithOpacity,
+                shape: BoxShape.circle,
+              ),
               child: Icon(
                 direction == TransactionDirection.incoming
                     ? Icons.arrow_downward_rounded
                     : Icons.arrow_upward_rounded,
                 color: direction == TransactionDirection.incoming
                     ? OxenPalette.lime
-                    : OxenPalette.lightRed,
-              ),
-              decoration: BoxDecoration(
-                color: direction == TransactionDirection.incoming
-                    ? OxenPalette.limeWithOpacity
-                    : OxenPalette.lightRedWithOpacity,
-                shape: BoxShape.circle,
+                    : isStake
+                      ? OxenPalette.teal
+                      : OxenPalette.lightRed,
               ),
             ),
             Expanded(
@@ -60,15 +66,17 @@ class TransactionRow extends StatelessWidget {
                       children: <Widget>[
                         Text(
                             (direction == TransactionDirection.incoming
-                                    ? S.of(context).received
-                                    : S.of(context).sent) +
-                                (isPending ? S.of(context).pending : ''),
+                                    ? tr(context).received
+                                    : isStake
+                                      ? tr(context).stake
+                                      : tr(context).sent) +
+                                (isPending ? tr(context).pending : ''),
                             style: TextStyle(
                                 fontSize: 16,
                                 color: Theme.of(context)
                                     .primaryTextTheme
                                     .subtitle1
-                                    .color)),
+                                    ?.color)),
                         Text(formattedAmount,
                             style: const TextStyle(
                                 fontSize: 16, color: Palette.purpleBlue))

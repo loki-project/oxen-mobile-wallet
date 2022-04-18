@@ -1,6 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:oxen_wallet/generated/l10n.dart';
+import 'package:oxen_wallet/l10n.dart';
 import 'package:oxen_wallet/palette.dart';
 import 'package:oxen_wallet/routes.dart';
 import 'package:oxen_wallet/src/domain/common/contact.dart';
@@ -12,7 +11,7 @@ enum AddressTextFieldOption { qrCode, addressBook, subaddressList }
 
 class AddressTextField extends StatelessWidget {
   AddressTextField(
-      {@required this.controller,
+      {required this.controller,
       this.isActive = true,
       this.placeholder,
       this.options = const [
@@ -21,7 +20,7 @@ class AddressTextField extends StatelessWidget {
       ],
       this.onURIScanned,
       this.focusNode,
-      this.validator});
+      required this.validator});
 
   static const prefixIconWidth = 34.0;
   static const prefixIconHeight = 34.0;
@@ -29,11 +28,11 @@ class AddressTextField extends StatelessWidget {
 
   final TextEditingController controller;
   final bool isActive;
-  final String placeholder;
-  final Function(Uri) onURIScanned;
+  final String? placeholder;
+  final Function(Uri)? onURIScanned;
   final List<AddressTextFieldOption> options;
   final FormFieldValidator<String> validator;
-  final FocusNode focusNode;
+  final FocusNode? focusNode;
 
   @override
   Widget build(BuildContext context) {
@@ -42,61 +41,65 @@ class AddressTextField extends StatelessWidget {
       controller: controller,
       focusNode: focusNode,
       suffixIcon: Padding(
-          padding: EdgeInsets.only(right: 10),
-          child: SizedBox(
-            width: prefixIconWidth * options.length +
-                (spaceBetweenPrefixIcons * options.length),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                SizedBox(width: 5),
-                if (options.contains(AddressTextFieldOption.qrCode)) ...[
-                  Container(
-                      width: prefixIconWidth,
-                      height: prefixIconHeight,
-                      child: InkWell(
-                        onTap: () async => _presentQRScanner(context),
-                        child: Container(
-                            decoration: BoxDecoration(
-                                color: Palette.wildDarkBlueWithOpacity,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8))),
-                            child: Icon(Icons.qr_code_outlined)),
-                      ))
-                ],
-                if (options.contains(AddressTextFieldOption.addressBook)) ...[
-                  Container(
-                      width: prefixIconWidth,
-                      height: prefixIconHeight,
-                      child: InkWell(
-                        onTap: () async => _presetAddressBookPicker(context),
-                        child: Container(
-                            decoration: BoxDecoration(
-                                color: Palette.wildDarkBlueWithOpacity,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8))),
-                            child: Icon(Icons.contacts_rounded)),
-                      ))
-                ],
-                if (options
-                    .contains(AddressTextFieldOption.subaddressList)) ...[
-                  Container(
-                      width: prefixIconWidth,
-                      height: prefixIconHeight,
-                      child: InkWell(
-                        onTap: () async => _presetSubaddressListPicker(context),
-                        child: Container(
-                            decoration: BoxDecoration(
-                                color: Palette.wildDarkBlueWithOpacity,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8))),
-                            child: Icon(Icons.arrow_downward_rounded)),
-                      ))
-                ],
+        padding: EdgeInsets.only(right: 10),
+        child: SizedBox(
+          width: prefixIconWidth * options.length + spaceBetweenPrefixIcons * options.length,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              SizedBox(width: 5),
+              if (options.contains(AddressTextFieldOption.qrCode)) ...[
+                Container(
+                  width: prefixIconWidth,
+                  height: prefixIconHeight,
+                  child: InkWell(
+                    onTap: () async => _presentQRScanner(context),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Palette.wildDarkBlueWithOpacity,
+                        borderRadius: BorderRadius.all(Radius.circular(8))),
+                      child: Icon(Icons.qr_code_outlined)
+                    ),
+                  ),
+                ),
               ],
-            ),
-          )),
-      hintText: placeholder ?? S.current.widgets_address,
+              if (options.contains(AddressTextFieldOption.addressBook)) ...[
+                Container(
+                  width: prefixIconWidth,
+                  height: prefixIconHeight,
+                  child: InkWell(
+                    onTap: () async => _presetAddressBookPicker(context),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Palette.wildDarkBlueWithOpacity,
+                        borderRadius: BorderRadius.all(Radius.circular(8))
+                      ),
+                      child: Icon(Icons.contacts_rounded),
+                    ),
+                  ),
+                ),
+              ],
+              if (options.contains(AddressTextFieldOption.subaddressList)) ...[
+                Container(
+                  width: prefixIconWidth,
+                  height: prefixIconHeight,
+                  child: InkWell(
+                    onTap: () async => _presetSubaddressListPicker(context),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Palette.wildDarkBlueWithOpacity,
+                        borderRadius: BorderRadius.all(Radius.circular(8))
+                      ),
+                      child: Icon(Icons.arrow_downward_rounded)
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+      hintText: placeholder ?? tr(context).widgets_address,
       validator: validator,
     );
   }
@@ -104,19 +107,20 @@ class AddressTextField extends StatelessWidget {
   Future<void> _presentQRScanner(BuildContext context) async {
     try {
       final code = await presentQRScanner();
-      final uri = Uri.parse(code);
-      var address = '';
+      if (code == null) // Cancelled, do nothing.
+        return;
 
-      if (uri == null) {
+      final Uri uri;
+      try {
+        uri = Uri.parse(code);
+      } catch (e) {
         controller.text = code;
         return;
       }
-
-      address = uri.path;
-      controller.text = address;
+      controller.text = uri.path;
 
       if (onURIScanned != null) {
-        onURIScanned(uri);
+        onURIScanned!(uri);
       }
     } catch (e) {
       print('Error $e');
@@ -127,17 +131,15 @@ class AddressTextField extends StatelessWidget {
     final contact = await Navigator.of(context, rootNavigator: true)
         .pushNamed(Routes.pickerAddressBook);
 
-    if (contact is Contact && contact.address != null) {
+    if (contact is Contact)
       controller.text = contact.address;
-    }
   }
 
   Future<void> _presetSubaddressListPicker(BuildContext context) async {
     final subaddress = await Navigator.of(context, rootNavigator: true)
         .pushNamed(Routes.subaddressList);
 
-    if (subaddress is Subaddress && subaddress.address != null) {
+    if (subaddress is Subaddress)
       controller.text = subaddress.address;
-    }
   }
 }

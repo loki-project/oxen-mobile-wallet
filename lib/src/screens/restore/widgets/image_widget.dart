@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 class ImageWidget extends StatelessWidget {
   ImageWidget({
-    @required this.image,
-    @required this.aspectRatioImage,
+    required this.image,
+    required this.aspectRatioImage,
     this.isLargeScreen = false});
 
   final Image image;

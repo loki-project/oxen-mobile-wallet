@@ -6,7 +6,7 @@ import 'package:oxen_wallet/src/screens/restore/widgets/restore_button.dart';
 import 'package:oxen_wallet/src/screens/restore/widgets/image_widget.dart';
 import 'package:oxen_wallet/src/screens/restore/widgets/base_restore_widget.dart';
 import 'package:oxen_wallet/src/screens/base_page.dart';
-import 'package:oxen_wallet/generated/l10n.dart';
+import 'package:oxen_wallet/l10n.dart';
 import 'package:oxen_wallet/src/stores/seed_language/seed_language_store.dart';
 import 'package:provider/provider.dart';
 
@@ -14,7 +14,7 @@ class RestoreWalletOptionsPage extends BasePage {
   static const _aspectRatioImage = 2.086;
 
   @override
-  String get title => S.current.restore_seed_keys_restore;
+  String getTitle(AppLocalizations t) => t.restore_seed_keys_restore;
 
   @override
   Color get backgroundColor => Palette.creamyGrey;
@@ -39,9 +39,9 @@ class RestoreWalletOptionsPage extends BasePage {
             isLargeScreen: isLargeScreen),
         titleColor: Palette.lightViolet,
         color: Palette.lightViolet,
-        title: S.of(context).restore_title_from_seed,
-        description: S.of(context).restore_description_from_seed,
-        textButton: S.of(context).restore_next,
+        title: tr(context).restore_title_from_seed,
+        description: tr(context).restore_description_from_seed,
+        textButton: tr(context).restore_next,
       ),
       secondRestoreButton: RestoreButton(
         onPressed: () {
@@ -54,9 +54,9 @@ class RestoreWalletOptionsPage extends BasePage {
             isLargeScreen: isLargeScreen),
         titleColor: OxenPalette.teal,
         color: OxenPalette.teal,
-        title: S.of(context).restore_title_from_keys,
-        description: S.of(context).restore_description_from_keys,
-        textButton: S.of(context).restore_next,
+        title: tr(context).restore_title_from_keys,
+        description: tr(context).restore_description_from_keys,
+        textButton: tr(context).restore_next,
       ),
       isLargeScreen: isLargeScreen,
     );

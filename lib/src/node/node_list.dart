@@ -10,13 +10,12 @@ Future<List<Node>> loadDefaultNodes() async {
   final nodesRaw = await rootBundle.loadString('assets/$nodeListFileName');
   final nodes = loadYaml(nodesRaw) as YamlList;
 
-  return nodes.map((dynamic raw) {
-    if (raw is Map) {
-      return Node.fromMap(raw);
-    }
-
-    return null;
-  }).toList();
+  final n = <Node>[];
+  nodes.forEach((dynamic raw) {
+    if (raw is Map)
+      n.add(Node.fromMap(raw));
+  });
+  return n;
 }
 
 Future resetToDefault(Box<Node> nodeSource) async {

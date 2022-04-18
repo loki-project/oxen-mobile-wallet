@@ -1,22 +1,22 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:oxen_wallet/generated/l10n.dart';
+import 'package:oxen_wallet/l10n.dart';
 import 'package:oxen_wallet/palette.dart';
 import 'package:oxen_wallet/src/widgets/primary_button.dart';
 import 'package:oxen_wallet/src/widgets/slide_to_act.dart';
 
 Future showOxenDialog(BuildContext context, Widget child,
-    {void Function(BuildContext context) onDismiss}) {
+    {required void Function(BuildContext context) onDismiss}) {
   return showDialog<void>(
       builder: (_) => OxenDialog(body: child, onDismiss: onDismiss),
       context: context);
 }
 
 Future showSimpleOxenDialog(BuildContext context, String title, String body,
-    {String buttonText,
-    void Function(BuildContext context) onPressed,
-    void Function(BuildContext context) onDismiss}) {
+    {String? buttonText,
+    required void Function(BuildContext context) onPressed,
+    void Function(BuildContext context)? onDismiss}) {
   return showDialog<void>(
       builder: (_) => SimpleOxenDialog(title, body,
           buttonText: buttonText, onDismiss: onDismiss, onPressed: onPressed),
@@ -24,9 +24,9 @@ Future showSimpleOxenDialog(BuildContext context, String title, String body,
 }
 
 Future showConfirmOxenDialog(BuildContext context, String title, String body,
-    {void Function(BuildContext context) onConfirm,
-    Future Function(BuildContext context) onFutureConfirm,
-    void Function(BuildContext context) onDismiss}) {
+    {void Function(BuildContext context)? onConfirm,
+    Future Function(BuildContext context)? onFutureConfirm,
+    void Function(BuildContext context)? onDismiss}) {
   return showDialog<void>(
       builder: (_) => ConfirmOxenDialog(title, body,
           onDismiss: onDismiss,
@@ -36,16 +36,16 @@ Future showConfirmOxenDialog(BuildContext context, String title, String body,
 }
 
 class OxenDialog extends StatelessWidget {
-  OxenDialog({this.body, this.onDismiss});
+  OxenDialog({required this.body, this.onDismiss});
 
-  final void Function(BuildContext context) onDismiss;
+  final void Function(BuildContext context)? onDismiss;
   final Widget body;
 
   void _onDismiss(BuildContext context) {
     if (onDismiss == null) {
       Navigator.of(context).pop();
     } else {
-      onDismiss(context);
+      onDismiss!(context);
     }
   }
 
@@ -81,13 +81,13 @@ class OxenDialog extends StatelessWidget {
 
 class SimpleOxenDialog extends StatelessWidget {
   SimpleOxenDialog(this.title, this.body,
-      {this.buttonText, this.onPressed, this.onDismiss});
+      {this.buttonText, required this.onPressed, this.onDismiss});
 
   final String title;
   final String body;
-  final String buttonText;
+  final String? buttonText;
   final void Function(BuildContext context) onPressed;
-  final void Function(BuildContext context) onDismiss;
+  final void Function(BuildContext context)? onDismiss;
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +107,7 @@ class SimpleOxenDialog extends StatelessWidget {
                           color: Theme.of(context)
                               .primaryTextTheme
                               .caption
-                              .color))),
+                              ?.color))),
               Padding(
                   padding: EdgeInsets.only(top: 15, bottom: 30),
                   child: Text(body,
@@ -117,15 +117,15 @@ class SimpleOxenDialog extends StatelessWidget {
                           color: Theme.of(context)
                               .primaryTextTheme
                               .caption
-                              .color))),
+                              ?.color))),
               PrimaryButton(
-                  text: buttonText ?? S.of(context).ok,
+                  text: buttonText ?? tr(context).ok,
                   color:
-                      Theme.of(context).primaryTextTheme.button.backgroundColor,
+                      Theme.of(context).primaryTextTheme.button?.backgroundColor,
                   borderColor:
-                      Theme.of(context).primaryTextTheme.button.decorationColor,
+                      Theme.of(context).primaryTextTheme.button?.decorationColor,
                   onPressed: () {
-                    if (onPressed != null) onPressed(context);
+                    onPressed(context);
                   })
             ],
           ),
@@ -139,9 +139,9 @@ class ConfirmOxenDialog extends StatelessWidget {
 
   final String title;
   final String body;
-  final Future Function(BuildContext context) onFutureConfirm;
-  final void Function(BuildContext context) onConfirm;
-  final void Function(BuildContext context) onDismiss;
+  final Future Function(BuildContext context)? onFutureConfirm;
+  final void Function(BuildContext context)? onConfirm;
+  final void Function(BuildContext context)? onDismiss;
 
   @override
   Widget build(BuildContext context) {
@@ -161,7 +161,7 @@ class ConfirmOxenDialog extends StatelessWidget {
                           color: Theme.of(context)
                               .primaryTextTheme
                               .caption
-                              .color))),
+                              ?.color))),
               Padding(
                   padding: EdgeInsets.only(top: 15, bottom: 30),
                   child: Text(body,
@@ -171,15 +171,15 @@ class ConfirmOxenDialog extends StatelessWidget {
                           color: Theme.of(context)
                               .primaryTextTheme
                               .caption
-                              .color))),
+                              ?.color))),
               SlideToAct(
-                text: S.of(context).ok,
-                outerColor: Theme.of(context).primaryTextTheme.subtitle2.color,
+                text: tr(context).ok,
+                outerColor: Theme.of(context).primaryTextTheme.subtitle2?.color,
                 innerColor: OxenPalette.teal,
                 onFutureSubmit: onFutureConfirm != null
-                    ? () async => await onFutureConfirm(context)
+                    ? () async => await onFutureConfirm!(context)
                     : null,
-                onSubmit: onConfirm != null ? () => onConfirm(context) : null,
+                onSubmit: onConfirm != null ? () => onConfirm!(context) : null,
               )
             ],
           ),

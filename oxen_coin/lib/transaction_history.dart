@@ -22,14 +22,14 @@ List<TransactionInfoRow> getAllTransactions() {
       .toList();
 }
 
-void commitTransactionFromPointerAddress({int address}) =>
+void commitTransactionFromPointerAddress({required int address}) =>
     transaction_history.commitTransaction(
         transactionPointer:
             Pointer<PendingTransactionRaw>.fromAddress(address));
 
 PendingTransactionDescription _createTransactionSync(Map args) {
   final address = args['address'] as String;
-  final amount = args['amount'] as String;
+  final amount = args['amount'] as String?;
   final priorityRaw = args['priorityRaw'] as int;
   final accountIndex = args['accountIndex'] as int;
 
@@ -41,12 +41,12 @@ PendingTransactionDescription _createTransactionSync(Map args) {
 }
 
 Future<PendingTransactionDescription> createTransaction(
-        {String address,
-        String amount,
-        int priorityRaw,
+        {required String recipient,
+        required String? amount,
+        required int priorityRaw,
         int accountIndex = 0}) =>
     compute(_createTransactionSync, {
-      'address': address,
+      'address': recipient,
       'amount': amount,
       'priorityRaw': priorityRaw,
       'accountIndex': accountIndex

@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:oxen_coin/src/native/subaddress_list.dart' as subaddress_list;
 import 'package:oxen_coin/oxen_coin_structs.dart';
 
-void refreshSubaddresses({int accountIndex}) =>
+void refreshSubaddresses({required int accountIndex}) =>
     subaddress_list.subaddressRefreshNative(accountIndex);
 
 List<SubaddressRow> getAllSubaddresses() {
@@ -33,12 +33,12 @@ void _setLabelForSubaddress(Map<String, dynamic> args) {
       accountIndex: accountIndex, addressIndex: addressIndex, label: label);
 }
 
-Future addSubaddress({int accountIndex, String label}) async =>
+Future addSubaddress({required int accountIndex, required String label}) async =>
     compute<Map<String, Object>, void>(
         _addSubaddress, {'accountIndex': accountIndex, 'label': label});
 
 Future setLabelForSubaddress(
-        {int accountIndex, int addressIndex, String label}) =>
+        {required int accountIndex, required int addressIndex, required String label}) =>
     compute<Map<String, Object>, void>(_setLabelForSubaddress, {
       'accountIndex': accountIndex,
       'addressIndex': addressIndex,

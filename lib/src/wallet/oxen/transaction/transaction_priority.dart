@@ -1,39 +1,37 @@
-import 'package:oxen_wallet/generated/l10n.dart';
+import 'package:oxen_wallet/l10n.dart';
 import 'package:oxen_wallet/src/domain/common/enumerable_item.dart';
 
 class OxenTransactionPriority extends EnumerableItem<int> with Serializable<int> {
-  const OxenTransactionPriority({String title, int raw})
-      : super(title: title, raw: raw);
+  const OxenTransactionPriority({required int raw})
+      : super(raw: raw);
 
   static const all = [
     OxenTransactionPriority.slow,
     OxenTransactionPriority.blink
   ];
 
-  static const slow = OxenTransactionPriority(title: 'Slow', raw: 1);
-  static const blink = OxenTransactionPriority(title: 'Blink', raw: 5);
+  static const slow = OxenTransactionPriority(raw: 1);
+  static const blink = OxenTransactionPriority(raw: 5);
   static const standard = blink;
 
-  static OxenTransactionPriority deserialize({int raw}) {
+  static OxenTransactionPriority deserialize({required int? raw}) {
     switch (raw) {
       case 1:
         return slow;
       case 5:
-        return blink;
       default:
-        return null;
+        return blink;
     }
   }
 
   @override
-  String toString() {
+  String getTitle(AppLocalizations l10n) {
     switch (this) {
       case OxenTransactionPriority.slow:
-        return S.current.transaction_priority_slow;
+        return l10n.transaction_priority_slow;
       case OxenTransactionPriority.blink:
-        return S.current.transaction_priority_blink;
       default:
-        return '';
+        return l10n.transaction_priority_blink;
     }
   }
 }

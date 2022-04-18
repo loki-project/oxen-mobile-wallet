@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:oxen_coin/wallet_manager.dart' as oxen_wallet_manager;
@@ -13,7 +12,7 @@ import 'package:oxen_wallet/src/wallet/wallet_description.dart';
 import 'package:oxen_wallet/src/wallet/oxen/oxen_wallet.dart';
 import 'package:oxen_wallet/devtools.dart';
 
-Future<String> pathForWallet({String name}) async {
+Future<String> pathForWallet({required String name}) async {
   final directory = await getApplicationDocumentsDirectory();
   final pathDir = directory.path + '/$name';
   final dir = Directory(pathDir);
@@ -26,7 +25,7 @@ Future<String> pathForWallet({String name}) async {
 }
 
 class OxenWalletsManager extends WalletsManager {
-  OxenWalletsManager({@required this.walletInfoSource});
+  OxenWalletsManager({required this.walletInfoSource});
 
   static const type = WalletType.oxen;
   static const nettype = isTestnet ? 1 : 0; // Mainnet: 0 Testnet: 1
@@ -170,10 +169,11 @@ class OxenWalletsManager extends WalletsManager {
     }
 
     final id =
-        walletTypeToString(wallet.type).toLowerCase() + '_' + wallet.name;
-    final info = walletInfoSource.values
-        .firstWhere((info) => info.id == id, orElse: () => null);
-
-    await info?.delete();
+        (walletTypeToString(wallet.type)?.toLowerCase() ?? 'unknown') + '_' + wallet.name;
+    try {
+      await walletInfoSource.values.firstWhere((info) => info.id == id).delete();
+    } on StateError catch (_) {
+      // id not found; ignore
+    }
   }
 }

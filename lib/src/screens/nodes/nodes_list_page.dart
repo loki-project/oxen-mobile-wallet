@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:oxen_wallet/generated/l10n.dart';
+import 'package:oxen_wallet/l10n.dart';
 import 'package:oxen_wallet/palette.dart';
 import 'package:oxen_wallet/routes.dart';
 import 'package:oxen_wallet/src/screens/base_page.dart';
@@ -15,7 +15,7 @@ class NodeListPage extends BasePage {
   NodeListPage();
 
   @override
-  String get title => S.current.nodes;
+  String getTitle(AppLocalizations t) => t.nodes;
 
   @override
   Widget trailing(context) {
@@ -31,8 +31,8 @@ class NodeListPage extends BasePage {
               onPressed: () async {
                 await showConfirmOxenDialog(
                     context,
-                    S.of(context).node_reset_settings_title,
-                    S.of(context).nodes_list_reset_to_default_message,
+                    tr(context).node_reset_settings_title,
+                    tr(context).nodes_list_reset_to_default_message,
                     onFutureConfirm: (context) async {
                   Navigator.pop(context);
                   await nodeList.reset();
@@ -41,10 +41,10 @@ class NodeListPage extends BasePage {
                 });
               },
               child: Text(
-                S.of(context).reset,
+                tr(context).reset,
                 style: TextStyle(
                     fontSize: 16.0,
-                    color: Theme.of(context).primaryTextTheme.subtitle2.color),
+                    color: Theme.of(context).primaryTextTheme.subtitle2?.color),
               )),
         ),
         Container(
@@ -105,7 +105,7 @@ class NodeListPageBodyState extends State<NodeListPageBody> {
                   return Observer(builder: (_) {
                     final isCurrent = settings.node == null
                         ? false
-                        : node.key == settings.node.key;
+                        : node.key == settings.node!.key;
 
                     final content = Container(
                         color: isCurrent ? currentColor : notCurrentColor,
@@ -117,7 +117,7 @@ class NodeListPageBodyState extends State<NodeListPageBody> {
                                 color: Theme.of(context)
                                     .primaryTextTheme
                                     .headline6
-                                    .color),
+                                    ?.color),
                           ),
                           trailing: FutureBuilder(
                               future: nodeList.isNodeOnline(node),
@@ -133,7 +133,7 @@ class NodeListPageBodyState extends State<NodeListPageBody> {
                           onTap: () async {
                             if (!isCurrent) {
                               await showSimpleOxenDialog(context, '',
-                                  S.of(context).change_current_node(node.uri),
+                                  tr(context).change_current_node(node.uri),
                                   onPressed: (context) async {
                                 Navigator.of(context).pop();
                                 await settings.setCurrentNode(node: node);
@@ -150,14 +150,13 @@ class NodeListPageBodyState extends State<NodeListPageBody> {
                               var result = false;
                               await showConfirmOxenDialog(
                                   context,
-                                  S.of(context).remove_node,
-                                  S.of(context).remove_node_message,
+                                  tr(context).remove_node,
+                                  tr(context).remove_node_message,
                                   onDismiss: (context) =>
                                       Navigator.pop(context, false),
                                   onConfirm: (context) {
                                     result = true;
                                     Navigator.pop(context, true);
-                                    return true;
                                   });
                               return result;
                             },
@@ -177,7 +176,7 @@ class NodeListPageBodyState extends State<NodeListPageBody> {
                                       color: Colors.white,
                                     ),
                                     Text(
-                                      S.of(context).delete,
+                                      tr(context).delete,
                                       style: TextStyle(color: Colors.white),
                                     )
                                   ],

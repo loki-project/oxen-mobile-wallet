@@ -1,8 +1,6 @@
-import 'package:date_range_picker/date_range_picker.dart' as date_rage_picker;
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:oxen_wallet/generated/l10n.dart';
+import 'package:oxen_wallet/l10n.dart';
 import 'package:oxen_wallet/palette.dart';
 import 'package:oxen_wallet/routes.dart';
 import 'package:oxen_wallet/src/domain/common/balance_display_mode.dart';
@@ -20,6 +18,7 @@ import 'package:oxen_wallet/src/stores/sync/sync_store.dart';
 import 'package:oxen_wallet/src/stores/wallet/wallet_store.dart';
 import 'package:oxen_wallet/src/widgets/picker.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 
 class DashboardPage extends BasePage {
   final _bodyKey = GlobalKey();
@@ -32,7 +31,7 @@ class DashboardPage extends BasePage {
             padding: EdgeInsets.all(0),
             onPressed: () => _presentWalletMenu(context),
             child: Icon(Icons.sync_rounded,
-                color: Theme.of(context).primaryTextTheme.caption.color,
+                color: Theme.of(context).primaryTextTheme.caption?.color,
                 size: 30)));
   }
 
@@ -47,15 +46,17 @@ class DashboardPage extends BasePage {
             Text(
               walletStore.name,
               style: TextStyle(
-                  color: Theme.of(context).primaryTextTheme.headline6.color),
+                  color: Theme.of(context).primaryTextTheme.headline6?.color),
+              overflow: TextOverflow.ellipsis,
             ),
             SizedBox(height: 5),
             Text(
-              walletStore.account != null ? '${walletStore.account.label}' : '',
+              '${walletStore.account.label}',
               style: TextStyle(
                   fontWeight: FontWeight.w400,
                   fontSize: 10,
-                  color: Theme.of(context).primaryTextTheme.headline6.color),
+                  color: Theme.of(context).primaryTextTheme.headline6?.color),
+              overflow: TextOverflow.ellipsis,
             ),
           ]);
     });
@@ -69,7 +70,7 @@ class DashboardPage extends BasePage {
           padding: EdgeInsets.all(0),
           onPressed: () => Navigator.of(context).pushNamed(Routes.profile),
           child: Icon(Icons.account_circle_rounded,
-              color: Theme.of(context).primaryTextTheme.caption.color,
+              color: Theme.of(context).primaryTextTheme.caption?.color,
               size: 30)),
     );
   }
@@ -84,7 +85,7 @@ class DashboardPage extends BasePage {
         builder: (_) => Picker(
             items: walletMenu.items,
             selectedAtIndex: -1,
-            title: S.of(bodyContext).wallet_menu,
+            title: tr(bodyContext).wallet_menu,
             pickerHeight: 300,
             onItemSelected: (String item) =>
                 walletMenu.action(walletMenu.items.indexOf(item))),
@@ -93,7 +94,7 @@ class DashboardPage extends BasePage {
 }
 
 class DashboardPageBody extends StatefulWidget {
-  DashboardPageBody({Key key}) : super(key: key);
+  DashboardPageBody({required Key key}) : super(key: key);
 
   @override
   DashboardPageBodyState createState() => DashboardPageBodyState();
@@ -113,13 +114,13 @@ class DashboardPageBodyState extends State<DashboardPageBody> {
     final actionListStore = Provider.of<ActionListStore>(context);
     final syncStore = Provider.of<SyncStore>(context);
     final settingsStore = Provider.of<SettingsStore>(context);
-    final transactionDateFormat = settingsStore.getCurrentDateFormat(
-        formatUSA: 'MMMM d, yyyy, HH:mm', formatDefault: 'd MMMM yyyy, HH:mm');
+    final t = tr(context);
+    final transactionDateFormat = DateFormat.yMMMMd(t.localeName).add_jm();
 
     return Observer(
         key: _listObserverKey,
         builder: (_) {
-          final items = actionListStore.items ?? <String>[];
+          final items = actionListStore.items;
           final itemsCount = items.length + 2;
 
           return ListView.builder(
@@ -144,23 +145,18 @@ class DashboardPageBodyState extends State<DashboardPageBody> {
                             key: _syncingObserverKey,
                             builder: (_) {
                               final status = syncStore.status;
-                              final statusText = status.title();
+                              final statusText = status.title(t);
                               final progress = syncStore.status.progress();
                               final isFailure = status is FailedSyncStatus;
 
                               var descriptionText = '';
 
                               if (status is SyncingSyncStatus) {
-                                descriptionText = S
-                                    .of(context)
-                                    .Blocks_remaining(
-                                        syncStore.status.toString());
+                                descriptionText = t.blocks_remaining(syncStore.status.toString());
                               }
 
                               if (status is FailedSyncStatus) {
-                                descriptionText = S
-                                    .of(context)
-                                    .please_try_to_connect_to_another_node;
+                                descriptionText = t.please_try_to_connect_to_another_node;
                               }
 
                               return Container(
@@ -209,15 +205,12 @@ class DashboardPageBodyState extends State<DashboardPageBody> {
                                           settingsStore.balanceDisplayMode;
                                       final displayMode = balanceStore
                                               .isReversing
-                                          ? (savedDisplayMode ==
-                                                  BalanceDisplayMode
-                                                      .availableBalance
+                                          ? (savedDisplayMode == BalanceDisplayMode.availableBalance
                                               ? BalanceDisplayMode.fullBalance
-                                              : BalanceDisplayMode
-                                                  .availableBalance)
+                                              : BalanceDisplayMode.availableBalance)
                                           : savedDisplayMode;
 
-                                      return Text(displayMode.toString(),
+                                      return Text(displayMode.getTitle(t),
                                           style: TextStyle(
                                               color: OxenPalette.teal,
                                               fontSize: 16));
@@ -228,29 +221,16 @@ class DashboardPageBodyState extends State<DashboardPageBody> {
                                       final savedDisplayMode =
                                           settingsStore.balanceDisplayMode;
                                       var balance = '---';
-                                      final displayMode = balanceStore
-                                              .isReversing
-                                          ? (savedDisplayMode ==
-                                                  BalanceDisplayMode
-                                                      .availableBalance
+                                      final displayMode = balanceStore.isReversing
+                                          ? (savedDisplayMode == BalanceDisplayMode.availableBalance
                                               ? BalanceDisplayMode.fullBalance
-                                              : BalanceDisplayMode
-                                                  .availableBalance)
+                                              : BalanceDisplayMode.availableBalance)
                                           : savedDisplayMode;
 
-                                      if (displayMode ==
-                                          BalanceDisplayMode.availableBalance) {
-                                        balance = balanceStore
-                                                .unlockedBalanceString ??
-                                            '0.0';
-                                      }
-
-                                      if (displayMode ==
-                                          BalanceDisplayMode.fullBalance) {
-                                        balance =
-                                            balanceStore.fullBalanceString ??
-                                                '0.0';
-                                      }
+                                      if (displayMode == BalanceDisplayMode.availableBalance)
+                                        balance = balanceStore.unlockedBalanceString;
+                                      else if (displayMode == BalanceDisplayMode.fullBalance)
+                                        balance = balanceStore.fullBalanceString;
 
                                       return Text(
                                         balance,
@@ -258,7 +238,7 @@ class DashboardPageBodyState extends State<DashboardPageBody> {
                                             color: Theme.of(context)
                                                 .primaryTextTheme
                                                 .caption
-                                                .color,
+                                                ?.color,
                                             fontSize: 42),
                                       );
                                     }),
@@ -272,32 +252,20 @@ class DashboardPageBodyState extends State<DashboardPageBody> {
                                           final displayMode = settingsStore
                                                   .enableFiatCurrency
                                               ? (balanceStore.isReversing
-                                                  ? (savedDisplayMode ==
-                                                          BalanceDisplayMode
-                                                              .availableBalance
-                                                      ? BalanceDisplayMode
-                                                          .fullBalance
-                                                      : BalanceDisplayMode
-                                                          .availableBalance)
+                                                  ? (savedDisplayMode == BalanceDisplayMode.availableBalance
+                                                      ? BalanceDisplayMode.fullBalance
+                                                      : BalanceDisplayMode.availableBalance)
                                                   : savedDisplayMode)
-                                              : BalanceDisplayMode
-                                                  .hiddenBalance;
-                                          final symbol = settingsStore
-                                              .fiatCurrency
-                                              .toString();
+                                              : BalanceDisplayMode.hiddenBalance;
+                                          final symbol = settingsStore.fiatCurrency.toString();
                                           var balance = '---';
 
-                                          if (displayMode ==
-                                              BalanceDisplayMode
-                                                  .availableBalance) {
-                                            balance =
-                                                '${balanceStore.fiatUnlockedBalance} $symbol';
+                                          if (displayMode == BalanceDisplayMode.availableBalance) {
+                                            balance = '${balanceStore.fiatUnlockedBalance} $symbol';
                                           }
 
-                                          if (displayMode ==
-                                              BalanceDisplayMode.fullBalance) {
-                                            balance =
-                                                '${balanceStore.fiatFullBalance} $symbol';
+                                          if (displayMode == BalanceDisplayMode.fullBalance) {
+                                            balance = '${balanceStore.fiatFullBalance} $symbol';
                                           }
 
                                           return Text(balance,
@@ -326,7 +294,7 @@ class DashboardPageBodyState extends State<DashboardPageBody> {
                                                 rootNavigator: true)
                                             .pushNamed(Routes.send),
                                       ),
-                                      Text(S.of(context).send)
+                                      Text(t.send)
                                     ],
                                   ),
                                   Column(
@@ -339,7 +307,7 @@ class DashboardPageBodyState extends State<DashboardPageBody> {
                                                 rootNavigator: true)
                                             .pushNamed(Routes.receive),
                                       ),
-                                      Text(S.of(context).receive)
+                                      Text(t.receive)
                                     ],
                                   )
                                 ],
@@ -359,83 +327,74 @@ class DashboardPageBodyState extends State<DashboardPageBody> {
                           PopupMenuButton<int>(
                             itemBuilder: (context) => [
                               PopupMenuItem(
-                                  enabled: false,
-                                  value: -1,
-                                  child: Text(S.of(context).transactions,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Theme.of(context)
-                                              .primaryTextTheme
-                                              .caption
-                                              .color))),
+                                enabled: false,
+                                value: -1,
+                                child: Text(t.transactions,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Theme.of(context).primaryTextTheme.caption?.color
+                                  )
+                                )
+                              ),
                               PopupMenuItem(
-                                  value: 0,
-                                  child: Observer(
-                                      builder: (_) => Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text(S.of(context).incoming),
-                                                Checkbox(
-                                                  value: actionListStore
-                                                      .transactionFilterStore
-                                                      .displayIncoming,
-                                                  onChanged: (value) =>
-                                                      actionListStore
-                                                          .transactionFilterStore
-                                                          .toggleIncoming(),
-                                                )
-                                              ]))),
+                                value: 0,
+                                child: Observer(
+                                  builder: (_) => Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(t.incoming),
+                                      Checkbox(
+                                        value: actionListStore.transactionFilterStore.displayIncoming,
+                                        onChanged: (value) => actionListStore.transactionFilterStore.toggleIncoming(),
+                                      )
+                                    ]
+                                  )
+                                )
+                              ),
                               PopupMenuItem(
-                                  value: 1,
-                                  child: Observer(
-                                      builder: (_) => Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text(S.of(context).outgoing),
-                                                Checkbox(
-                                                  value: actionListStore
-                                                      .transactionFilterStore
-                                                      .displayOutgoing,
-                                                  onChanged: (value) =>
-                                                      actionListStore
-                                                          .transactionFilterStore
-                                                          .toggleOutgoing(),
-                                                )
-                                              ]))),
+                                value: 1,
+                                child: Observer(
+                                  builder: (_) => Row(
+                                    mainAxisAlignment:MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(t.outgoing),
+                                      Checkbox(
+                                        value: actionListStore.transactionFilterStore.displayOutgoing,
+                                        onChanged: (value) => actionListStore.transactionFilterStore.toggleOutgoing(),
+                                      )
+                                    ]
+                                  )
+                                )
+                              ),
                               PopupMenuItem(
-                                  value: 2,
-                                  child:
-                                      Text(S.of(context).transactions_by_date)),
+                                value: 2,
+                                child: Text(t.transactions_by_date)
+                              ),
                             ],
-                            child: Text(S.of(context).filters,
-                                style: TextStyle(
-                                    fontSize: 16.0,
-                                    color: Theme.of(context)
-                                        .primaryTextTheme
-                                        .subtitle2
-                                        .color)),
+                            child: Text(t.filters,
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                color: Theme.of(context).primaryTextTheme.subtitle2?.color
+                              )
+                            ),
                             onSelected: (item) async {
                               if (item == 2) {
-                                final picked =
-                                    await date_rage_picker.showDatePicker(
-                                        context: context,
-                                        initialFirstDate: DateTime.now()
-                                            .subtract(Duration(days: 1)),
-                                        initialLastDate: (DateTime.now()),
-                                        firstDate: DateTime(2015),
-                                        lastDate: DateTime.now()
-                                            .add(Duration(days: 1)));
+                                final picked = await showDateRangePicker(
+                                  context: context,
+                                  initialDateRange: DateTimeRange(
+                                    start: DateTime.now().subtract(Duration(days: 1)),
+                                    end: DateTime.now()
+                                  ),
+                                  firstDate: DateTime(2018),
+                                  lastDate: DateTime.now()
+                                );
 
-                                if (picked != null && picked.length == 2) {
-                                  actionListStore.transactionFilterStore
-                                      .changeStartDate(picked.first);
-                                  actionListStore.transactionFilterStore
-                                      .changeEndDate(picked.last);
-                                }
+                                actionListStore.transactionFilterStore.changeStartDate(picked?.start);
+                                // Add 1d to the end date because we want the picker returns the
+                                // DateTime of the beginning of the end date, but we want to include
+                                // everything on that date as well.
+                                actionListStore.transactionFilterStore.changeEndDate(
+                                  picked == null ? null : picked.end.add(Duration(days: 1)));
                               }
                             },
                           )
@@ -476,7 +435,8 @@ class DashboardPageBodyState extends State<DashboardPageBody> {
                           transactionDateFormat.format(transaction.date),
                       formattedAmount: formattedAmount,
                       formattedFiatAmount: formattedFiatAmount,
-                      isPending: transaction.isPending);
+                      isPending: transaction.isPending,
+                      isStake: transaction.isStake);
                 }
 
                 return Container();

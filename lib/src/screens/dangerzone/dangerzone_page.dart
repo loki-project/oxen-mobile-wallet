@@ -1,15 +1,14 @@
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:oxen_wallet/generated/l10n.dart';
+import 'package:oxen_wallet/l10n.dart';
 import 'package:oxen_wallet/palette.dart';
 import 'package:oxen_wallet/routes.dart';
 import 'package:oxen_wallet/src/screens/base_page.dart';
 import 'package:oxen_wallet/src/widgets/primary_button.dart';
 
 class DangerzonePage extends BasePage {
-  DangerzonePage({this.nextPage});
+  DangerzonePage({required this.nextPage});
 
   final String nextPage;
 
@@ -20,8 +19,8 @@ class DangerzonePage extends BasePage {
     final textScaleFactor = _screenWidth < _baseWidth ? 0.76 : 1.0;
     final appStore = Platform.isAndroid ? 'Play Store' : 'AppStore';
     final item = nextPage == Routes.dangerzoneSeed
-        ? S.of(context).seed_title
-        : S.of(context).keys_title;
+        ? tr(context).seed_title
+        : tr(context).keys_title;
 
     return Column(children: <Widget>[
       Expanded(
@@ -36,7 +35,7 @@ class DangerzonePage extends BasePage {
               Padding(
                 padding: EdgeInsets.all(10),
                 child: Text(
-                  S.of(context).dangerzone,
+                  tr(context).dangerzone,
                   style: TextStyle(
                     fontSize: 30.0,
                     fontWeight: FontWeight.bold,
@@ -48,7 +47,7 @@ class DangerzonePage extends BasePage {
               Padding(
                   padding: EdgeInsets.all(10),
                   child: Text(
-                    S.of(context).never_give_your(item),
+                    tr(context).never_give_your(item),
                     style: TextStyle(
                       fontSize: 22.0,
                       color: Palette.lightBlue,
@@ -59,7 +58,7 @@ class DangerzonePage extends BasePage {
               Padding(
                   padding: EdgeInsets.all(10),
                   child: Text(
-                    S.of(context).dangerzone_warning(
+                    tr(context).dangerzone_warning(
                           item, appStore
                         ),
                     style: TextStyle(
@@ -77,10 +76,10 @@ class DangerzonePage extends BasePage {
             onPressed: () {
               Navigator.popAndPushNamed(context, nextPage);
             },
-            text: S.of(context).yes_im_sure,
-            color: Theme.of(context).primaryTextTheme.button.backgroundColor,
+            text: tr(context).yes_im_sure,
+            color: Theme.of(context).primaryTextTheme.button?.backgroundColor,
             borderColor:
-                Theme.of(context).primaryTextTheme.button.decorationColor),
+                Theme.of(context).primaryTextTheme.button?.decorationColor),
       )
     ]);
   }

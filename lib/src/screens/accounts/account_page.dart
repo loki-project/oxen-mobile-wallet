@@ -1,7 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:oxen_wallet/generated/l10n.dart';
+import 'package:oxen_wallet/l10n.dart';
 import 'package:oxen_wallet/src/screens/base_page.dart';
 import 'package:oxen_wallet/src/stores/account_list/account_list_store.dart';
 import 'package:oxen_wallet/src/wallet/oxen/account.dart';
@@ -13,10 +12,10 @@ import 'package:provider/provider.dart';
 class AccountPage extends BasePage {
   AccountPage({this.account});
 
-  final Account account;
+  final Account? account;
 
   @override
-  String get title => 'Account';
+  String getTitle(AppLocalizations t) => t.account;
 
   @override
   Widget body(BuildContext context) => AccountForm(account);
@@ -25,7 +24,7 @@ class AccountPage extends BasePage {
 class AccountForm extends StatefulWidget {
   AccountForm(this.account);
 
-  final Account account;
+  final Account? account;
 
   @override
   AccountFormState createState() => AccountFormState();
@@ -37,7 +36,7 @@ class AccountFormState extends State<AccountForm> {
 
   @override
   void initState() {
-    if (widget.account != null) _textController.text = widget.account.label;
+    if (widget.account != null) _textController.text = widget.account!.label;
     super.initState();
   }
 
@@ -60,10 +59,10 @@ class AccountFormState extends State<AccountForm> {
               children: <Widget>[
                 Center(
                   child: OxenTextField(
-                    hintText: S.of(context).account,
+                    hintText: tr(context).account,
                     controller: _textController,
                     validator: (value) {
-                      accountListStore.validateAccountName(value);
+                      accountListStore.validateAccountName(value ?? '', tr(context));
                       return accountListStore.errorMessage;
                     },
                   ),
@@ -74,24 +73,24 @@ class AccountFormState extends State<AccountForm> {
       bottomSection: Observer(
           builder: (_) => LoadingPrimaryButton(
                 onPressed: () async {
-                  if (!_formKey.currentState.validate()) {
+                  if (!(_formKey.currentState?.validate() ?? false)) {
                     return;
                   }
 
                   if (widget.account != null) {
                     await accountListStore.renameAccount(
-                        index: widget.account.id, label: _textController.text);
+                        index: widget.account!.id, label: _textController.text);
                   } else {
                     await accountListStore.addAccount(
                         label: _textController.text);
                   }
                   Navigator.of(context).pop(_textController.text);
                 },
-                text: widget.account != null ? 'Rename' : S.of(context).add,
+                text: widget.account != null ? 'Rename' : tr(context).add,
                 color:
-                    Theme.of(context).primaryTextTheme.button.backgroundColor,
+                    Theme.of(context).primaryTextTheme.button?.backgroundColor,
                 borderColor:
-                    Theme.of(context).primaryTextTheme.button.decorationColor,
+                    Theme.of(context).primaryTextTheme.button?.decorationColor,
                 isLoading: accountListStore.isAccountCreating,
               )),
     );

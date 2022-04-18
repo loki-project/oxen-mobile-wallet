@@ -16,7 +16,7 @@ class OxenTransactionHistory extends TransactionHistory {
       : _transactions = BehaviorSubject<List<TransactionInfo>>.seeded([]);
 
   @override
-  Observable<List<TransactionInfo>> get transactions => _transactions.stream;
+  Stream<List<TransactionInfo>> get transactions => _transactions.stream;
 
   final BehaviorSubject<List<TransactionInfo>> _transactions;
   bool _isUpdating = false;

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flutter/foundation.dart';
 import 'package:mobx/mobx.dart';
 import 'package:oxen_wallet/src/domain/services/user_service.dart';
 
@@ -21,17 +20,13 @@ enum AuthenticationState {
 }
 
 abstract class AuthenticationStoreBase with Store {
-  AuthenticationStoreBase({@required this.userService}) {
+  AuthenticationStoreBase({required this.userService}) :
     state = AuthenticationState.uninitialized;
-  }
 
   final UserService userService;
 
   @observable
   AuthenticationState state;
-
-  @observable
-  String errorMessage;
 
   Future started() async {
     final canAuth = await userService.canAuthenticate();

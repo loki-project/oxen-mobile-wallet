@@ -1,5 +1,5 @@
-class MnemoticItem {
-  MnemoticItem({String text, this.dic}) : _text = text;
+class MnemonicItem {
+  MnemonicItem({required String text, required this.dic}) : _text = text;
 
   String get text => _text;
   final List<String> dic;

@@ -1,24 +1,23 @@
-import 'package:esys_flutter_share/esys_flutter_share.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:oxen_wallet/generated/l10n.dart';
+import 'package:oxen_wallet/l10n.dart';
 import 'package:oxen_wallet/palette.dart';
 import 'package:oxen_wallet/routes.dart';
 import 'package:oxen_wallet/src/screens/base_page.dart';
-import 'package:oxen_wallet/src/screens/receive/qr_image.dart';
 import 'package:oxen_wallet/src/stores/subaddress_list/subaddress_list_store.dart';
 import 'package:oxen_wallet/src/stores/wallet/wallet_store.dart';
 import 'package:oxen_wallet/src/widgets/oxen_text_field.dart';
 import 'package:provider/provider.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class ReceivePage extends BasePage {
   @override
   bool get isModalBackButton => true;
 
   @override
-  String get title => S.current.receive;
+  String getTitle(AppLocalizations t) => t.receive;
 
   @override
   Widget trailing(BuildContext context) {
@@ -33,8 +32,7 @@ class ReceivePage extends BasePage {
             highlightColor: Colors.transparent,
             splashColor: Colors.transparent,
             padding: EdgeInsets.all(0),
-            onPressed: () => Share.text(
-                'Share address', walletStore.subaddress.address, 'text/plain'),
+            onPressed: () => Share.share(walletStore.subaddress.address),
             child: Icon(
               Icons.share,
               size: 30.0,
@@ -72,7 +70,7 @@ class ReceiveBodyState extends State<ReceiveBody> {
     final notCurrentColor = Theme.of(context).scaffoldBackgroundColor;
 
     amountController.addListener(() {
-      if (_formKey.currentState.validate()) {
+      if (_formKey.currentState?.validate() ?? false) {
         walletStore.onChangedAmountValue(amountController.text);
       } else {
         walletStore.onChangedAmountValue('');
@@ -100,14 +98,15 @@ class ReceiveBodyState extends State<ReceiveBody> {
                                 flex: 2,
                                 child: AspectRatio(
                                   aspectRatio: 1.0,
-                                  child: Container(
-                                    padding: EdgeInsets.all(5),
-                                    color: Colors.white,
-                                    child: QrImage(
-                                      data: walletStore.subaddress.address +
-                                          walletStore.amountValue,
-                                      backgroundColor: Colors.transparent,
-                                    ),
+                                  child: QrImage(
+                                    size: 100.0,
+                                    version: QrVersions.auto,
+                                    errorCorrectionLevel: QrErrorCorrectLevel.M,
+                                    data: walletStore.subaddress.address + walletStore.amountValue,
+                                    embeddedImage: AssetImage('assets/images/oxen.png'),
+                                    embeddedImageStyle: QrEmbeddedImageStyle(size: Size(40, 40)),
+                                    backgroundColor: OxenPalette.whiteBlue,
+                                    foregroundColor: OxenPalette.navy,
                                   ),
                                 )),
                             Spacer(flex: 1)
@@ -125,9 +124,9 @@ class ReceiveBodyState extends State<ReceiveBody> {
                                   onTap: () {
                                     Clipboard.setData(ClipboardData(
                                         text: walletStore.subaddress.address));
-                                    Scaffold.of(context).showSnackBar(SnackBar(
+                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                                       content: Text(
-                                        S.of(context).copied_to_clipboard,
+                                        tr(context).copied_to_clipboard,
                                         style: TextStyle(color: Colors.white),
                                       ),
                                       backgroundColor: Colors.green,
@@ -142,7 +141,7 @@ class ReceiveBodyState extends State<ReceiveBody> {
                                         color: Theme.of(context)
                                             .primaryTextTheme
                                             .headline6
-                                            .color)
+                                            ?.color)
                                   )
                                 )
                               )
@@ -161,9 +160,9 @@ class ReceiveBodyState extends State<ReceiveBody> {
                                     inputFormatters: [
                                       FilteringTextInputFormatter.deny(RegExp('[- ]'))
                                     ],
-                                    hintText: S.of(context).amount,
+                                    hintText: tr(context).amount,
                                     validator: (value) {
-                                      walletStore.validateAmount(value);
+                                      walletStore.validateAmount(value ?? '', tr(context));
                                       return walletStore.errorMessage;
                                     },
                                     controller: amountController
@@ -177,18 +176,18 @@ class ReceiveBodyState extends State<ReceiveBody> {
                   children: <Widget>[
                     Expanded(
                         child: Container(
-                      color: Theme.of(context).accentTextTheme.headline5.color,
+                      color: Theme.of(context).accentTextTheme.headline5?.color,
                       child: Column(
                         children: <Widget>[
                           ListTile(
                             title: Text(
-                              S.of(context).subaddresses,
+                              tr(context).subaddresses,
                               style: TextStyle(
                                   fontSize: 16.0,
                                   color: Theme.of(context)
                                       .primaryTextTheme
                                       .headline5
-                                      .color),
+                                      ?.color),
                             ),
                             trailing: Container(
                               width: 28.0,
@@ -252,7 +251,7 @@ class ReceiveBodyState extends State<ReceiveBody> {
                                         color: Theme.of(context)
                                             .primaryTextTheme
                                             .headline5
-                                            .color),
+                                            ?.color),
                                   ),
                                 )
                               ]),

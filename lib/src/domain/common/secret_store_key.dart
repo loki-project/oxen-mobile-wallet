@@ -3,7 +3,7 @@ enum SecretStoreKey { moneroWalletPassword, pinCodePassword }
 const moneroWalletPassword = 'MONERO_WALLET_PASSWORD';
 const pinCodePassword = 'PIN_CODE_PASSWORD';
 
-String generateStoreKeyFor({SecretStoreKey key, String walletName = '',}) {
+String generateStoreKeyFor({required SecretStoreKey key, String walletName = '',}) {
   var _key = '';
 
   switch (key) {

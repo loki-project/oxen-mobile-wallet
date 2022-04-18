@@ -4,24 +4,27 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
 import 'package:oxen_wallet/src/stores/seed_language/seed_language_store.dart';
 import 'package:oxen_wallet/src/widgets/present_picker.dart';
-import 'package:oxen_wallet/generated/l10n.dart';
+import 'package:oxen_wallet/l10n.dart';
 
 class SeedLanguagePicker extends StatelessWidget {
-  final List<String> seedLocales = [
-    S.current.seed_language_english,
-    S.current.seed_language_chinese,
-    S.current.seed_language_dutch,
-    S.current.seed_language_german,
-    S.current.seed_language_japanese,
-    S.current.seed_language_portuguese,
-    S.current.seed_language_russian,
-    S.current.seed_language_spanish,
-    S.current.seed_language_french,
-    S.current.seed_language_italian
-  ];
+  List<String> getSeedLocales(AppLocalizations l10n) {
+    return [
+      l10n.seed_language_english,
+      l10n.seed_language_chinese,
+      l10n.seed_language_dutch,
+      l10n.seed_language_german,
+      l10n.seed_language_japanese,
+      l10n.seed_language_portuguese,
+      l10n.seed_language_russian,
+      l10n.seed_language_spanish,
+      l10n.seed_language_french,
+      l10n.seed_language_italian
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
+    final seedLocales = getSeedLocales(tr(context));
     final seedLanguageStore = Provider.of<SeedLanguageStore>(context);
 
     return Observer(
@@ -32,7 +35,7 @@ class SeedLanguagePicker extends StatelessWidget {
             //width: double.infinity,
             decoration: BoxDecoration(
                 border: Border.all(
-                    color: Theme.of(context).dividerTheme.color
+                    color: Theme.of(context).dividerTheme.color ?? Palette.lightGrey
                 ),
                 borderRadius: BorderRadius.circular(8.0)
             ),
@@ -45,6 +48,7 @@ class SeedLanguagePicker extends StatelessWidget {
   }
 
   Future<void> _setSeedLanguage(BuildContext context) async {
+    final seedLocales = getSeedLocales(tr(context));
     final seedLanguageStore = context.read<SeedLanguageStore>();
     var selectedSeedLanguage = await presentPicker(context, seedLocales);
 

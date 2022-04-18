@@ -1,8 +1,8 @@
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:oxen_wallet/generated/l10n.dart';
+import 'package:intl/intl.dart';
+import 'package:oxen_wallet/l10n.dart';
 import 'package:oxen_wallet/src/wallet/transaction/transaction_info.dart';
 import 'package:oxen_wallet/src/stores/settings/settings_store.dart';
 import 'package:oxen_wallet/src/screens/transaction_details/standart_list_item.dart';
@@ -10,12 +10,12 @@ import 'package:oxen_wallet/src/screens/transaction_details/standart_list_row.da
 import 'package:oxen_wallet/src/screens/base_page.dart';
 
 class TransactionDetailsPage extends BasePage {
-  TransactionDetailsPage({this.transactionInfo});
+  TransactionDetailsPage({required this.transactionInfo});
 
   final TransactionInfo transactionInfo;
 
   @override
-  String get title => S.current.transaction_details_title;
+  String getTitle(AppLocalizations t) => t.transaction_details_title;
 
   @override
   Widget body(BuildContext context) {
@@ -28,7 +28,7 @@ class TransactionDetailsPage extends BasePage {
 
 class TransactionDetailsForm extends StatefulWidget {
   TransactionDetailsForm(
-      {@required this.transactionInfo, @required this.settingsStore});
+      {required this.transactionInfo, required this.settingsStore});
 
   final TransactionInfo transactionInfo;
   final SettingsStore settingsStore;
@@ -38,41 +38,38 @@ class TransactionDetailsForm extends StatefulWidget {
 }
 
 class TransactionDetailsFormState extends State<TransactionDetailsForm> {
-  final _items = <StandartListItem>[];
 
-  @override
-  void initState() {
-    final _dateFormat = widget.settingsStore.getCurrentDateFormat(
-          formatUSA: 'yyyy.MM.dd, HH:mm',
-          formatDefault: 'dd.MM.yyyy, HH:mm');
-    final items = [
+  List<StandartListItem> getItems(AppLocalizations t) {
+    final _dateFormat = DateFormat.yMMMd(t.localeName).add_jm();
+    final items = <StandartListItem>[
       StandartListItem(
-          title: S.current.transaction_details_transaction_id,
+          title: t.transaction_details_transaction_id,
           value: widget.transactionInfo.id),
       StandartListItem(
-          title: S.current.transaction_details_date,
+          title: t.transaction_details_date,
           value: _dateFormat.format(widget.transactionInfo.date)),
       StandartListItem(
-          title: S.current.transaction_details_height,
+          title: t.transaction_details_height,
           value: '${widget.transactionInfo.height}'),
       StandartListItem(
-          title: S.current.transaction_details_amount,
+          title: t.transaction_details_amount,
           value: widget.transactionInfo.amountFormatted())
     ];
 
     if (widget.settingsStore.shouldSaveRecipientAddress &&
         widget.transactionInfo.recipientAddress != null) {
       items.add(StandartListItem(
-          title: S.current.transaction_details_recipient_address,
-          value: widget.transactionInfo.recipientAddress));
+          title: t.transaction_details_recipient_address,
+          value: widget.transactionInfo.recipientAddress!));
     }
-
-    _items.addAll(items);
-    super.initState();
+    return items;
   }
 
   @override
   Widget build(BuildContext context) {
+
+    final items = getItems(tr(context));
+
     return Container(
       padding: EdgeInsets.only(left: 20, right: 15, top: 10, bottom: 10),
       child: ListView.separated(
@@ -81,17 +78,17 @@ class TransactionDetailsFormState extends State<TransactionDetailsForm> {
                 color: Theme.of(context).dividerTheme.color,
               ),
           padding: EdgeInsets.only(left: 25, top: 10, right: 25, bottom: 15),
-          itemCount: _items.length,
+          itemCount: items.length,
           itemBuilder: (context, index) {
-            final item = _items[index];
+            final item = items[index];
 
             return GestureDetector(
               onTap: () {
                 Clipboard.setData(ClipboardData(text: item.value));
-                Scaffold.of(context).showSnackBar(
+                ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(
-                        S.of(context).transaction_details_copied(item.title)),
+                        tr(context).transaction_details_copied(item.title)),
                     backgroundColor: Colors.green,
                     duration: Duration(milliseconds: 1500),
                   ),

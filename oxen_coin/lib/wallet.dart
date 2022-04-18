@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:ffi';
-import 'dart:typed_data';
 
 import 'package:ffi/ffi.dart';
 import 'package:flutter/foundation.dart';
@@ -52,53 +50,41 @@ bool isRefreshingSync() => oxen_wallet.isRefreshingNative() != 0;
 bool isConnectedSync() => oxen_wallet.isConnectedNative() != 0;
 
 bool setupNodeSync(
-    {String address,
-    String login,
-    String password,
+    {required String address,
+    String? login,
+    String? password,
     bool useSSL = false,
     bool isLightWallet = false}) {
-  final addressPointer = Utf8.toUtf8(address);
-  Pointer<Utf8> loginPointer;
-  Pointer<Utf8> passwordPointer;
+  final addressPointer = address.toNativeUtf8();
+  final loginPointer = (login ?? '').toNativeUtf8();
+  final passwordPointer = (password ?? '').toNativeUtf8();
 
-  if (login != null) {
-    loginPointer = Utf8.toUtf8(login);
-  }
-
-  if (password != null) {
-    passwordPointer = Utf8.toUtf8(password);
-  }
-
-  final errorMessagePointer = allocate<Utf8>();
   final isSetupNode = oxen_wallet.setupNodeNative(
           addressPointer,
           loginPointer,
           passwordPointer,
           _boolToInt(useSSL),
-          _boolToInt(isLightWallet),
-          errorMessagePointer) !=
-      0;
+          _boolToInt(isLightWallet));
 
-  free(addressPointer);
-  free(loginPointer);
-  free(passwordPointer);
+  calloc.free(addressPointer);
+  calloc.free(loginPointer);
+  calloc.free(passwordPointer);
 
-  if (!isSetupNode) {
-    throw SetupWalletException(
-        message: convertUTF8ToString(pointer: errorMessagePointer));
+  if (!isSetupNode.good) {
+    throw SetupWalletException(message: isSetupNode.errorString());
   }
 
-  return isSetupNode;
+  return true;
 }
 
 void startRefreshSync() => oxen_wallet.startRefreshNative();
 
-Future<bool> connectToNode() async => oxen_wallet.connecToNodeNative() != 0;
+Future<bool> connectToNode() async => oxen_wallet.connecToNodeNative().good;
 
-void setRefreshFromBlockHeight({int height}) =>
+void setRefreshFromBlockHeight({required int height}) =>
     oxen_wallet.setRefreshFromBlockHeightNative(height);
 
-void setRecoveringFromSeed({bool isRecovery}) =>
+void setRecoveringFromSeed({required bool isRecovery}) =>
     oxen_wallet.setRecoveringFromSeedNative(_boolToInt(isRecovery));
 
 void closeCurrentWallet() => oxen_wallet.closeCurrentWalletNative();
@@ -116,19 +102,15 @@ String getPublicSpendKey() =>
     convertUTF8ToString(pointer: oxen_wallet.getPublicSpendKeyNative());
 
 class SyncListener {
-  SyncListener(this.onNewBlock, this.onNewTransaction) {
-    _cachedBlockchainHeight = 0;
-    _lastKnownBlockHeight = 0;
-    _initialSyncHeight = 0;
-  }
+  SyncListener(this.onNewBlock, this.onNewTransaction);
 
   void Function(int, int, double, bool) onNewBlock;
   void Function() onNewTransaction;
 
-  Timer _updateSyncInfoTimer;
-  int _cachedBlockchainHeight;
-  int _lastKnownBlockHeight;
-  int _initialSyncHeight;
+  Timer? _updateSyncInfoTimer;
+  int _cachedBlockchainHeight = 0;
+  int _lastKnownBlockHeight = 0;
+  int _initialSyncHeight = 0;
 
   Future<int> getNodeHeightOrUpdate(int baseHeight) async {
     if (_cachedBlockchainHeight < baseHeight || _cachedBlockchainHeight == 0) {
@@ -158,7 +140,7 @@ class SyncListener {
 
       final bchHeight = await getNodeHeightOrUpdate(syncHeight);
 
-      if (_lastKnownBlockHeight == syncHeight || syncHeight == null) {
+      if (_lastKnownBlockHeight == syncHeight) {
         return;
       }
 
@@ -175,12 +157,12 @@ class SyncListener {
       final refreshing = isRefreshing();
       if (!refreshing) {
         if (isNewTransactionExist()) {
-          onNewTransaction?.call();
+          onNewTransaction.call();
         }
       }
 
       // 1. Actual new height; 2. Blocks left to finish; 3. Progress in percents;
-      onNewBlock?.call(syncHeight, left, ptc, refreshing);
+      onNewBlock.call(syncHeight, left, ptc, refreshing);
     });
   }
 
@@ -222,15 +204,19 @@ int _getNodeHeight(Object _) => getNodeHeightSync();
 void startRefresh() => startRefreshSync();
 
 Future setupNode(
-        {String address,
-        String login,
-        String password,
+        {required String address,
+        /*
+        required String login,
+        required String password,
+        */
         bool useSSL = false,
         bool isLightWallet = false}) =>
     compute<Map<String, Object>, void>(_setupNodeSync, {
       'address': address,
+      /*
       'login': login,
       'password': password,
+      */
       'useSSL': useSSL,
       'isLightWallet': isLightWallet
     });
