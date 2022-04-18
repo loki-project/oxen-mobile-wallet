@@ -317,6 +317,8 @@
   "restore_from_seed_placeholder" : "Please enter or paste your seed here",
   "add_new_word" : "Add new word",
   "incorrect_seed" : "The text entered is not valid.",
+  "invalid_seed_words" : "\nInvalid seed words: {words}.",
+  "@invalid_seed_words" : { "placeholders": {"words": {}}},
 
   "biometric_auth_reason" : "Scan your fingerprint to authenticate",
   "version" : "Version {currentVersion}",

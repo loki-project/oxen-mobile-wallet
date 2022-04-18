@@ -23,9 +23,6 @@ class SeedWidget extends StatefulWidget {
   SeedWidget({required Key key, required this.onMnemonicChange, required this.onFinish, required this.seedLanguage})
       : super(key: key) {
     switch (seedLanguage) {
-      case 'English':
-        words = _englishWords;
-        break;
       case 'Chinese (simplified)':
         words = ChineseSimplifiedMnemonics.words;
         break;
@@ -53,6 +50,7 @@ class SeedWidget extends StatefulWidget {
       case 'Italian':
         words = ItalianMnemonics.words;
         break;
+      case 'English':
       default:
         words = _englishWords;
     }
@@ -76,6 +74,7 @@ class SeedWidgetState extends State<SeedWidget> {
   MnemonicItem? selectedItem;
 
   List<MnemonicItem> currentMnemonics = [];
+  List<String> invalidWords = [];
   bool isCurrentMnemonicValid = false;
   String? _errorMessage;
 
@@ -83,6 +82,7 @@ class SeedWidgetState extends State<SeedWidget> {
   void initState() {
     super.initState();
     isCurrentMnemonicValid = false;
+    invalidWords = [];
     _seedController
         .addListener(() => changeCurrentMnemonic(_seedController.text));
   }
@@ -163,6 +163,8 @@ class SeedWidgetState extends State<SeedWidget> {
       final splitted = trimmedText.split(' ');
       _errorMessage = null;
 
+      invalidWords = [];
+
       if (text.isEmpty) {
         currentMnemonics = [];
         isCurrentMnemonicValid = false;
@@ -176,10 +178,9 @@ class SeedWidgetState extends State<SeedWidget> {
       var isValid = true;
 
       for (final word in currentMnemonics) {
-        isValid = word.isCorrect();
-
-        if (!isValid) {
-          break;
+        if (!word.isCorrect()) {
+          isValid = false;
+          invalidWords.add(word.text);
         }
       }
 
@@ -203,7 +204,9 @@ class SeedWidgetState extends State<SeedWidget> {
 
   void showErrorIfExist(AppLocalizations t) {
     setState(() => _errorMessage =
-        !isCurrentMnemonicValid ? t.incorrect_seed : null);
+        isCurrentMnemonicValid
+        ? null
+        : t.incorrect_seed + (invalidWords.isNotEmpty ? t.invalid_seed_words(invalidWords.join(", ")) : ""));
   }
 
   bool isSeedValid() {

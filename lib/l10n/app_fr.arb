@@ -301,6 +301,7 @@
   "restore_from_seed_placeholder" : "Veuillez entrer votre code ici",
   "add_new_word" : "Ajouter un nouveau mot",
   "incorrect_seed" : "Le texte saisi n'est pas valide.",
+  "invalid_seed_words": "\nMots invalide: {words}.",
 
   "biometric_auth_reason" : "Scannez votre empreinte digitale pour l'authentification",
   "version" : "Version {currentVersion}",
