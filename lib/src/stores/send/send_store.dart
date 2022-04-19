@@ -47,7 +47,7 @@ abstract class SendStoreBase with Store {
   PendingTransaction? _pendingTransaction;
   final NumberFormat _cryptoNumberFormat;
   final NumberFormat _fiatNumberFormat;
-  String _lastRecipientAddress = '';
+  String? _lastRecipientAddress;
 
   @action
   Future createStake({required String snPubkey, String? amount, required AppLocalizations l10n}) async {
@@ -98,7 +98,7 @@ abstract class SendStoreBase with Store {
       await _pendingTransaction!.commit();
       state = TransactionCommitted();
 
-      if (settingsStore.shouldSaveRecipientAddress) {
+      if (settingsStore.shouldSaveRecipientAddress && _lastRecipientAddress != null) {
         await transactionDescriptions.add(TransactionDescription(
             id: transactionId, recipientAddress: _lastRecipientAddress));
       }
