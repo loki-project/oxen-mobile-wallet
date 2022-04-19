@@ -22,6 +22,7 @@ import 'package:oxen_wallet/src/screens/auth/create_login_page.dart';
 import 'package:oxen_wallet/src/screens/auth/create_unlock_page.dart';
 import 'package:oxen_wallet/src/screens/changelog/changelog_page.dart';
 import 'package:oxen_wallet/src/screens/dangerzone/dangerzone_page.dart';
+import 'package:oxen_wallet/src/screens/dangerzone/dangerzone_remove_wallet.dart';
 import 'package:oxen_wallet/src/screens/dashboard/create_dashboard_page.dart';
 import 'package:oxen_wallet/src/screens/disclaimer/disclaimer_page.dart';
 import 'package:oxen_wallet/src/screens/faq/faq_page.dart';
@@ -386,6 +387,13 @@ class Router {
         return MaterialPageRoute<void>(builder: (context) {
           return DangerzonePage(
             nextPage: Routes.seed,
+          );
+        });
+
+      case Routes.dangerzoneRemoveWallet:
+        return MaterialPageRoute<void>(builder: (context) {
+          return DangerzoneRemoveWalletPage(
+            onConfirmed: settings.arguments as void Function(),
           );
         });
 

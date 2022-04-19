@@ -2465,6 +2465,26 @@ class S {
     );
   }
 
+  /// `Are you sure you want to delete this wallet?`
+  String get remove_wallet_confirmation {
+    return Intl.message(
+      'Are you sure you want to delete this wallet?',
+      name: 'remove_wallet_confirmation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure you want to delete this wallet? If you have not saved your seed phrase then any funds sent to this wallet will be lost forever!`
+  String get dangerzone_remove_wallet_warning {
+    return Intl.message(
+      'If you have not saved your seed phrase then any funds sent to this wallet will be lost forever!',
+      name: 'dangerzone_remove_wallet_warning',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Keys`
   String get keys_title {
     return Intl.message(
