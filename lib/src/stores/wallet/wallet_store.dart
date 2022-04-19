@@ -6,24 +6,22 @@ import 'package:oxen_wallet/src/wallet/oxen/account.dart';
 import 'package:oxen_wallet/src/wallet/oxen/oxen_wallet.dart';
 import 'package:oxen_wallet/src/wallet/oxen/subaddress.dart';
 import 'package:oxen_wallet/src/domain/services/wallet_service.dart';
-import 'package:oxen_wallet/src/domain/common/crypto_currency.dart';
 import 'package:oxen_wallet/src/stores/settings/settings_store.dart';
-import 'package:oxen_wallet/generated/l10n.dart';
+import 'package:oxen_wallet/l10n.dart';
 
 part 'wallet_store.g.dart';
 
 class WalletStore = WalletStoreBase with _$WalletStore;
 
 abstract class WalletStoreBase with Store {
-  WalletStoreBase({WalletService walletService, SettingsStore settingsStore}) {
-    _walletService = walletService;
-    _settingsStore = settingsStore;
-    name = '';
-    type = CryptoCurrency.oxen;
-    amountValue = '';
-
+  WalletStoreBase({required WalletService walletService, required SettingsStore settingsStore})
+  : _walletService = walletService,
+    _settingsStore = settingsStore,
+    name = '',
+    amountValue = ''
+  {
     if (_walletService.currentWallet != null) {
-      _onWalletChanged(_walletService.currentWallet);
+      _onWalletChanged(_walletService.currentWallet!);
     }
 
     _onWalletChangeSubscription = _walletService.onWalletChange
@@ -31,36 +29,30 @@ abstract class WalletStoreBase with Store {
   }
 
   @observable
-  String address;
+  String? address;
 
   @observable
   String name;
 
   @observable
-  Subaddress subaddress;
+  Subaddress subaddress = Subaddress(id: 0, address: '', label: '');
 
   @observable
-  Account account;
-
-  @observable
-  CryptoCurrency type;
+  Account account = Account(id: 0);
 
   @observable
   String amountValue;
 
   @observable
-  bool isValid;
+  String? errorMessage;
 
-  @observable
-  String errorMessage;
+  String get id => name + 'oxen';
 
-  String get id => name + type.toString().toLowerCase();
-
-  WalletService _walletService;
-  SettingsStore _settingsStore;
-  StreamSubscription<Wallet> _onWalletChangeSubscription;
-  StreamSubscription<Account> _onAccountChangeSubscription;
-  StreamSubscription<Subaddress> _onSubaddressChangeSubscription;
+  final WalletService _walletService;
+  final SettingsStore _settingsStore;
+  late StreamSubscription<Wallet> _onWalletChangeSubscription;
+  StreamSubscription<Account>? _onAccountChangeSubscription;
+  StreamSubscription<Subaddress>? _onSubaddressChangeSubscription;
 
 //  @override
 //  void dispose() {
@@ -104,21 +96,17 @@ abstract class WalletStoreBase with Store {
       await _walletService.connectToNode(node: _settingsStore.node);
 
   @action
-  Future rescan({int restoreHeight}) async =>
+  Future rescan({required int restoreHeight}) async =>
       await _walletService.rescan(restoreHeight: restoreHeight);
 
   @action
   Future startSync() async => await _walletService.startSync();
 
   @action
-  Future connectToNode({Node node}) async =>
+  Future connectToNode({required Node? node}) async =>
       await _walletService.connectToNode(node: node);
 
   Future _onWalletChanged(Wallet wallet) async {
-    if (this == null) {
-      return;
-    }
-
     wallet.onNameChange.listen((name) => this.name = name);
     wallet.onAddressChange.listen((address) => this.address = address);
 
@@ -135,10 +123,11 @@ abstract class WalletStoreBase with Store {
       amountValue = value.isNotEmpty ? '?tx_amount=$value' : '';
 
   @action
-  void validateAmount(String amount) {
-    const maxValue = 18446744.073709551616;
+  void validateAmount(String amount, AppLocalizations t) {
+    const maxValue = 18446744073.0;
     final value = amount.replaceAll(',', '.');
 
+    bool isValid;
     if (value.isEmpty) {
       isValid = true;
     } else {
@@ -157,7 +146,7 @@ abstract class WalletStoreBase with Store {
       }
     }
 
-    errorMessage = isValid ? null : S.current.error_text_amount;
+    errorMessage = isValid ? null : t.error_text_amount;
   }
 
   Future<bool> isConnected() async => await _walletService.isConnected();

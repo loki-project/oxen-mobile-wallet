@@ -1,3 +1,3 @@
-bool parseBoolFromString(String string) {
-  return string.toString() == 'true';
+bool parseBoolFromString(String? string) {
+  return string == 'true';
 }

@@ -1,24 +1,23 @@
-import 'package:rxdart/rxdart.dart';
 import 'package:oxen_wallet/src/node/sync_status.dart';
 import 'package:oxen_wallet/src/wallet/transaction/transaction_history.dart';
 import 'package:oxen_wallet/src/wallet/wallet_type.dart';
-import 'package:oxen_wallet/src/wallet/transaction/transaction_creation_credentials.dart';
 import 'package:oxen_wallet/src/wallet/transaction/pending_transaction.dart';
 import 'package:oxen_wallet/src/wallet/balance.dart';
+import 'package:oxen_wallet/src/wallet/oxen/transaction/transaction_priority.dart';
 import 'package:oxen_wallet/src/node/node.dart';
 
+export 'package:oxen_wallet/src/wallet/oxen/transaction/transaction_priority.dart' show OxenTransactionPriority;
+
 abstract class Wallet {
-  WalletType getType();
+  WalletType get walletType;
 
-  WalletType walletType;
+  Stream<Balance> get onBalanceChange;
 
-  Observable<Balance> onBalanceChange;
+  Stream<SyncStatus> get syncStatus;
 
-  Observable<SyncStatus> syncStatus;
+  Stream<String> get onNameChange;
 
-  Observable<String> get onNameChange;
-
-  Observable<String> get onAddressChange;
+  Stream<String> get onAddressChange;
 
   String get name;
 
@@ -52,16 +51,19 @@ abstract class Wallet {
 
   TransactionHistory getHistory();
 
-  Future connectToNode(
-      {Node node, bool useSSL = false, bool isLightWallet = false});
+  Future<void> connectToNode(
+      {required Node node, bool useSSL = false, bool isLightWallet = false});
 
   Future startSync();
 
-  Future<PendingTransaction> createStake(
-      TransactionCreationCredentials credentials);
+  Future<PendingTransaction> createStake({
+      required String snPubkey,
+      required String? amount});
 
-  Future<PendingTransaction> createTransaction(
-      TransactionCreationCredentials credentials);
+  Future<PendingTransaction> createTransaction({
+      required String recipient,
+      required String? amount,
+      OxenTransactionPriority priority = OxenTransactionPriority.blink});
 
   Future rescan({int restoreHeight = 0});
 }

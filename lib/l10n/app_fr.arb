@@ -20,6 +20,8 @@
   "contact_name" : "Nom du contact",
   "reset" : "Réinitialiser",
   "save" : "Sauvegarder",
+  "remove_contact" : "Supprimer le Contact",
+  "remove_contact_confirm" : "Êtes vous sûr de vouloir supprimer le contact sélectionné?",
 
 
   "authenticated" : "Authentifié",
@@ -28,7 +30,7 @@
 
 
   "wallet_menu" : "Menu du portefeuille",
-  "Blocks_remaining" : "{status} blocs restants",
+  "blocks_remaining" : "{status} blocs restants",
   "please_try_to_connect_to_another_node" : "veuillez essayer de vous connecter à un autre node",
   "oxen_hidden" : "OXEN caché",
   "oxen_available_balance" : "OXEN solde disponible",
@@ -44,6 +46,7 @@
   "yesterday" : "hier",
   "received" : "a reçu",
   "sent" : "expédié",
+  "stake" : "Stake",
   "pending" : " (en attente)",
   "rescan" : "réanalyser",
   "reconnect" : "se reconnecter",
@@ -66,8 +69,9 @@
   "amount" : "Montant: ",
   "status" : "Statut: ",
   "confirm" : "confirmer",
-  "confirm_sending" : "confirmer l'envoi",
-  "commit_transaction_amount_fee" : "Valider la transaction\nMontant: {amount}\nFee: {fee}",
+  "confirm_sending" : "Confirmer l'envoi",
+  "confirm_stake" : "Confirmer le Stake",
+  "confirm_transaction_amount_fee" : "Montant: {amount} OXEN\nFee: {fee} OXEN",
   "sending" : "Envoyer",
   "transaction_sent" : "Transaction envoyé!",
   "send_oxen" : "Envoyer OXEN",
@@ -83,6 +87,10 @@
   "new_wallet" : "Nouveau portefeuille",
   "wallet_name" : "Nom du portefeuille",
   "continue_text" : "Continuez",
+
+
+  "remove_wallet_confirmation": "Êtes vous sûr de vouloir supprimer ce wallet?",
+  "dangerzone_remove_wallet_warning": "Si vous n'avez pas sauvegardé votre phrase de récupération tous les fonds envoyés sur ce wallet seront perdus pour toujours!",
 
 
   "node_new" : "Nouveau Node",
@@ -101,8 +109,7 @@
   "delete" : "effacer",
 
 
-  "use" : "Basculer vers ",
-  "digit_pin" : "-chiffre PIN",
+  "use_n_digit_pin" : "Basculer vers {n}-chiffre PIN",
 
 
   "share_address" : "Partager l'adresse ",
@@ -118,7 +125,7 @@
   "restore_description_from_backup" : "Vous pouvez restaurer l'intégralité de l'application Oxen Wallet à partir de son fichier de sauvegarde.",
   "restore_seed_keys_restore" : "Restaurer depuis le Seed ou les clés",
   "restore_title_from_seed" : "Restaurer à partir du Seed",
-  "restore_description_from_seed" : "Récupérez votre portefeuille à partir du code de combinaison de 25 ou 13 mots",
+  "restore_description_from_seed" : "Récupérez votre portefeuille à partir du code de combinaison de 25 mots",
   "restore_title_from_keys" : "Récupération des clés",
   "restore_description_from_keys" : "Restaurez votre portefeuille à partir du mnemonic généré à partir de vos clés privées",
   "restore_wallet_name" : "Nom du portefeuille",
@@ -251,25 +258,20 @@
   "router_no_route" : "Aucun itinéraire défini pour {name}",
 
 
-  "error_text_account_name" : "Le nom du compte ne peut contenir que des lettres et des chiffres\net doit comporter entre 1 et 15 caractères",
-  "error_text_contact_name" : "Dans le nom du contact, les symboles ` , ' \" ne doivent pas être inclus\net doit comporter entre 1 et 32 ​​caractères",
-  "error_text_address" : "L'adresse du portefeuille doit correspondre au type de crypto-monnaie",
-  "error_text_node_address" : "Veuillez saisir une adresse iPv4",
+  "error_text_empty": "Ne peux pas être vide",
+  "error_text_address" : "Adresse de portefeuille OXEN invalide!",
+  "error_text_node_address" : "Veuillez saisir une adresse IP",
   "error_text_node_port" : "Le port du Node ne peut contenir que des nombres compris entre 0 et 65535",
   "error_text_payment_id" : "L'ID de paiement ne peut contenir que 16 à 64 caractères hexadécimaux",
-  "error_text_oxen" : "La valeur OXEN ne peut pas dépasser le solde disponible.\nLe nombre de décimales doit être inférieur ou égal à 12",
+  "error_text_oxen" : "La valeur OXEN ne peut pas dépasser le solde disponible.\nLe nombre de décimales doit être inférieur ou égal à 9",
   "error_text_fiat" : "La valeur du montant ne peut pas dépasser le solde disponible du compte.\nLe nombre de décimales doit être inférieur ou égal à 2",
-  "error_text_subaddress_name" : "Au nom de la sous-adresse, les symboles ` , ' \" ne pas être inclus\net doit comporter entre 1 et 20 caractères",
   "error_text_amount" : "Le montant ne peut contenir que des nombres",
-  "error_text_wallet_name" : "Le nom du portefeuille ne peut contenir que des lettres et des chiffres\net doit comporter entre 1 et 15 caractères",
   "error_text_keys" : "Les clés de portefeuille ne peuvent contenir que 64 caractères hexadécimaux",
-  "error_text_crypto_currency" : "Le nombre de décimales\nm doit être inférieur ou égal à 12.",
+  "error_text_crypto_currency" : "Le nombre de décimales\nm doit être inférieur ou égal à 9.",
   "error_text_service_node" : "Une clé de nœud de service ne peut contenir que 64 caractères maximum",
 
 
-  "auth_store_ban_timeout" : "Interdire le délai d'expiration",
-  "auth_store_banned_for" : "Interdit pour ",
-  "auth_store_banned_minutes" : " Protocole",
+  "auth_store_banned_for" : "Interdit pendant {mins} minutes",
   "auth_store_incorrect_password" : "mauvais code PIN",
   "wallet_restoration_store_incorrect_seed_length" : "mauvaise longueur du Seed",
 
@@ -299,6 +301,7 @@
   "restore_from_seed_placeholder" : "Veuillez entrer votre code ici",
   "add_new_word" : "Ajouter un nouveau mot",
   "incorrect_seed" : "Le texte saisi n'est pas valide.",
+  "invalid_seed_words": "\nMots invalide: {words}.",
 
   "biometric_auth_reason" : "Scannez votre empreinte digitale pour l'authentification",
   "version" : "Version {currentVersion}",

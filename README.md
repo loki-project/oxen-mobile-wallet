@@ -9,12 +9,12 @@ The Oxen Wallet is a Fork of the Cake Wallet.
     flutter pub get
     ```
 
-2. Run the build_runner
+2. Run the build_runner to create generated dependency files:
     ```shell script
-    flutter pub run build_runner build
+    flutter pub run build_runner build --delete-conflicting-outputs
     ```
 
-3. To download the latest build of the Oxen Dependencies run 
+3. To download the latest build of the Oxen Dependencies run:
    ```
    ./tool/download-android-deps.sh https://oxen.rocks/oxen-io/oxen-core/oxen-stable-android-deps-LATEST.tar.xz
    ./tool/download-ios-deps.sh https://oxen.rocks/oxen-io/oxen-core/oxen-stable-ios-deps-LATEST.tar.xz
@@ -41,6 +41,16 @@ The Oxen Wallet is a Fork of the Cake Wallet.
     ```shell script
     flutter run
     ```
+
+  or build APKs with:
+  ```shell script
+  flutter build apk --split-per-abi
+  ```
+
+  or build an .aab (for Google Play Store) with:
+  ```shell script
+  flutter build appbundle
+  ```
 
 ## Copyright
 Copyright (c) 2020 Konstantin Ullrich.\

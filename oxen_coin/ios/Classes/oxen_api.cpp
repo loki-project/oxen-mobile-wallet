@@ -1,5 +1,6 @@
 #include <cstdint>
 #include <cstdlib>
+#include <cstring>
 #include <chrono>
 #include <functional>
 #include <iostream>
@@ -19,15 +20,29 @@ namespace Oxen = Wallet;
 
 extern "C"
 {
-    struct Utf8Box
+    typedef struct
     {
-        char *value;
+        bool good;
+        char error[1023];
+    } status_and_error;
 
-        Utf8Box(char *_value)
-        {
-            value = _value;
-        }
-    };
+    void set_error(status_and_error& sae, std::string_view error) {
+        size_t len = std::min(error.size(), sizeof(sae.error)-1);
+        std::memcpy(sae.error, error.data(), len);
+        sae.error[len] = '\0';
+    }
+    status_and_error make_status_and_error(bool good, std::string_view error) {
+        status_and_error sae;
+        sae.good = good;
+        set_error(sae, error);
+        return sae;
+    }
+    status_and_error make_good_status() {
+        return make_status_and_error(true, "");
+    }
+    status_and_error make_fail_status(std::string_view error) {
+        return make_status_and_error(false, error);
+    }
 
     struct SubaddressRow
     {
@@ -133,6 +148,7 @@ extern "C"
         uint32_t subaddrAccount;
         int8_t direction;
         int8_t isPending;
+        int8_t isStake;
         
         char *hash;
         char *paymentId;
@@ -149,6 +165,7 @@ extern "C"
             datetime = static_cast<int64_t>(transaction->timestamp());            
             direction = transaction->direction();
             isPending = static_cast<int8_t>(transaction->isPending());
+            isStake = static_cast<int8_t>(transaction->isStake());
             std::string *hash_str = new std::string(transaction->hash());
             hash = strdup(hash_str->c_str());
             paymentId = strdup(transaction->paymentId().c_str());
@@ -248,7 +265,7 @@ extern "C"
     }
 
     EXPORT
-    bool create_wallet(char *path, char *password, char *language, int32_t networkType, char *error)
+    status_and_error create_wallet(char *path, char *password, char *language, int32_t networkType)
     {
         Oxen::NetworkType _networkType = static_cast<Oxen::NetworkType>(networkType);
         Oxen::WalletManagerBase *walletManager = Oxen::WalletManagerFactory::getWalletManager();
@@ -256,55 +273,42 @@ extern "C"
 
         auto stat = wallet->status();
 
-        auto& [status, errorString] = stat;
-
-        if (status != Oxen::Wallet::Status_Ok)
-        {
-            error = strdup(errorString.c_str());
-            return false;
-        }
+        if (stat.first != Oxen::Wallet::Status_Ok)
+            return make_fail_status(stat.second);
 
         walletManager->closeWallet(wallet);
-        wallet = walletManager->openWallet(std::string(path), std::string(password), _networkType);
+        wallet = walletManager->openWallet(path, password, _networkType);
 
         stat = wallet->status();
 
-        if (status != Oxen::Wallet::Status_Ok)
-        {
-            error = strdup(errorString.c_str());
-            return false;
-        }
+        if (stat.first != Oxen::Wallet::Status_Ok)
+            return make_fail_status(stat.second);
 
         change_current_wallet(wallet);
 
-        return true;
+        return make_good_status();
     }
 
     EXPORT
-    bool restore_wallet_from_seed(char *path, char *password, char *seed, int32_t networkType, uint64_t restoreHeight, char *error)
+    status_and_error restore_wallet_from_seed(char *path, char *password, char *seed, int32_t networkType, uint64_t restoreHeight)
     {
         Oxen::NetworkType _networkType = static_cast<Oxen::NetworkType>(networkType);
         Oxen::Wallet *wallet = Oxen::WalletManagerFactory::getWalletManager()->recoveryWallet(
-            std::string(path),
-            std::string(password),
-            std::string(seed),
-            _networkType,
-            (uint64_t)restoreHeight);
+            path, password, seed, _networkType, restoreHeight);
 
         auto [status, errorString] = wallet->status();
 
         if (status != Oxen::Wallet::Status_Ok)
         {
-            error = strdup(errorString.c_str());
-            return false;
+            return make_fail_status(errorString);
         }
 
         change_current_wallet(wallet);
-        return true;
+        return make_good_status();
     }
 
     EXPORT
-    bool restore_wallet_from_keys(char *path, char *password, char *language, char *address, char *viewKey, char *spendKey, int32_t networkType, uint64_t restoreHeight, char *error)
+    status_and_error restore_wallet_from_keys(char *path, char *password, char *language, char *address, char *viewKey, char *spendKey, int32_t networkType, uint64_t restoreHeight)
     {
         Oxen::NetworkType _networkType = static_cast<Oxen::NetworkType>(networkType);
         Oxen::Wallet *wallet = Oxen::WalletManagerFactory::getWalletManager()->createWalletFromKeys(
@@ -321,13 +325,10 @@ extern "C"
         auto [status, errorString] = wallet->status();
 
         if (status != Oxen::Wallet::Status_Ok || !errorString.empty())
-        {
-            error = strdup(errorString.c_str());
-            return false;
-        }
+            return make_fail_status(errorString);
 
         change_current_wallet(wallet);
-        return true;
+        return make_good_status();
     }
 
     EXPORT
@@ -425,21 +426,19 @@ extern "C"
     }
 
     EXPORT
-    bool connect_to_node(char *error)
+    status_and_error connect_to_node()
     {
         nice(19);
         bool is_connected = get_current_wallet()->connectToDaemon();
 
         if (!is_connected)
-        {
-            error = strdup(get_current_wallet()->status().second.c_str());
-        }
+            return make_fail_status(get_current_wallet()->status().second);
 
-        return is_connected;
+        return make_good_status();
     }
 
     EXPORT
-    bool setup_node(char *address, char *login, char *password, bool use_ssl, bool is_light_wallet, char *error)
+    status_and_error setup_node(char *address, char *login, char *password, bool use_ssl)
     {
         nice(19);
         Oxen::Wallet *wallet = get_current_wallet();
@@ -448,25 +447,17 @@ extern "C"
         std::string _password = "";
 
         if (login != nullptr)
-        {
-            _login = std::string(login);
-        }
+            _login = login;
 
         if (password != nullptr)
-        {
-            _password = std::string(password);
-        }
+            _password = password;
 
-        bool inited = wallet->init(std::string(address), 0, _login, _password, use_ssl, is_light_wallet);
+        bool inited = wallet->init(address, 0, _login, _password, use_ssl);
 
-        if (!inited)
-        {
-            error = strdup(wallet->status().second.c_str());
-        } else if (!wallet->connectToDaemon()) {
-            error = strdup(wallet->status().second.c_str());
-        }
+        if (!inited || !wallet->connectToDaemon())
+            return make_fail_status(wallet->status().second);
 
-        return inited;
+        return make_good_status();
     }
 
     EXPORT
@@ -527,25 +518,26 @@ extern "C"
     }
 
     EXPORT
-    bool stake_create(char *service_node_key, char *amount, Utf8Box &error, PendingTransactionRaw &pendingTransaction)
+    status_and_error stake_create(char *service_node_key, char *amount, PendingTransactionRaw &pendingTransaction)
     {
         nice(19);
 
         Oxen::PendingTransaction *transaction;
 
-        uint64_t _amount = Oxen::Wallet::amountFromString(std::string(amount));
-        transaction = m_wallet->stakePending(std::string(service_node_key), _amount);
+        uint64_t _amount = amount != nullptr
+            ? Oxen::Wallet::amountFromString(amount)
+            : get_unlocked_balance(0);
+        transaction = m_wallet->stakePending(service_node_key, _amount);
 
         int status = transaction->status().first;
 
         if (status == Oxen::PendingTransaction::Status::Status_Error || status == Oxen::PendingTransaction::Status::Status_Critical)
         {
-            error = Utf8Box(strdup(transaction->status().second.c_str()));
-            return false;
+            return make_fail_status(transaction->status().second);
         }
 
         pendingTransaction = PendingTransactionRaw(transaction);
-        return true;
+        return make_good_status();
     }
 
     EXPORT
@@ -556,20 +548,16 @@ extern "C"
     }
 
     EXPORT
-    bool submit_stake_unlock(char *service_node_key, Utf8Box &error, PendingTransactionRaw &pendingTransaction)
+    status_and_error submit_stake_unlock(char *service_node_key, PendingTransactionRaw &pendingTransaction)
     {
         std::unique_ptr<Oxen::StakeUnlockResult> stakeUnlockResult{m_wallet->requestStakeUnlock(service_node_key)};
 
         if (stakeUnlockResult->success())
         {
             pendingTransaction = stakeUnlockResult->ptx();
-            return true;
+            return make_good_status();
         }
-        else
-        {
-            error = Utf8Box(strdup(stakeUnlockResult->msg().c_str()));
-            return false;
-        }
+        return make_fail_status(stakeUnlockResult->msg());
     }
 
     EXPORT
@@ -579,55 +567,48 @@ extern "C"
     }
 
     EXPORT
-    bool transaction_create(char *address, char *amount, uint8_t priority, uint32_t subaddr_account, Utf8Box &error,
+    status_and_error transaction_create(char *address, char *amount, uint8_t priority, uint32_t subaddr_account,
         PendingTransactionRaw &pendingTransaction)
     {
         nice(19);
 
         Oxen::PendingTransaction *transaction;
 
+        std::optional<uint64_t> amt;
         if (amount != nullptr)
-        {
-            uint64_t _amount = Oxen::Wallet::amountFromString(std::string(amount));
-            transaction = m_wallet->createTransaction(std::string(address), _amount, priority, subaddr_account);
-        }
-        else
-        {
-            transaction = m_wallet->createTransaction(std::string(address), std::optional<uint64_t>(), priority, subaddr_account);
-        }
+            amt = Oxen::Wallet::amountFromString(amount);
+
+        transaction = m_wallet->createTransaction(address, amt, priority, subaddr_account);
 
         int status = transaction->status().first;
 
         if (status == Oxen::PendingTransaction::Status::Status_Error || status == Oxen::PendingTransaction::Status::Status_Critical)
         {
-            error = Utf8Box(strdup(transaction->status().second.c_str()));
-            return false;
+            return make_fail_status(transaction->status().second);
         }
 
         pendingTransaction = PendingTransactionRaw(transaction);
-        return true;
+        return make_good_status();
     }
 
     EXPORT
-    bool transaction_commit(PendingTransactionRaw *transaction, Utf8Box &error)
+    status_and_error transaction_commit(PendingTransactionRaw *transaction)
     {
-        bool committed = transaction->transaction->commit();
+        status_and_error result = make_status_and_error(transaction->transaction->commit(), "");
 
-        if (!committed)
-        {
-            error = Utf8Box(strdup(transaction->transaction->status().second.c_str()));
-        } else if (m_listener != nullptr) {
+        if (!result.good)
+            set_error(result, transaction->transaction->status().second);
+        else if (m_listener)
             m_listener->m_new_transaction = true;
-        }
 
-        return committed;
+        return result;
     }
 
     EXPORT
-    uint64_t get_node_height_or_update(uint64_t base_eight)
+    uint64_t get_node_height_or_update(uint64_t base_height)
     {
-        if (m_cached_syncing_blockchain_height < base_eight) {
-            m_cached_syncing_blockchain_height = base_eight;
+        if (m_cached_syncing_blockchain_height < base_height) {
+            m_cached_syncing_blockchain_height = base_height;
         }
 
         return m_cached_syncing_blockchain_height;

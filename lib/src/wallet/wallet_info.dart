@@ -6,12 +6,12 @@ part 'wallet_info.g.dart';
 @HiveType(typeId: 4)
 class WalletInfo extends HiveObject {
   WalletInfo(
-      {this.id,
-      this.name,
-      this.type,
-      this.isRecovery,
-      this.restoreHeight,
-      this.timestamp,
+      {required this.id,
+      required this.name,
+      required this.type,
+      required this.isRecovery,
+      required this.restoreHeight,
+      required this.timestamp,
       this.hasTestnet = false});
 
   static const boxName = 'WalletInfo';

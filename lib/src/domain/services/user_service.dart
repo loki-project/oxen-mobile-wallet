@@ -4,7 +4,7 @@ import 'package:oxen_wallet/src/domain/common/secret_store_key.dart';
 import 'package:oxen_wallet/src/domain/common/encrypt.dart';
 
 class UserService {
-  UserService({this.sharedPreferences, this.secureStorage});
+  UserService({required this.sharedPreferences, required this.secureStorage});
 
   final FlutterSecureStorage secureStorage;
   final SharedPreferences sharedPreferences;
@@ -24,21 +24,24 @@ class UserService {
   Future<bool> canAuthenticate() async {
     final key = generateStoreKeyFor(key: SecretStoreKey.pinCodePassword);
     final sharedPreferences = await SharedPreferences.getInstance();
-    final walletName = sharedPreferences.getString('current_wallet_name') ?? '';
-    var password = '';
+    final walletName = sharedPreferences.getString('current_wallet_name');
+    if (!(walletName?.isNotEmpty ?? false))
+      return false;
 
+    String? password;
     try {
       password = await secureStorage.read(key: key);
     } catch (e) {
       print(e);
     }
-
-    return walletName.isNotEmpty && password.isNotEmpty;
+    return password?.isNotEmpty ?? false;
   }
 
   Future<bool> authenticate(String pin) async {
     final key = generateStoreKeyFor(key: SecretStoreKey.pinCodePassword);
     final encodedPin = await secureStorage.read(key: key);
+    if (encodedPin == null)
+      return false;
     final decodedPin = decodedPinCode(pin: encodedPin);
 
     return decodedPin == pin;

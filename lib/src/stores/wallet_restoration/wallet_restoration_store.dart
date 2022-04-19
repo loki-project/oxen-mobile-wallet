@@ -1,12 +1,11 @@
 import 'package:mobx/mobx.dart';
-import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:oxen_wallet/src/domain/services/wallet_list_service.dart';
-import 'package:oxen_wallet/src/wallet/mnemotic_item.dart';
+import 'package:oxen_wallet/src/wallet/mnemonic_item.dart';
 import 'package:oxen_wallet/src/stores/wallet_restoration/wallet_restoration_state.dart';
 import 'package:oxen_wallet/src/stores/authentication/authentication_store.dart';
-import 'package:oxen_wallet/src/domain/common/crypto_currency.dart';
-import 'package:oxen_wallet/generated/l10n.dart';
+import 'package:oxen_wallet/l10n.dart';
+import 'package:oxen_wallet/src/util/validators.dart';
 
 part 'wallet_restoration_store.g.dart';
 
@@ -16,30 +15,25 @@ class WalletRestorationStore = WalletRestorationStoreBase
 abstract class WalletRestorationStoreBase with Store {
   WalletRestorationStoreBase(
       {this.seed,
-      @required this.authStore,
-      @required this.walletListService,
-      @required this.sharedPreferences}) {
-    state = WalletRestorationStateInitial();
-  }
+      required this.authStore,
+      required this.walletListService,
+      required this.sharedPreferences});
 
   final AuthenticationStore authStore;
   final WalletListService walletListService;
   final SharedPreferences sharedPreferences;
 
   @observable
-  WalletRestorationState state;
+  WalletRestorationState state = WalletRestorationStateInitial();
 
   @observable
-  String errorMessage;
+  String? errorMessage;
 
   @observable
-  bool isValid;
-
-  @observable
-  List<MnemoticItem> seed;
+  List<MnemonicItem>? seed;
 
   @action
-  Future restoreFromSeed({String name, String seed, int restoreHeight}) async {
+  Future restoreFromSeed({required String name, String? seed, required int restoreHeight}) async {
     state = WalletRestorationStateInitial();
     final _seed = seed ?? _seedText();
 
@@ -55,12 +49,12 @@ abstract class WalletRestorationStoreBase with Store {
 
   @action
   Future restoreFromKeys(
-      {String name,
-      String language,
-      String address,
-      String viewKey,
-      String spendKey,
-      int restoreHeight}) async {
+      {required String name,
+      required String language,
+      required String address,
+      required String viewKey,
+      required String spendKey,
+      required int restoreHeight}) async {
     state = WalletRestorationStateInitial();
 
     try {
@@ -75,95 +69,43 @@ abstract class WalletRestorationStoreBase with Store {
   }
 
   @action
-  void setSeed(List<MnemoticItem> seed) {
+  void setSeed(List<MnemonicItem> seed) {
     this.seed = seed;
   }
 
   @action
-  void validateSeed(List<MnemoticItem> seed) {
+  void validateSeed(List<MnemonicItem>? seed, AppLocalizations l10n) {
     final _seed = seed ?? this.seed;
-    var isValid = _seed != null ? _seed.length == 25 : false;
 
-    if (!isValid) {
-      errorMessage = S.current.wallet_restoration_store_incorrect_seed_length;
-      this.isValid = isValid;
+    if (_seed == null || _seed.length != 25) {
+      errorMessage = l10n.wallet_restoration_store_incorrect_seed_length;
       return;
     }
 
     for (final item in _seed) {
       if (!item.isCorrect()) {
-        isValid = false;
-        break;
+        errorMessage = l10n.incorrect_seed;
+        return;
       }
     }
 
-    if (isValid) {
-      errorMessage = null;
-    }
-
-    this.isValid = isValid;
+    errorMessage = null;
     return;
   }
 
   String _seedText() {
-    return seed.fold('', (acc, item) => acc + ' ' + item.toString());
+    return seed?.join(' ') ?? '';
   }
 
-  void validateWalletName(String value) {
-    const pattern = '^[a-zA-Z0-9_]{1,15}\$';
-    final regExp = RegExp(pattern);
-    isValid = regExp.hasMatch(value);
-    errorMessage = isValid ? null : S.current.error_text_wallet_name;
+  void validateWalletName(String value, AppLocalizations l10n) {
+    errorMessage = hasNonWhitespace(value) ? null : l10n.error_text_empty;
   }
 
-  void validateAddress(String value, {CryptoCurrency cryptoCurrency}) {
-    // OXEN (95, 106), XMR (95, 106), ADA (59, 92, 105), BCH (42), BNB (42),
-    // BTC (34, 42), DASH (34), EOS (42), ETH (42), LTC (34), NANO (64, 65),
-    // TRX (34), USDT (42), XLM (56), XRP (34)
-    const pattern = '^[0-9a-zA-Z]{95}\$|^[0-9a-zA-Z]{34}\$|^[0-9a-zA-Z]{42}\$|^[0-9a-zA-Z]{56}\$|^[0-9a-zA-Z]{59}\$|^[0-9a-zA-Z_]{64}\$|^[0-9a-zA-Z_]{65}\$|^[0-9a-zA-Z]{92}\$|^[0-9a-zA-Z]{105}\$|^[0-9a-zA-Z]{106}\$';
-    final regExp = RegExp(pattern);
-    isValid = regExp.hasMatch(value);
-    if (isValid && cryptoCurrency != null) {
-      switch (cryptoCurrency) {
-        case CryptoCurrency.xmr:
-        case CryptoCurrency.oxen:
-          isValid = (value.length == 95)||(value.length == 106);
-          break;
-        case CryptoCurrency.bch:
-        case CryptoCurrency.bnb:
-        case CryptoCurrency.usdt:
-        case CryptoCurrency.eos:
-        case CryptoCurrency.eth:
-          isValid = (value.length == 42);
-          break;
-        case CryptoCurrency.dash:
-        case CryptoCurrency.ltc:
-        case CryptoCurrency.trx:
-        case CryptoCurrency.xrp:
-          isValid = (value.length == 34);
-          break;
-        case CryptoCurrency.ada:
-          isValid = (value.length == 59)||(value.length == 92)||(value.length == 105);
-          break;
-        case CryptoCurrency.btc:
-          isValid = (value.length == 34)||(value.length == 42);
-          break;
-        case CryptoCurrency.nano:
-          isValid = (value.length == 64)||(value.length == 65);
-          break;
-        case CryptoCurrency.xlm:
-          isValid = (value.length == 56);
-          break;
-      }
-    }
-
-    errorMessage = isValid ? null : S.current.error_text_address;
+  void validateAddress(String value, {required AppLocalizations l10n}) {
+    errorMessage = isValidOxenAddress(value) ? null : l10n.error_text_address;
   }
 
-  void validateKeys(String value) {
-    const pattern = '^[A-Fa-f0-9]{64}\$';
-    final regExp = RegExp(pattern);
-    isValid = regExp.hasMatch(value);
-    errorMessage = isValid ? null : S.current.error_text_keys;
+  void validateKeys(String value, AppLocalizations l10n) {
+    errorMessage = isHexKey(value) ? null : l10n.error_text_keys;
   }
 }

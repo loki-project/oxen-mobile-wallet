@@ -83,6 +83,7 @@ class OxenPalette {
   static const Color black = Color.fromRGBO(0, 0, 0, 1.0); // #000000
 
   // Opacity
+  static const Color navyWithOpacity = Color.fromRGBO(31, 28, 71, 0.8);
   static const Color tealWithOpacity = Color.fromRGBO(18, 199, 186, 0.2);
   static const Color lightRedWithOpacity = Color.fromRGBO(255, 122, 135, 0.5);
   static const Color limeWithOpacity = Color.fromRGBO(195, 245, 58, 0.5);

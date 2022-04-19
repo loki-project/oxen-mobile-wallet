@@ -1,4 +1,3 @@
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:oxen_wallet/src/wallet/oxen/transaction/transaction_priority.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -32,8 +31,7 @@ import 'package:oxen_wallet/src/domain/common/default_settings_migration.dart';
 import 'package:oxen_wallet/src/domain/common/fiat_currency.dart';
 import 'package:oxen_wallet/src/wallet/wallet_type.dart';
 import 'package:oxen_wallet/src/domain/services/wallet_service.dart';
-import 'package:oxen_wallet/generated/l10n.dart';
-import 'package:oxen_wallet/src/domain/common/language.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:oxen_wallet/src/stores/seed_language/seed_language_store.dart';
 
 void main() async {
@@ -57,7 +55,7 @@ void main() async {
     final nodes = await Hive.openBox<Node>(Node.boxName);
     final transactionDescriptions = await Hive.openBox<TransactionDescription>(
         TransactionDescription.boxName,
-        encryptionKey: transactionDescriptionsBoxKey);
+        encryptionCipher: HiveAesCipher(transactionDescriptionsBoxKey));
     final walletInfoSource = await Hive.openBox<WalletInfo>(WalletInfo.boxName);
 
     final sharedPreferences = await SharedPreferences.getInstance();
@@ -121,7 +119,7 @@ void main() async {
       Provider(create: (_) => transactionDescriptions),
       Provider(create: (_) => seedLanguageStore)
     ], child: OxenWalletApp()));
-  } catch (e) {
+  } catch (e, trace) {
     runApp(MaterialApp(
       debugShowCheckedModeBanner: true,
       home: Scaffold(
@@ -129,7 +127,7 @@ void main() async {
           margin:
             EdgeInsets.only(top: 50, left: 20, right: 20, bottom: 20),
           child: Text(
-            'Error:\n${e.toString()}',
+            'Error:\n${e.toString()}\n${trace.toString()}',
             style: TextStyle(fontSize: 22),
           )
         )
@@ -139,13 +137,11 @@ void main() async {
 }
 
 Future<void> initialSetup(
-    {WalletListService walletListService,
-    SharedPreferences sharedPreferences,
-    Box<Node> nodes,
-    AuthenticationStore authStore,
-    int initialMigrationVersion = 1,
-    WalletType initialWalletType = WalletType.oxen}) async {
-  await walletListService.changeWalletManger(walletType: initialWalletType);
+    {required WalletListService walletListService,
+    required SharedPreferences sharedPreferences,
+    required Box<Node> nodes,
+    required AuthenticationStore authStore,
+    required int initialMigrationVersion}) async {
   await defaultSettingsMigration(
       version: initialMigrationVersion,
       sharedPreferences: sharedPreferences,
@@ -167,9 +163,7 @@ class OxenWalletApp extends StatelessWidget {
     return ChangeNotifierProvider<ThemeChanger>(
         create: (_) => ThemeChanger(
             settingsStore.isDarkTheme ? Themes.darkTheme : Themes.lightTheme),
-        child: ChangeNotifierProvider<Language>(
-            create: (_) => Language(settingsStore.languageCode),
-            child: MaterialAppWithTheme()));
+        child: MaterialAppWithTheme());
   }
 }
 
@@ -188,7 +182,6 @@ class MaterialAppWithTheme extends StatelessWidget {
     final theme = Provider.of<ThemeChanger>(context);
     final statusBarColor =
         settingsStore.isDarkTheme ? Colors.black : Colors.white;
-    final currentLanguage = Provider.of<Language>(context);
     final contacts = Provider.of<Box<Contact>>(context);
     final nodes = Provider.of<Box<Node>>(context);
     final transactionDescriptions =
@@ -200,14 +193,8 @@ class MaterialAppWithTheme extends StatelessWidget {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: theme.getTheme(),
-        localizationsDelegates: [
-          S.delegate,
-          GlobalCupertinoLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-        ],
-        supportedLocales: S.delegate.supportedLocales,
-        locale: Locale(currentLanguage.getCurrentLanguage()),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         onGenerateRoute: (settings) => oxenroute.Router.generateRoute(
             sharedPreferences: sharedPreferences,
             walletListService: walletListService,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:oxen_wallet/routes.dart';
 import 'package:provider/provider.dart';
-import 'package:oxen_wallet/generated/l10n.dart';
+import 'package:oxen_wallet/l10n.dart';
 import 'package:oxen_wallet/src/stores/wallet_list/wallet_list_store.dart';
 import 'package:oxen_wallet/src/wallet/wallet_description.dart';
 import 'package:oxen_wallet/src/screens/auth/auth_page.dart';
@@ -11,85 +11,58 @@ class WalletMenu {
 
   final BuildContext context;
 
-  final List<String> listItems = [
-    S.current.wallet_list_load_wallet,
-    S.current.show_seed,
-    S.current.remove,
-    S.current.rescan
-  ];
-
-  List<String> generateItemsForWalletMenu(bool isCurrentWallet) {
-    final items = <String>[];
-
-    if (!isCurrentWallet) items.add(listItems[0]);
-    if (isCurrentWallet) items.add(listItems[1]);
-    if (!isCurrentWallet) items.add(listItems[2]);
-    if (isCurrentWallet) items.add(listItems[3]);
-
-    return items;
+  List<String> generateItemsForWalletMenu() {
+    final l10n = tr(context);
+    return [
+        l10n.wallet_list_load_wallet,
+        l10n.remove
+    ];
   }
 
-  void action(int index, WalletDescription wallet, bool isCurrentWallet) {
+  void action(int index, WalletDescription wallet) {
     final _walletListStore = context.read<WalletListStore>();
+    final t = tr(context);
+    final nav = Navigator.of(context);
 
-    switch (index) {
-      case 0:
-        Navigator.of(context).pushNamed(Routes.auth, arguments:
-            (bool isAuthenticatedSuccessfully, AuthPageState auth) async {
-          if (!isAuthenticatedSuccessfully) {
-            return;
-          }
+    nav.pushNamed(
+      Routes.auth,
+      arguments: (bool authSuccessful, AuthPageState auth) async {
+        if (!authSuccessful)
+          return;
 
-          try {
-            auth.changeProcessText(
-                S.of(context).wallet_list_loading_wallet(wallet.name));
-            await _walletListStore.loadWallet(wallet);
+        switch (index) {
+          case 0:
+            try {
+              auth.changeProcessText(context, t.wallet_list_loading_wallet(wallet.name));
+              await _walletListStore.loadWallet(wallet);
+              auth.close();
+              nav.pop();
+            } catch (e) {
+              auth.changeProcessText(context, t.wallet_list_failed_to_load(wallet.name, e.toString()));
+            }
+            break;
+          case 1:
             auth.close();
-            Navigator.of(context).pop();
-          } catch (e) {
-            auth.changeProcessText(S
-                .of(context)
-                .wallet_list_failed_to_load(wallet.name, e.toString()));
-          }
-        });
-        break;
-      case 1:
-        Navigator.of(context).pushNamed(Routes.auth, arguments:
-            (bool isAuthenticatedSuccessfully, AuthPageState auth) async {
-          if (!isAuthenticatedSuccessfully) {
-            return;
-          }
-          auth.close();
-          await Navigator.of(context).pushNamed(Routes.seed);
-        });
-        break;
-      case 2:
-        Navigator.of(context).pushNamed(Routes.auth, arguments:
-            (bool isAuthenticatedSuccessfully, AuthPageState auth) async {
-          if (!isAuthenticatedSuccessfully) {
-            return;
-          }
-
-          await Navigator.of(context).pushNamed(Routes.dangerzoneRemoveWallet, arguments:
-            () async {
-              try {
-                auth.changeProcessText(
-                    S.of(context).wallet_list_removing_wallet(wallet.name));
-                await _walletListStore.remove(wallet);
-                auth.close();
-              } catch (e) {
-                auth.changeProcessText(S
-                    .of(context)
-                    .wallet_list_failed_to_remove(wallet.name, e.toString()));
+            await nav.pushNamed(
+              Routes.dangerzoneRemoveWallet,
+              arguments: () async {
+                try {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(t.wallet_list_removing_wallet(wallet.name)),
+                    backgroundColor: Colors.green
+                  ));
+                  await _walletListStore.remove(wallet);
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(t.wallet_list_failed_to_remove(wallet.name, e.toString())),
+                    backgroundColor: Colors.red
+                  ));
+                }
               }
-            });
-        });
-        break;
-      case 3:
-        Navigator.of(context).pushNamed(Routes.rescan);
-        break;
-      default:
-        break;
-    }
+            );
+            break;
+        }
+      },
+    );
   }
 }

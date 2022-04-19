@@ -25,7 +25,7 @@ int serializeToInt(WalletType type) {
   }
 }
 
-WalletType deserializeToInt(int raw) {
+WalletType? deserializeToInt(int raw) {
   switch (raw) {
     case 0:
       return WalletType.monero;
@@ -36,7 +36,7 @@ WalletType deserializeToInt(int raw) {
   }
 }
 
-String walletTypeToString(WalletType type) {
+String? walletTypeToString(WalletType type) {
   switch (type) {
     case WalletType.monero:
       return 'Monero';

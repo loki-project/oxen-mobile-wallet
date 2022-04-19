@@ -1,9 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:oxen_wallet/generated/l10n.dart';
+import 'package:oxen_wallet/l10n.dart';
 import 'package:oxen_wallet/palette.dart';
-import 'package:oxen_wallet/src/wallet/mnemotic_item.dart';
+import 'package:oxen_wallet/src/wallet/mnemonic_item.dart';
 import 'package:oxen_wallet/src/wallet/oxen/mnemonics/chinese_simplified.dart';
 import 'package:oxen_wallet/src/wallet/oxen/mnemonics/dutch.dart';
 import 'package:oxen_wallet/src/wallet/oxen/mnemonics/english.dart';
@@ -21,12 +20,9 @@ final List<String> _englishWords =
     EnglishMnemonics.words + EnglishOldMnemonics.words;
 
 class SeedWidget extends StatefulWidget {
-  SeedWidget({Key key, this.onMnemoticChange, this.onFinish, this.seedLanguage})
+  SeedWidget({required Key key, required this.onMnemonicChange, required this.onFinish, required this.seedLanguage})
       : super(key: key) {
     switch (seedLanguage) {
-      case 'English':
-        words = _englishWords;
-        break;
       case 'Chinese (simplified)':
         words = ChineseSimplifiedMnemonics.words;
         break;
@@ -54,15 +50,16 @@ class SeedWidget extends StatefulWidget {
       case 'Italian':
         words = ItalianMnemonics.words;
         break;
+      case 'English':
       default:
         words = _englishWords;
     }
   }
 
-  final Function(List<MnemoticItem>) onMnemoticChange;
+  final Function(List<MnemonicItem>) onMnemonicChange;
   final Function() onFinish;
   final String seedLanguage;
-  List<String> words;
+  late final List<String> words;
 
   @override
   SeedWidgetState createState() => SeedWidgetState();
@@ -71,37 +68,34 @@ class SeedWidget extends StatefulWidget {
 class SeedWidgetState extends State<SeedWidget> {
   static const maxLength = 25;
 
-  List<MnemoticItem> items = <MnemoticItem>[];
+  List<MnemonicItem> items = <MnemonicItem>[];
   final _seedController = TextEditingController();
   final _seedTextFieldKey = GlobalKey();
-  MnemoticItem selectedItem;
-  bool isValid;
-  String errorMessage;
+  MnemonicItem? selectedItem;
 
-  List<MnemoticItem> currentMnemotics;
-  bool isCurrentMnemoticValid;
-  String _errorMessage;
+  List<MnemonicItem> currentMnemonics = [];
+  List<String> invalidWords = [];
+  bool isCurrentMnemonicValid = false;
+  String? _errorMessage;
 
   @override
   void initState() {
     super.initState();
-    isValid = false;
-    isCurrentMnemoticValid = false;
+    isCurrentMnemonicValid = false;
+    invalidWords = [];
     _seedController
-        .addListener(() => changeCurrentMnemotic(_seedController.text));
+        .addListener(() => changeCurrentMnemonic(_seedController.text));
   }
 
-  void addMnemotic(String text) {
+  void addMnemonic(String text) {
     setState(() => items
-        .add(MnemoticItem(text: text.trim(), dic: widget.words)));
+        .add(MnemonicItem(text: text.trim(), dic: widget.words)));
     _seedController.text = '';
 
-    if (widget.onMnemoticChange != null) {
-      widget.onMnemoticChange(items);
-    }
+    widget.onMnemonicChange(items);
   }
 
-  void mnemoticFromText(String text) {
+  void mnemonicFromText(String text) {
     final splitted = text.split(' ');
 
     if (splitted.length >= 2) {
@@ -111,18 +105,18 @@ class SeedWidgetState extends State<SeedWidget> {
         }
 
         if (selectedItem != null) {
-          editTextOfSelectedMnemotic(text);
+          editTextOfSelectedMnemonic(text);
         } else {
-          addMnemotic(text);
+          addMnemonic(text);
         }
       }
     }
   }
 
-  void selectMnemotic(MnemoticItem item) {
+  void selectMnemonic(MnemonicItem item) {
     setState(() {
       selectedItem = item;
-      currentMnemotics = [item];
+      currentMnemonics = [item];
 
       _seedController
         ..text = item.text
@@ -130,24 +124,22 @@ class SeedWidgetState extends State<SeedWidget> {
     });
   }
 
-  void onMnemoticTap(MnemoticItem item) {
+  void onMnemonicTap(MnemonicItem item) {
     if (selectedItem == item) {
       setState(() => selectedItem = null);
       _seedController.text = '';
       return;
     }
 
-    selectMnemotic(item);
+    selectMnemonic(item);
   }
 
-  void editTextOfSelectedMnemotic(String text) {
-    setState(() => selectedItem.changeText(text));
+  void editTextOfSelectedMnemonic(String text) {
+    setState(() => selectedItem?.changeText(text));
     selectedItem = null;
     _seedController.text = '';
 
-    if (widget.onMnemoticChange != null) {
-      widget.onMnemoticChange(items);
-    }
+    widget.onMnemonicChange(items);
   }
 
   void clear() {
@@ -156,94 +148,79 @@ class SeedWidgetState extends State<SeedWidget> {
       selectedItem = null;
       _seedController.text = '';
 
-      if (widget.onMnemoticChange != null) {
-        widget.onMnemoticChange(items);
-      }
+      widget.onMnemonicChange(items);
     });
-  }
-
-  void invalidate() {
-    setState(() => isValid = false);
-  }
-
-  void validated() {
-    setState(() => isValid = true);
-  }
-
-  void setErrorMessage(String errorMessage) {
-    setState(() => this.errorMessage = errorMessage);
   }
 
   void replaceText(String text) {
     setState(() => items = []);
-    mnemoticFromText(text);
+    mnemonicFromText(text);
   }
 
-  void changeCurrentMnemotic(String text) {
+  void changeCurrentMnemonic(String text) {
     setState(() {
       final trimmedText = text.trim();
       final splitted = trimmedText.split(' ');
       _errorMessage = null;
 
-      if (text == null) {
-        currentMnemotics = [];
-        isCurrentMnemoticValid = false;
+      invalidWords = [];
+
+      if (text.isEmpty) {
+        currentMnemonics = [];
+        isCurrentMnemonicValid = false;
         return;
       }
 
-      currentMnemotics = splitted
-          .map((text) => MnemoticItem(text: text, dic: widget.words))
+      currentMnemonics = splitted
+          .map((text) => MnemonicItem(text: text, dic: widget.words))
           .toList();
 
       var isValid = true;
 
-      for (final word in currentMnemotics) {
-        isValid = word.isCorrect();
-
-        if (!isValid) {
-          break;
+      for (final word in currentMnemonics) {
+        if (!word.isCorrect()) {
+          isValid = false;
+          invalidWords.add(word.text);
         }
       }
 
-      isCurrentMnemoticValid = isValid;
+      isCurrentMnemonicValid = isValid;
     });
   }
 
-  void saveCurrentMnemoticToItems() {
+  void saveCurrentMnemonicToItems() {
     setState(() {
       if (selectedItem != null) {
-        selectedItem.changeText(currentMnemotics.first.text.trim());
+        selectedItem!.changeText(currentMnemonics.first.text.trim());
         selectedItem = null;
       } else {
-        items.addAll(currentMnemotics);
+        items.addAll(currentMnemonics);
       }
 
-      currentMnemotics = [];
+      currentMnemonics = [];
       _seedController.text = '';
     });
   }
 
-  void showErrorIfExist() {
+  void showErrorIfExist(AppLocalizations t) {
     setState(() => _errorMessage =
-        !isCurrentMnemoticValid ? S.current.incorrect_seed : null);
+        isCurrentMnemonicValid
+        ? null
+        : t.incorrect_seed + (invalidWords.isNotEmpty ? t.invalid_seed_words(invalidWords.join(", ")) : ""));
   }
 
   bool isSeedValid() {
-    bool isValid;
-
     for (final item in items) {
-      isValid = item.isCorrect();
-
-      if (!isValid) {
-        break;
-      }
+      if (!item.isCorrect())
+        return false;
     }
 
-    return isValid;
+    return true;
   }
 
   @override
   Widget build(BuildContext context) {
+    final t = tr(context);
     return Container(
       child: Column(children: [
         Flexible(
@@ -256,7 +233,7 @@ class SeedWidgetState extends State<SeedWidget> {
                 final isSelected = selectedItem == item;
 
                 return InkWell(
-                  onTap: () => onMnemoticTap(item),
+                  onTap: () => onMnemonicTap(item),
                   child: Container(
                       decoration: BoxDecoration(
                           color:
@@ -286,12 +263,14 @@ class SeedWidgetState extends State<SeedWidget> {
                   Column(children: <Widget>[
                     TextFormField(
                       key: _seedTextFieldKey,
-                      onFieldSubmitted: (text) => isCurrentMnemoticValid
-                          ? saveCurrentMnemoticToItems()
+                      onFieldSubmitted: (text) => isCurrentMnemonicValid
+                          ? saveCurrentMnemonicToItems()
                           : null,
                       style: TextStyle(fontSize: 14.0),
                       controller: _seedController,
                       textInputAction: TextInputAction.done,
+                      autocorrect: false,
+                      enableSuggestions: false,
                       decoration: InputDecoration(
                           suffixIcon: GestureDetector(
                             behavior: HitTestBehavior.opaque,
@@ -304,29 +283,13 @@ class SeedWidgetState extends State<SeedWidget> {
                                       '${items.length}/${SeedWidgetState.maxLength}',
                                       style: TextStyle(
                                           color: Colors.grey, fontSize: 12)),
-                                  SizedBox(width: 10),
-                                  InkWell(
-                                    onTap: () async =>
-                                        Clipboard.getData('text/plain').then(
-                                            (clipboard) =>
-                                                replaceText(clipboard.text)),
-                                    child: Container(
-                                        height: 35,
-                                        padding: EdgeInsets.all(7),
-                                        decoration: BoxDecoration(
-                                            color:
-                                                Palette.wildDarkBlueWithOpacity,
-                                            borderRadius:
-                                                BorderRadius.circular(10.0)),
-                                        child: Text(S.of(context).paste)),
-                                  )
                                 ],
                               ),
                             ),
                           ),
                           hintStyle:
                               TextStyle(color: Theme.of(context).hintColor),
-                          hintText: S.of(context).restore_from_seed_placeholder,
+                          hintText: t.restore_from_seed_placeholder,
                           errorText: _errorMessage,
                           focusedBorder: UnderlineInputBorder(
                               borderSide: BorderSide(
@@ -335,35 +298,32 @@ class SeedWidgetState extends State<SeedWidget> {
                               borderSide: BorderSide(
                                   color: Theme.of(context).focusColor,
                                   width: 1.0))),
-                      enableInteractiveSelection: false,
                     ),
                   ]),
                   Padding(
                       padding: EdgeInsets.only(bottom: 20),
                       child: (selectedItem == null && items.length == maxLength)
                           ? PrimaryButton(
-                              text: S.of(context).restore_next,
+                              text: t.restore_next,
                               isDisabled: !isSeedValid(),
-                              onPressed: () => widget.onFinish != null
-                                  ? widget.onFinish()
-                                  : null,
+                              onPressed: widget.onFinish,
                               color: Theme.of(context)
                                   .primaryTextTheme
                                   .button
-                                  .backgroundColor,
+                                  ?.backgroundColor,
                               borderColor: Theme.of(context)
                                   .primaryTextTheme
                                   .button
-                                  .decorationColor)
+                                  ?.decorationColor)
                           : PrimaryButton(
                               text: selectedItem != null
-                                  ? S.of(context).save
-                                  : S.of(context).add_new_word,
-                              onPressed: () => isCurrentMnemoticValid
-                                  ? saveCurrentMnemoticToItems()
+                                  ? t.save
+                                  : t.add_new_word,
+                              onPressed: () => isCurrentMnemonicValid
+                                  ? saveCurrentMnemonicToItems()
                                   : null,
-                              onDisabledPressed: () => showErrorIfExist(),
-                              isDisabled: !isCurrentMnemoticValid,
+                              onDisabledPressed: () => showErrorIfExist(t),
+                              isDisabled: !isCurrentMnemonicValid,
                               color: PaletteDark.darkThemeBlueButton,
                               borderColor: Palette.brightBlue))
                 ]))

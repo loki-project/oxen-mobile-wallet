@@ -9,11 +9,11 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Widget createLoginPage(
-        {@required SharedPreferences sharedPreferences,
-        @required UserService userService,
-        @required WalletService walletService,
-        @required WalletListService walletListService,
-        @required AuthenticationStore authenticationStore}) =>
+        {required SharedPreferences sharedPreferences,
+        required UserService userService,
+        required WalletService walletService,
+        required WalletListService walletListService,
+        required AuthenticationStore authenticationStore}) =>
     Provider(
         create: (_) => AuthStore(
             sharedPreferences: sharedPreferences,

@@ -25,16 +25,16 @@ final subaddressSetLabelNative = oxenApi
     .lookup<NativeFunction<subaddress_set_label>>('subaddress_set_label')
     .asFunction<SubaddressSetLabel>();
 
-void addSubaddressSync({int accountIndex, String label}) {
-  final labelPointer = Utf8.toUtf8(label);
+void addSubaddressSync({required int accountIndex, required String label}) {
+  final labelPointer = label.toNativeUtf8();
   subaddressAddNewNative(accountIndex, labelPointer);
-  free(labelPointer);
+  calloc.free(labelPointer);
 }
 
 void setLabelForSubaddressSync(
-    {int accountIndex, int addressIndex, String label}) {
-  final labelPointer = Utf8.toUtf8(label);
+    {required int accountIndex, required int addressIndex, required String label}) {
+  final labelPointer = label.toNativeUtf8();
 
   subaddressSetLabelNative(accountIndex, addressIndex, labelPointer);
-  free(labelPointer);
+  calloc.free(labelPointer);
 }

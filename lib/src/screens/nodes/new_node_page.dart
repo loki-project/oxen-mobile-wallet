@@ -1,6 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:oxen_wallet/generated/l10n.dart';
+import 'package:oxen_wallet/l10n.dart';
 import 'package:oxen_wallet/src/screens/base_page.dart';
 import 'package:oxen_wallet/src/stores/node_list/node_list_store.dart';
 import 'package:oxen_wallet/src/widgets/oxen_text_field.dart';
@@ -10,7 +9,7 @@ import 'package:provider/provider.dart';
 
 class NewNodePage extends BasePage {
   @override
-  String get title => S.current.node_new;
+  String getTitle(AppLocalizations t) => t.node_new;
 
   @override
   Widget body(BuildContext context) => NewNodePageForm();
@@ -51,39 +50,42 @@ class NewNodeFormState extends State<NewNodePageForm> {
               child: Column(
                 children: <Widget>[
                   OxenTextField(
-                    hintText: S.of(context).node_address,
+                    hintText: tr(context).node_address,
                     controller: _nodeAddressController,
                     validator: (value) {
-                      nodeList.validateNodeAddress(value);
+                      nodeList.validateNodeAddress(value ?? '', tr(context));
                       return nodeList.errorMessage;
                     },
                   ),
                   Padding(
                       padding: EdgeInsets.only(top: 20),
                       child: OxenTextField(
-                        hintText: S.of(context).node_port,
+                        hintText: tr(context).node_port,
                         controller: _nodePortController,
                         keyboardType: TextInputType.numberWithOptions(
                             signed: false, decimal: false),
                         validator: (value) {
-                          nodeList.validateNodePort(value);
+                          nodeList.validateNodePort(value ?? '', tr(context));
                           return nodeList.errorMessage;
                         },
                       )),
+                      // Disable login/password fields for now: oxend currently doesn't support
+                      // Digest MD5 auth (because it is deprecated and insecure), and the wallet2
+                      // code *only* supports Digest MD5 auth.
+                      /*
                   Padding(
                       padding: EdgeInsets.only(top: 20),
                       child: OxenTextField(
-                        hintText: S.of(context).login,
+                        hintText: tr(context).login,
                         controller: _loginController,
-                        validator: (value) => null,
                       )),
                   Padding(
                       padding: EdgeInsets.only(top: 20),
                       child: OxenTextField(
-                        hintText: S.of(context).password,
+                        hintText: tr(context).password,
                         controller: _passwordController,
-                        validator: (value) => null,
                       )),
+                      */
                 ],
               ))),
       bottomSection: Container(
@@ -99,18 +101,18 @@ class NewNodeFormState extends State<NewNodePageForm> {
                     _loginController.text = '';
                     _passwordController.text = '';
                   },
-                  text: S.of(context).reset,
+                  text: tr(context).reset,
                   color:
-                      Theme.of(context).accentTextTheme.button.backgroundColor,
+                      Theme.of(context).accentTextTheme.button?.backgroundColor,
                   borderColor:
-                      Theme.of(context).accentTextTheme.button.decorationColor),
+                      Theme.of(context).accentTextTheme.button?.decorationColor),
             )),
             Flexible(
                 child: Container(
               padding: EdgeInsets.only(left: 8.0),
               child: PrimaryButton(
                 onPressed: () async {
-                  if (!_formKey.currentState.validate()) {
+                  if (!(_formKey.currentState?.validate() ?? false)) {
                     return;
                   }
 
@@ -122,11 +124,11 @@ class NewNodeFormState extends State<NewNodePageForm> {
 
                   Navigator.of(context).pop();
                 },
-                text: S.of(context).save,
+                text: tr(context).save,
                 color:
-                    Theme.of(context).primaryTextTheme.button.backgroundColor,
+                    Theme.of(context).primaryTextTheme.button?.backgroundColor,
                 borderColor:
-                    Theme.of(context).primaryTextTheme.button.decorationColor,
+                    Theme.of(context).primaryTextTheme.button?.decorationColor,
               ),
             )),
           ],

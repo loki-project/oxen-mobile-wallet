@@ -4,18 +4,18 @@ import 'package:oxen_wallet/src/screens/settings/attributes.dart';
 class SettingsItem {
   SettingsItem(
       {this.onTaped,
-      this.title,
+      required this.title,
       this.link,
       this.image,
       this.widget,
-      this.attribute,
+      required this.attribute,
       this.widgetBuilder});
 
-  final VoidCallback onTaped;
+  final VoidCallback? onTaped;
   final String title;
-  final String link;
-  final Image image;
-  final Widget widget;
+  final String? link;
+  final Image? image;
+  final Widget? widget;
   final Attributes attribute;
-  final WidgetBuilder widgetBuilder;
+  final WidgetBuilder? widgetBuilder;
 }

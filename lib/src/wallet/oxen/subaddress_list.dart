@@ -4,19 +4,18 @@ import 'package:oxen_coin/subaddress_list.dart' as subaddress_list;
 import 'package:oxen_wallet/src/wallet/oxen/subaddress.dart';
 
 class SubaddressList {
-  SubaddressList() {
-    _isRefreshing = false;
-    _isUpdating = false;
+  SubaddressList() :
+    _isRefreshing = false,
+    _isUpdating = false,
     _subaddress = BehaviorSubject<List<Subaddress>>();
-  }
 
-  Observable<List<Subaddress>> get subaddresses => _subaddress.stream;
+  Stream<List<Subaddress>> get subaddresses => _subaddress.stream;
 
-  BehaviorSubject<List<Subaddress>> _subaddress;
+  final BehaviorSubject<List<Subaddress>> _subaddress;
   bool _isRefreshing;
   bool _isUpdating;
 
-  Future update({int accountIndex}) async {
+  Future update({required int accountIndex}) async {
     if (_isUpdating) {
       return;
     }
@@ -40,20 +39,20 @@ class SubaddressList {
         .toList();
   }
 
-  Future addSubaddress({int accountIndex, String label}) async {
+  Future addSubaddress({required int accountIndex, required String label}) async {
     await subaddress_list.addSubaddress(
         accountIndex: accountIndex, label: label);
     await update(accountIndex: accountIndex);
   }
 
   Future setLabelSubaddress(
-      {int accountIndex, int addressIndex, String label}) async {
+      {required int accountIndex, required int addressIndex, required String label}) async {
     await subaddress_list.setLabelForSubaddress(
         accountIndex: accountIndex, addressIndex: addressIndex, label: label);
-    await update();
+    await update(accountIndex: accountIndex);
   }
 
-  Future refresh({int accountIndex}) async {
+  Future refresh({required int accountIndex}) async {
     if (_isRefreshing) {
       return;
     }

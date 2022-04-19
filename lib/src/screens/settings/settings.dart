@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:oxen_wallet/generated/l10n.dart';
 import 'package:oxen_wallet/palette.dart';
 import 'package:oxen_wallet/routes.dart';
 import 'package:oxen_wallet/src/domain/common/balance_display_mode.dart';
@@ -11,6 +10,7 @@ import 'package:oxen_wallet/src/screens/base_page.dart';
 import 'package:oxen_wallet/src/screens/disclaimer/disclaimer_page.dart';
 import 'package:oxen_wallet/src/screens/settings/attributes.dart';
 import 'package:oxen_wallet/src/screens/settings/items/settings_item.dart';
+import 'package:oxen_wallet/l10n.dart';
 
 // Settings widgets
 import 'package:oxen_wallet/src/screens/settings/widgets/settings_link_list_row.dart';
@@ -28,7 +28,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class SettingsPage extends BasePage {
   @override
-  String get title => S.current.settings_title;
+  String getTitle(AppLocalizations l10n) => l10n.settings_title;
 
   @override
   Color get backgroundColor => Palette.lightGrey2;
@@ -45,18 +45,21 @@ class SettingsForm extends StatefulWidget {
 }
 
 class SettingsFormState extends State<SettingsForm> {
+  final _sessionImage = Image.asset('assets/images/Session.png');
   final _telegramImage = Image.asset('assets/images/Telegram.png');
   final _twitterImage = Image.asset('assets/images/Twitter.png');
 
   final _emailText = 'team@oxen.io';
+  final _sessionText = 'getsession.org';
+  final _githubText = 'github.com/oxen-io';
   final _telegramText = 't.me/Oxen_Community';
   final _twitterText = 'twitter.com/Oxen_io';
-  final _githubText = 'github.com/oxen-io';
 
   final _emailUrl = 'mailto:team@oxen.io';
-  final _telegramUrl = 'https:t.me/Oxen_Community';
-  final _twitterUrl = 'https:twitter.com/Oxen_io';
-  final _githubUrl = 'https:github.com/oxen-io';
+  final _sessionUrl = 'https://getsession.org';
+  final _githubUrl = 'https://github.com/oxen-io';
+  final _telegramUrl = 'https://t.me/Oxen_Community';
+  final _twitterUrl = 'https://twitter.com/Oxen_io';
 
   final _items = <SettingsItem>[];
 
@@ -66,84 +69,85 @@ class SettingsFormState extends State<SettingsForm> {
 
   void _setSettingsList() {
     final settingsStore = context.read<SettingsStore>();
+    final t = tr(context);
     _items.addAll([
       SettingsItem(
-          title: S.current.settings_nodes, attribute: Attributes.header),
+          title: t.settings_nodes, attribute: Attributes.header),
       SettingsItem(
           onTaped: () => Navigator.of(context).pushNamed(Routes.nodeList),
-          title: S.current.settings_current_node,
+          title: t.settings_current_node,
           widget: Observer(
               builder: (_) => Text(
-                    settingsStore.node == null ? '' : settingsStore.node.uri,
+                    settingsStore.node?.uri ?? '',
                     textAlign: TextAlign.right,
                     style: TextStyle(
                         fontSize: 16.0,
                         color:
-                            Theme.of(context).primaryTextTheme.subtitle2.color),
+                            Theme.of(context).primaryTextTheme.subtitle2?.color),
                   )),
           attribute: Attributes.widget),
       SettingsItem(
-          title: S.current.settings_wallets, attribute: Attributes.header),
+          title: t.settings_wallets, attribute: Attributes.header),
       SettingsItem(
           onTaped: () => _setBalance(context),
-          title: S.current.settings_display_balance_as,
+          title: t.settings_display_balance_as,
           widget: Observer(
               builder: (_) => Text(
-                    settingsStore.balanceDisplayMode.toString(),
+                    settingsStore.balanceDisplayMode.getTitle(t),
                     textAlign: TextAlign.right,
                     style: TextStyle(
                         fontSize: 16.0,
                         color:
-                            Theme.of(context).primaryTextTheme.subtitle2.color),
+                            Theme.of(context).primaryTextTheme.subtitle2?.color),
                   )),
           attribute: Attributes.widget),
       SettingsItem(
           onTaped: () => _setBalanceDetail(context),
-          title: S.current.settings_balance_detail,
+          title: t.settings_balance_detail,
           widget: Observer(
               builder: (_) => Text(
-                settingsStore.balanceDetail.toString(),
+                settingsStore.balanceDetail.getTitle(t),
                 textAlign: TextAlign.right,
                 style: TextStyle(
                     fontSize: 16.0,
                     color:
-                    Theme.of(context).primaryTextTheme.subtitle2.color),
+                    Theme.of(context).primaryTextTheme.subtitle2?.color),
               )),
           attribute: Attributes.widget),
       SettingsItem(
-          title: S.current.settings_enable_fiat_currency,
+          title: t.settings_enable_fiat_currency,
           attribute: Attributes.switcher),
       SettingsItem(
           onTaped: () => _setCurrency(context),
-          title: S.current.settings_currency,
+          title: t.settings_currency,
           widget: Observer(
               builder: (_) => Text(
-                    settingsStore.fiatCurrency.toString(),
+                    settingsStore.fiatCurrency.getTitle(t),
                     textAlign: TextAlign.right,
                     style: TextStyle(
                         fontSize: 16.0,
                         color:
-                            Theme.of(context).primaryTextTheme.subtitle2.color),
+                            Theme.of(context).primaryTextTheme.subtitle2?.color),
                   )),
           attribute: Attributes.widget),
       SettingsItem(
           onTaped: () => _setTransactionPriority(context),
-          title: S.current.settings_fee_priority,
+          title: t.settings_fee_priority,
           widget: Observer(
               builder: (_) => Text(
-                    settingsStore.transactionPriority.toString(),
+                    settingsStore.transactionPriority.getTitle(t),
                     textAlign: TextAlign.right,
                     style: TextStyle(
                         fontSize: 16.0,
                         color:
-                            Theme.of(context).primaryTextTheme.subtitle2.color),
+                            Theme.of(context).primaryTextTheme.subtitle2?.color),
                   )),
           attribute: Attributes.widget),
       SettingsItem(
-          title: S.current.settings_save_recipient_address,
+          title: t.settings_save_recipient_address,
           attribute: Attributes.switcher),
       SettingsItem(
-          title: S.current.settings_personal, attribute: Attributes.header),
+          title: t.settings_personal, attribute: Attributes.header),
       SettingsItem(
           onTaped: () {
             Navigator.of(context).pushNamed(Routes.auth,
@@ -156,19 +160,19 @@ class SettingsFormState extends State<SettingsForm> {
                                     Navigator.of(context).pop())
                         : null);
           },
-          title: S.current.settings_change_pin,
+          title: t.settings_change_pin,
           attribute: Attributes.arrow),
       SettingsItem(
           onTaped: () => Navigator.pushNamed(context, Routes.changeLanguage),
-          title: S.current.settings_change_language,
+          title: t.settings_change_language,
           attribute: Attributes.arrow),
       SettingsItem(
-          title: S.current.settings_allow_biometric_authentication,
+          title: t.settings_allow_biometric_authentication,
           attribute: Attributes.switcher),
       SettingsItem(
-          title: S.current.settings_dark_mode, attribute: Attributes.switcher),
+          title: t.settings_dark_mode, attribute: Attributes.switcher),
       SettingsItem(
-          title: S.current.settings_support, attribute: Attributes.header),
+          title: t.settings_support, attribute: Attributes.header),
       SettingsItem(
           onTaped: () => _launchUrl(_emailUrl),
           title: 'Email',
@@ -180,6 +184,12 @@ class SettingsFormState extends State<SettingsForm> {
           title: 'Github',
           link: _githubText,
           image: null,
+          attribute: Attributes.link),
+      SettingsItem(
+          onTaped: () => _launchUrl(_sessionUrl),
+          title: 'Session',
+          link: _sessionText,
+          image: _sessionImage,
           attribute: Attributes.link),
       SettingsItem(
           onTaped: () => _launchUrl(_telegramUrl),
@@ -200,15 +210,15 @@ class SettingsFormState extends State<SettingsForm> {
                 CupertinoPageRoute<void>(
                     builder: (BuildContext context) => DisclaimerPage()));
           },
-          title: S.current.settings_terms_and_conditions,
+          title: t.settings_terms_and_conditions,
           attribute: Attributes.arrow),
       SettingsItem(
           onTaped: () => Navigator.pushNamed(context, Routes.faq),
-          title: S.current.faq,
+          title: t.faq,
           attribute: Attributes.arrow),
       SettingsItem(
           onTaped: () => Navigator.pushNamed(context, Routes.changelog),
-          title: S.current.changelog,
+          title: t.changelog,
           attribute: Attributes.arrow)
     ]);
     setState(() {});
@@ -219,7 +229,7 @@ class SettingsFormState extends State<SettingsForm> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback(_afterLayout);
+    WidgetsBinding.instance?.addPostFrameCallback(_afterLayout);
   }
 
   Widget _getWidget(SettingsItem item) {
@@ -246,7 +256,7 @@ class SettingsFormState extends State<SettingsForm> {
         return SettingsTextListRow(
           onTaped: item.onTaped,
           title: item.title,
-          widget: item.widget,
+          widget: item.widget ?? Offstage(),
         );
       case Attributes.rawWidget:
         return SettingRawWidgetListRow(widgetBuilder: item.widgetBuilder);
@@ -286,7 +296,7 @@ class SettingsFormState extends State<SettingsForm> {
                           color: Theme.of(context)
                               .accentTextTheme
                               .headline5
-                              .backgroundColor,
+                              ?.backgroundColor,
                           padding: EdgeInsets.only(
                             left: 20.0,
                             right: 20.0,
@@ -302,7 +312,7 @@ class SettingsFormState extends State<SettingsForm> {
             }),
         ListTile(
           contentPadding: EdgeInsets.only(left: 20.0),
-          title: Text(S.current.version(settingsStore.currentVersion),
+          title: Text(tr(context).version(settingsStore.currentVersion),
               style: TextStyle(fontSize: 14.0, color: Palette.wildDarkBlue)),
         )
       ],
@@ -312,7 +322,7 @@ class SettingsFormState extends State<SettingsForm> {
   Future<void> _setBalance(BuildContext context) async {
     final settingsStore = context.read<SettingsStore>();
     final selectedDisplayMode =
-        await presentPicker(context, BalanceDisplayMode.all);
+        await presentPicker(context, BalanceDisplayMode.all, initial: settingsStore.balanceDisplayMode);
 
     if (selectedDisplayMode != null) {
       await settingsStore.setCurrentBalanceDisplayMode(
@@ -322,7 +332,7 @@ class SettingsFormState extends State<SettingsForm> {
 
   Future<void> _setBalanceDetail(BuildContext context) async {
     final settingsStore = context.read<SettingsStore>();
-    final balanceDetail = await presentPicker(context, AmountDetail.all);
+    final balanceDetail = await presentPicker(context, AmountDetail.all, initial: settingsStore.balanceDetail);
 
     if (balanceDetail != null) {
       await settingsStore.setCurrentBalanceDetail(balanceDetail: balanceDetail);
@@ -331,7 +341,7 @@ class SettingsFormState extends State<SettingsForm> {
 
   Future<void> _setCurrency(BuildContext context) async {
     final settingsStore = context.read<SettingsStore>();
-    final selectedCurrency = await presentPicker(context, FiatCurrency.all);
+    final selectedCurrency = await presentPicker(context, FiatCurrency.all, initial: settingsStore.fiatCurrency);
 
     if (selectedCurrency != null) {
       await settingsStore.setCurrentFiatCurrency(currency: selectedCurrency);
@@ -341,7 +351,7 @@ class SettingsFormState extends State<SettingsForm> {
   Future<void> _setTransactionPriority(BuildContext context) async {
     final settingsStore = context.read<SettingsStore>();
     final selectedPriority =
-        await presentPicker(context, OxenTransactionPriority.all);
+        await presentPicker(context, OxenTransactionPriority.all, initial: settingsStore.transactionPriority);
 
     if (selectedPriority != null) {
       await settingsStore.setCurrentTransactionPriority(

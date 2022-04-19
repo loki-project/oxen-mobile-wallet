@@ -7,7 +7,7 @@ class SubaddressIsCreating extends SubaddressCreationState {}
 class SubaddressCreatedSuccessfully extends SubaddressCreationState {}
 
 class SubaddressCreationFailure extends SubaddressCreationState {
-  SubaddressCreationFailure({this.error});
+  SubaddressCreationFailure({required this.error});
   
   String error;
 }

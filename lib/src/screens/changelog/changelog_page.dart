@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:oxen_wallet/generated/l10n.dart';
+import 'package:oxen_wallet/l10n.dart';
 import 'package:oxen_wallet/src/screens/base_page.dart';
 import 'package:yaml/yaml.dart';
 
@@ -8,7 +8,7 @@ class ChangelogPage extends BasePage {
   final String changelogPath = 'assets/changelog.yml';
 
   @override
-  String get title => S.current.changelog;
+  String getTitle(AppLocalizations t) => t.changelog;
 
   @override
   Widget body(BuildContext context) {
@@ -41,7 +41,7 @@ class ChangelogPage extends BasePage {
           },
           separatorBuilder: (_, __) =>
               Divider(color: Theme.of(context).dividerTheme.color, height: 1.0),
-          itemCount: changelogs == null ? 0 : changelogs.length,
+          itemCount: changelogs.length,
         );
       },
       future: rootBundle.loadString(changelogPath),

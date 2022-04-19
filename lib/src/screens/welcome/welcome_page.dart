@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:oxen_wallet/generated/l10n.dart';
+import 'package:oxen_wallet/l10n.dart';
 import 'package:oxen_wallet/palette.dart';
 import 'package:oxen_wallet/routes.dart';
 import 'package:oxen_wallet/src/screens/base_page.dart';
@@ -33,7 +33,7 @@ class WelcomePage extends BasePage {
               Padding(
                 padding: EdgeInsets.all(10),
                 child: Text(
-                  S.of(context).welcome,
+                  tr(context).welcome,
                   style: TextStyle(
                     fontSize: 30.0,
                     fontWeight: FontWeight.bold,
@@ -45,7 +45,7 @@ class WelcomePage extends BasePage {
               Padding(
                   padding: EdgeInsets.all(10),
                   child: Text(
-                    S.of(context).first_wallet_text,
+                    tr(context).first_wallet_text,
                     style: TextStyle(
                       fontSize: 22.0,
                       color: Palette.lightBlue,
@@ -56,7 +56,7 @@ class WelcomePage extends BasePage {
               Padding(
                   padding: EdgeInsets.all(10),
                   child: Text(
-                    S.of(context).please_make_selection,
+                    tr(context).please_make_selection,
                     style: TextStyle(
                       fontSize: 16.0,
                       color: Palette.lightBlue,
@@ -73,20 +73,20 @@ class WelcomePage extends BasePage {
                 onPressed: () {
                   Navigator.pushNamed(context, Routes.newWalletFromWelcome);
                 },
-                text: S.of(context).create_new,
+                text: tr(context).create_new,
                 color:
-                    Theme.of(context).primaryTextTheme.button.backgroundColor,
+                    Theme.of(context).primaryTextTheme.button?.backgroundColor,
                 borderColor:
-                    Theme.of(context).primaryTextTheme.button.decorationColor),
+                    Theme.of(context).primaryTextTheme.button?.decorationColor),
             SizedBox(height: 10),
             PrimaryButton(
               onPressed: () {
                 Navigator.pushNamed(context, Routes.restoreOptions);
               },
-              color: Theme.of(context).accentTextTheme.caption.backgroundColor,
+              color: Theme.of(context).accentTextTheme.caption?.backgroundColor,
               borderColor:
-                  Theme.of(context).accentTextTheme.caption.decorationColor,
-              text: S.of(context).restore_wallet,
+                  Theme.of(context).accentTextTheme.caption?.decorationColor,
+              text: tr(context).restore_wallet,
             )
           ]))
     ]);

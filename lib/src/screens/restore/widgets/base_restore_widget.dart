@@ -4,8 +4,8 @@ const largeHeight = 700;
 
 class BaseRestoreWidget extends StatelessWidget {
   BaseRestoreWidget({
-    @required this.firstRestoreButton,
-    @required this.secondRestoreButton,
+    required this.firstRestoreButton,
+    required this.secondRestoreButton,
     this.isLargeScreen = false
   });
 

@@ -1,6 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:oxen_wallet/generated/l10n.dart';
+import 'package:oxen_wallet/l10n.dart';
 import 'package:oxen_wallet/routes.dart';
 import 'package:oxen_wallet/src/screens/base_page.dart';
 import 'package:oxen_wallet/src/screens/auth/auth_page.dart';
@@ -18,7 +17,7 @@ class ProfilePage extends BasePage {
           padding: EdgeInsets.all(0),
           onPressed: () => Navigator.of(context).pushNamed(Routes.settings),
           child: Icon(Icons.settings_rounded,
-              color: Theme.of(context).primaryTextTheme.caption.color,
+              color: Theme.of(context).primaryTextTheme.caption?.color,
               size: 25)),
     );
   }
@@ -28,7 +27,7 @@ class ProfilePage extends BasePage {
 }
 
 class ProfilePageBody extends StatefulWidget {
-  ProfilePageBody({Key key}) : super(key: key);
+  ProfilePageBody({required Key key}) : super(key: key);
 
   @override
   ProfilePageBodyState createState() => ProfilePageBodyState();
@@ -37,6 +36,7 @@ class ProfilePageBody extends StatefulWidget {
 class ProfilePageBodyState extends State<ProfilePageBody> {
   @override
   Widget build(BuildContext context) {
+    final t = tr(context);
     return SingleChildScrollView(
         child: Column(
       children: <Widget>[
@@ -46,40 +46,40 @@ class ProfilePageBodyState extends State<ProfilePageBody> {
           children: [
             NavListArrow(
                 leading: Icon(Icons.account_balance_wallet_rounded,
-                    color: Theme.of(context).primaryTextTheme.headline6.color),
-                text: S.current.wallets,
+                    color: Theme.of(context).primaryTextTheme.headline6?.color),
+                text: t.wallets,
                 onTap: () =>
                     Navigator.of(context).pushNamed(Routes.walletList)),
             NavListArrow(
                 leading: Icon(Icons.settings_rounded,
-                    color: Theme.of(context).primaryTextTheme.headline6.color),
-                text: S.current.settings_title,
+                    color: Theme.of(context).primaryTextTheme.headline6?.color),
+                text: t.settings_title,
                 onTap: () =>
                     Navigator.of(context).pushNamed(Routes.settings)),
-            NavListHeader(title: S.current.wallet_menu),
+            NavListHeader(title: t.wallet_menu),
             NavListArrow(
                 leading: Icon(Icons.attach_money_rounded,
-                    color: Theme.of(context).primaryTextTheme.headline6.color),
-                text: S.current.title_stakes,
+                    color: Theme.of(context).primaryTextTheme.headline6?.color),
+                text: t.title_stakes,
                 onTap: () =>
                     Navigator.of(context).pushNamed(Routes.stake)),
             NavListArrow(
                 leading: Icon(Icons.contacts_rounded,
-                    color: Theme.of(context).primaryTextTheme.headline6.color),
-                text: S.current.address_book_menu,
+                    color: Theme.of(context).primaryTextTheme.headline6?.color),
+                text: t.address_book_menu,
                 onTap: () =>
                     Navigator.of(context).pushNamed(Routes.addressBook)),
             NavListArrow(
                 leading: Icon(Icons.account_circle_rounded,
-                    color: Theme.of(context).primaryTextTheme.headline6.color),
-                text: S.current.accounts,
+                    color: Theme.of(context).primaryTextTheme.headline6?.color),
+                text: t.accounts,
                 onTap: () =>
                     Navigator.of(context).pushNamed(Routes.accountList)),
-            NavListHeader(title: S.current.dangerzone),
+            NavListHeader(title: t.dangerzone),
             NavListArrow(
                 leading: Icon(Icons.vpn_key_rounded,
-                    color: Theme.of(context).primaryTextTheme.headline6.color),
-                text: S.current.show_keys,
+                    color: Theme.of(context).primaryTextTheme.headline6?.color),
+                text: t.show_keys,
                 onTap: () => Navigator.of(context).pushNamed(Routes.auth,
                     arguments: (bool isAuthenticatedSuccessfully,
                             AuthPageState auth) =>
@@ -89,8 +89,8 @@ class ProfilePageBodyState extends State<ProfilePageBody> {
                             : null)),
             NavListArrow(
                 leading: Icon(Icons.vpn_key_rounded,
-                    color: Theme.of(context).primaryTextTheme.headline6.color),
-                text: S.current.show_seed,
+                    color: Theme.of(context).primaryTextTheme.headline6?.color),
+                text: t.show_seed,
                 onTap: () => Navigator.of(context).pushNamed(Routes.auth,
                     arguments: (bool isAuthenticatedSuccessfully,
                             AuthPageState auth) =>

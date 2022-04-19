@@ -2,7 +2,7 @@ import 'package:basic_utils/basic_utils.dart';
 
 class OpenaliasRecord {
 
-  OpenaliasRecord({this.address, this.name});
+  OpenaliasRecord({required this.address, required this.name});
 
   final String name;
   final String address;

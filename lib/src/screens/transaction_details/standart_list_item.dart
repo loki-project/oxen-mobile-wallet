@@ -1,5 +1,5 @@
 class StandartListItem {
-  StandartListItem({this.title, this.value});
+  StandartListItem({required this.title, required this.value});
 
   final String title;
   final String value;

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:oxen_wallet/palette.dart';
 
 class StandartSwitch extends StatefulWidget {
-  const StandartSwitch({@required this.value, @required this.onTaped});
+  const StandartSwitch({required this.value, this.onTaped});
 
   final bool value;
-  final VoidCallback onTaped;
+  final VoidCallback? onTaped;
 
   @override
   StandartSwitchState createState() => StandartSwitchState();
@@ -24,7 +25,7 @@ class StandartSwitchState extends State<StandartSwitch> {
         decoration: BoxDecoration(
             color: Theme.of(context).toggleButtonsTheme.color,
             border: Border.all(
-                color: Theme.of(context).toggleButtonsTheme.borderColor),
+                color: Theme.of(context).toggleButtonsTheme.borderColor ?? Palette.switchBorder),
             borderRadius: BorderRadius.all(Radius.circular(10.0))),
         child: Container(
           width: 25.0,

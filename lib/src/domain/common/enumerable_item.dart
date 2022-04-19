@@ -1,17 +1,15 @@
-import 'package:flutter/foundation.dart';
+import 'package:oxen_wallet/l10n.dart';
 
 abstract class EnumerableItem<T> {
-  const EnumerableItem({@required this.title, @required this.raw});
+  const EnumerableItem({required this.raw});
 
   final T raw;
-  final String title;
 
-  @override
-  String toString() => title;
+  String getTitle(AppLocalizations t);
 }
 
 mixin Serializable<T> on EnumerableItem<T> {
-  static Serializable deserialize<T>({T raw}) => null;
+  static Serializable? deserialize<T>({required T raw}) => null;
 
   T serialize() => raw;
 }

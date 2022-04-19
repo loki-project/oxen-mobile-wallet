@@ -6,13 +6,13 @@ import 'package:oxen_wallet/src/screens/restore/widgets/restore_button.dart';
 import 'package:oxen_wallet/src/screens/restore/widgets/image_widget.dart';
 import 'package:oxen_wallet/src/screens/restore/widgets/base_restore_widget.dart';
 import 'package:oxen_wallet/src/screens/base_page.dart';
-import 'package:oxen_wallet/generated/l10n.dart';
+import 'package:oxen_wallet/l10n.dart';
 
 class RestoreOptionsPage extends BasePage {
   static const _aspectRatioImage = 2.086;
 
   @override
-  String get title => S.current.restore_restore_wallet;
+  String getTitle(AppLocalizations t) => t.restore_restore_wallet;
 
   @override
   Color get backgroundColor => Palette.creamyGrey;
@@ -23,6 +23,8 @@ class RestoreOptionsPage extends BasePage {
   @override
   Widget body(BuildContext context) {
     final isLargeScreen = MediaQuery.of(context).size.height > largeHeight;
+
+    final t = tr(context);
 
     return BaseRestoreWidget(
       firstRestoreButton: RestoreButton(
@@ -36,9 +38,9 @@ class RestoreOptionsPage extends BasePage {
         ),
         titleColor: Palette.lightViolet,
         color: Palette.lightViolet,
-        title: S.of(context).restore_title_from_seed_keys,
-        description: S.of(context).restore_description_from_seed_keys,
-        textButton: S.of(context).restore_next,
+        title: t.restore_title_from_seed_keys,
+        description: t.restore_description_from_seed_keys,
+        textButton: t.restore_next,
       ),
       secondRestoreButton: RestoreButton(
         onPressed: () {},
@@ -49,9 +51,9 @@ class RestoreOptionsPage extends BasePage {
         ),
         titleColor: OxenPalette.teal,
         color: OxenPalette.teal,
-        title: S.of(context).restore_title_from_backup,
-        description: S.of(context).restore_description_from_backup,
-        textButton: S.of(context).restore_next,
+        title: t.restore_title_from_backup,
+        description: t.restore_description_from_backup,
+        textButton: t.restore_next,
       ),
       isLargeScreen: isLargeScreen,
     );

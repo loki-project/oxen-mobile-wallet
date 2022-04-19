@@ -1,11 +1,9 @@
 import 'package:mobx/mobx.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:oxen_wallet/generated/l10n.dart';
+import 'package:oxen_wallet/l10n.dart';
 import 'package:oxen_wallet/src/domain/services/wallet_list_service.dart';
 import 'package:oxen_wallet/src/domain/services/wallet_service.dart';
 import 'package:oxen_wallet/src/stores/wallet_restoration/wallet_restoration_store.dart';
@@ -19,16 +17,16 @@ import 'package:oxen_wallet/src/stores/seed_language/seed_language_store.dart';
 
 class RestoreWalletFromKeysPage extends BasePage {
   RestoreWalletFromKeysPage(
-      {@required this.walletsService,
-      @required this.sharedPreferences,
-      @required this.walletService});
+      {required this.walletsService,
+      required this.sharedPreferences,
+      required this.walletService});
 
   final WalletListService walletsService;
   final WalletService walletService;
   final SharedPreferences sharedPreferences;
 
   @override
-  String get title => S.current.restore_title_from_keys;
+  String getTitle(AppLocalizations t) => t.restore_title_from_keys;
 
   @override
   Widget body(BuildContext context) => RestoreFromKeysFrom();
@@ -58,7 +56,7 @@ class _RestoreFromKeysFromState extends State<RestoreFromKeysFrom> {
       }
 
       if (state is WalletRestorationFailure) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
+        WidgetsBinding.instance?.addPostFrameCallback((_) {
           showDialog<void>(
               context: context,
               builder: (BuildContext context) {
@@ -66,7 +64,7 @@ class _RestoreFromKeysFromState extends State<RestoreFromKeysFrom> {
                   content: Text(state.error),
                   actions: <Widget>[
                     FlatButton(
-                      child: Text(S.of(context).ok),
+                      child: Text(tr(context).ok),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                   ],
@@ -97,7 +95,7 @@ class _RestoreFromKeysFromState extends State<RestoreFromKeysFrom> {
                         decoration: InputDecoration(
                             hintStyle:
                                 TextStyle(color: Theme.of(context).hintColor),
-                            hintText: S.of(context).restore_wallet_name,
+                            hintText: tr(context).restore_wallet_name,
                             focusedBorder: UnderlineInputBorder(
                                 borderSide: BorderSide(
                                     color: OxenPalette.teal, width: 2.0)),
@@ -106,7 +104,7 @@ class _RestoreFromKeysFromState extends State<RestoreFromKeysFrom> {
                                     color: Theme.of(context).focusColor,
                                     width: 1.0))),
                         validator: (value) {
-                          walletRestorationStore.validateWalletName(value);
+                          walletRestorationStore.validateWalletName(value ?? '', tr(context));
                           return walletRestorationStore.errorMessage;
                         },
                       ),
@@ -126,7 +124,7 @@ class _RestoreFromKeysFromState extends State<RestoreFromKeysFrom> {
                         decoration: InputDecoration(
                             hintStyle:
                                 TextStyle(color: Theme.of(context).hintColor),
-                            hintText: S.of(context).restore_address,
+                            hintText: tr(context).restore_address,
                             focusedBorder: UnderlineInputBorder(
                                 borderSide: BorderSide(
                                     color: OxenPalette.teal, width: 2.0)),
@@ -135,7 +133,7 @@ class _RestoreFromKeysFromState extends State<RestoreFromKeysFrom> {
                                     color: Theme.of(context).focusColor,
                                     width: 1.0))),
                         validator: (value) {
-                          walletRestorationStore.validateAddress(value);
+                          walletRestorationStore.validateAddress(value ?? '', l10n: tr(context));
                           return walletRestorationStore.errorMessage;
                         },
                       ),
@@ -153,7 +151,7 @@ class _RestoreFromKeysFromState extends State<RestoreFromKeysFrom> {
                         decoration: InputDecoration(
                             hintStyle:
                                 TextStyle(color: Theme.of(context).hintColor),
-                            hintText: S.of(context).restore_view_key_private,
+                            hintText: tr(context).restore_view_key_private,
                             focusedBorder: UnderlineInputBorder(
                                 borderSide: BorderSide(
                                     color: OxenPalette.teal, width: 2.0)),
@@ -162,7 +160,7 @@ class _RestoreFromKeysFromState extends State<RestoreFromKeysFrom> {
                                     color: Theme.of(context).focusColor,
                                     width: 1.0))),
                         validator: (value) {
-                          walletRestorationStore.validateKeys(value);
+                          walletRestorationStore.validateKeys(value ?? '', tr(context));
                           return walletRestorationStore.errorMessage;
                         },
                       ),
@@ -180,7 +178,7 @@ class _RestoreFromKeysFromState extends State<RestoreFromKeysFrom> {
                         decoration: InputDecoration(
                             hintStyle:
                                 TextStyle(color: Theme.of(context).hintColor),
-                            hintText: S.of(context).restore_spend_key_private,
+                            hintText: tr(context).restore_spend_key_private,
                             focusedBorder: UnderlineInputBorder(
                                 borderSide: BorderSide(
                                     color: OxenPalette.teal, width: 2.0)),
@@ -189,7 +187,7 @@ class _RestoreFromKeysFromState extends State<RestoreFromKeysFrom> {
                                     color: Theme.of(context).focusColor,
                                     width: 1.0))),
                         validator: (value) {
-                          walletRestorationStore.validateKeys(value);
+                          walletRestorationStore.validateKeys(value ?? '', tr(context));
                           return walletRestorationStore.errorMessage;
                         },
                       ),
@@ -205,20 +203,22 @@ class _RestoreFromKeysFromState extends State<RestoreFromKeysFrom> {
       bottomSection: Observer(builder: (_) {
         return LoadingPrimaryButton(
             onPressed: () {
-              if (_formKey.currentState.validate()) {
+              if (_formKey.currentState == null || _blockchainHeightKey.currentState == null)
+                return;
+              if (_formKey.currentState!.validate()) {
                 walletRestorationStore.restoreFromKeys(
                     name: _nameController.text,
                     language: seedLanguageStore.selectedSeedLanguage,
                     address: _addressController.text,
                     viewKey: _viewKeyController.text,
                     spendKey: _spendKeyController.text,
-                    restoreHeight: _blockchainHeightKey.currentState.height);
+                    restoreHeight: _blockchainHeightKey.currentState!.height);
               }
             },
-            text: S.of(context).restore_recover,
-            color: Theme.of(context).primaryTextTheme.button.backgroundColor,
+            text: tr(context).restore_recover,
+            color: Theme.of(context).primaryTextTheme.button?.backgroundColor,
             borderColor:
-                Theme.of(context).primaryTextTheme.button.decorationColor);
+                Theme.of(context).primaryTextTheme.button?.decorationColor);
       }),
     );
   }

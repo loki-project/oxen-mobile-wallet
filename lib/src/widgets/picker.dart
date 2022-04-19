@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 
 class Picker<Item extends Object> extends StatelessWidget {
   Picker(
-      {@required this.selectedAtIndex,
-      @required this.items,
-      @required this.title,
+      {required this.selectedAtIndex,
+      required this.items,
+      required this.title,
       this.pickerHeight = 300,
-      this.onItemSelected});
+      required this.onItemSelected});
 
   final int selectedAtIndex;
   final List<Item> items;
@@ -63,7 +63,7 @@ class Picker<Item extends Object> extends StatelessWidget {
                                       color: Theme.of(context)
                                           .primaryTextTheme
                                           .caption
-                                          .color),
+                                          ?.color),
                                 ),
                               ),
                             );
@@ -74,9 +74,6 @@ class Picker<Item extends Object> extends StatelessWidget {
 
                           return GestureDetector(
                             onTap: () {
-                              if (onItemSelected == null) {
-                                return;
-                              }
                               Navigator.of(context).pop();
                               onItemSelected(item);
                             },
@@ -96,7 +93,7 @@ class Picker<Item extends Object> extends StatelessWidget {
                                         : Theme.of(context)
                                             .primaryTextTheme
                                             .caption
-                                            .color),
+                                            ?.color),
                               )),
                             ),
                           );

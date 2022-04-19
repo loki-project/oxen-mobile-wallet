@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:oxen_wallet/l10n.dart';
 import 'package:oxen_wallet/palette.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:oxen_wallet/src/screens/base_page.dart';
@@ -16,7 +16,7 @@ class DisclaimerPage extends BasePage {
   bool get isModalBackButton => false;
 
   @override
-  String get title => 'Terms of Use';
+  String getTitle(AppLocalizations t) => t.settings_terms_and_conditions;
 
   @override
   Widget body(BuildContext context) => DisclaimerPageBody(isReadOnly: true);
@@ -77,7 +77,7 @@ class DisclaimerBodyState extends State<DisclaimerPageBody> {
   void initState() {
     super.initState();
     getFileLines();
-    if (_isAccepted) WidgetsBinding.instance.addPostFrameCallback(_afterLayout);
+    if (_isAccepted) WidgetsBinding.instance?.addPostFrameCallback(_afterLayout);
   }
 
   @override
@@ -222,16 +222,16 @@ class DisclaimerBodyState extends State<DisclaimerPageBody> {
                   padding:
                       EdgeInsets.only(left: 25.0, right: 25.0, bottom: 25.0),
                   child: PrimaryButton(
-                    onPressed: _checked ? () {} : null,
+                    onPressed: () {},
                     text: 'Accept',
                     color: Theme.of(context)
                         .primaryTextTheme
                         .button
-                        .backgroundColor,
+                        ?.backgroundColor,
                     borderColor: Theme.of(context)
                         .primaryTextTheme
                         .button
-                        .decorationColor,
+                        ?.decorationColor,
                   ),
                 )
               : Offstage(),

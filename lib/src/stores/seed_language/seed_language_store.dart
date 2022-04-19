@@ -18,10 +18,9 @@ const List<String> seedLanguages = [
 class SeedLanguageStore = SeedLanguageStoreBase with _$SeedLanguageStore;
 
 abstract class SeedLanguageStoreBase with Store {
-  SeedLanguageStoreBase() {
-    selectedSeedLanguage = seedLanguages[0];
+  SeedLanguageStoreBase() :
+    selectedSeedLanguage = seedLanguages[0],
     currentRoute = '';
-  }
 
   @observable
   String selectedSeedLanguage;

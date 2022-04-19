@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hive/hive.dart';
 import 'package:oxen_wallet/src/domain/common/encrypt.dart';
@@ -10,7 +9,6 @@ import 'package:oxen_wallet/src/wallet/oxen/oxen_wallets_manager.dart';
 import 'package:oxen_wallet/src/wallet/wallet.dart';
 import 'package:oxen_wallet/src/wallet/wallet_description.dart';
 import 'package:oxen_wallet/src/wallet/wallet_info.dart';
-import 'package:oxen_wallet/src/wallet/wallet_type.dart';
 import 'package:oxen_wallet/src/wallet/wallets_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
@@ -26,11 +24,12 @@ class WalletIsExistException implements Exception {
 
 class WalletListService {
   WalletListService(
-      {this.secureStorage,
-      this.walletInfoSource,
-      this.walletsManager,
-      @required this.walletService,
-      @required this.sharedPreferences});
+      {required this.secureStorage,
+      required this.walletInfoSource,
+      WalletsManager? walletsManager,
+      required this.walletService,
+      required this.sharedPreferences})
+  : walletsManager = walletsManager ?? OxenWalletsManager(walletInfoSource: walletInfoSource);
 
   final FlutterSecureStorage secureStorage;
   final WalletService walletService;
@@ -107,18 +106,6 @@ class WalletListService {
     await onWalletChange(wallet);
   }
 
-  Future changeWalletManger({WalletType walletType}) async {
-    switch (walletType) {
-      case WalletType.oxen:
-        walletsManager = OxenWalletsManager(walletInfoSource: walletInfoSource);
-        break;
-      case WalletType.monero:
-      case WalletType.none:
-        walletsManager = null;
-        break;
-    }
-  }
-
   Future onWalletChange(Wallet wallet) async {
     walletService.currentWallet = wallet;
     final walletName = await wallet.getName();
@@ -128,15 +115,15 @@ class WalletListService {
   Future remove(WalletDescription wallet) async =>
       await walletsManager.remove(wallet);
 
-  Future<String> getWalletPassword({String walletName}) async {
+  Future<String> getWalletPassword({required String walletName}) async {
     final key = generateStoreKeyFor(
         key: SecretStoreKey.moneroWalletPassword, walletName: walletName);
     final encodedPassword = await secureStorage.read(key: key);
 
-    return decodeWalletPassword(password: encodedPassword);
+    return decodeWalletPassword(password: encodedPassword!);
   }
 
-  Future saveWalletPassword({String walletName, String password}) async {
+  Future saveWalletPassword({required String walletName, required String password}) async {
     final key = generateStoreKeyFor(
         key: SecretStoreKey.moneroWalletPassword, walletName: walletName);
     final encodedPassword = encodeWalletPassword(password: password);

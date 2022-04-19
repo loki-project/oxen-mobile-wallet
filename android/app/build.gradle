@@ -32,7 +32,7 @@ apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 31
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
@@ -51,10 +51,24 @@ android {
 
         externalNativeBuild {
             cmake {
-                cppFlags "-std=c++11"
-                arguments '-DANDROID_STL=c++_shared', '-DBUILD_TESTING=OFF'
-                version "3.10.2"
+                cppFlags "-std=c++17"
+                arguments '-DANDROID_STL=c++_shared'
+                version "3.18.0+"
             }
+        }
+
+        ndk {
+            abiFilters.clear()
+//            abiFilters 'x86_64', 'armeabi-v7a', 'arm64-v8a'
+        }
+    }
+
+    splits {
+        abi {
+            enable true //enables the ABIs split mechanism
+            reset() //reset the list of ABIs to be included to an empty string
+            include 'arm64-v8a', 'armeabi-v7a', 'x86_64'
+            universalApk true
         }
     }
 
@@ -73,9 +87,6 @@ android {
             signingConfig signingConfigs.release
 
             minifyEnabled true
-            useProguard true
-
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 }

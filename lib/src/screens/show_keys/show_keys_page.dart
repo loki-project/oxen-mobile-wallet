@@ -1,10 +1,9 @@
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:oxen_wallet/palette.dart';
-import 'package:oxen_wallet/generated/l10n.dart';
+import 'package:oxen_wallet/l10n.dart';
 import 'package:oxen_wallet/src/stores/wallet/wallet_keys_store.dart';
 import 'package:oxen_wallet/src/screens/base_page.dart';
 
@@ -13,7 +12,7 @@ class ShowKeysPage extends BasePage {
   bool get isModalBackButton => true;
 
   @override
-  String get title => S.current.wallet_keys;
+  String getTitle(AppLocalizations t) => t.wallet_keys;
 
   @override
   Widget body(BuildContext context) {
@@ -24,10 +23,10 @@ class ShowKeysPage extends BasePage {
         child: Observer(
           builder: (_) {
             final keysMap = {
-              S.of(context).view_key_public: walletKeysStore.publicViewKey,
-              S.of(context).view_key_private: walletKeysStore.privateViewKey,
-              S.of(context).spend_key_public: walletKeysStore.publicSpendKey,
-              S.of(context).spend_key_private: walletKeysStore.privateSpendKey
+              tr(context).view_key_public: walletKeysStore.publicViewKey,
+              tr(context).view_key_private: walletKeysStore.privateViewKey,
+              tr(context).spend_key_public: walletKeysStore.publicSpendKey,
+              tr(context).spend_key_private: walletKeysStore.privateSpendKey
             };
 
             return ListView.separated(
@@ -47,9 +46,9 @@ class ShowKeysPage extends BasePage {
                       onTap: () {
                         Clipboard.setData(ClipboardData(
                             text: keysMap.values.elementAt(index)));
-                        Scaffold.of(context).showSnackBar(SnackBar(
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                           content: Text(
-                            S.of(context).copied_key_to_clipboard(key),
+                            tr(context).copied_key_to_clipboard(key),
                             textAlign: TextAlign.center,
                             style: TextStyle(color: Colors.white),
                           ),

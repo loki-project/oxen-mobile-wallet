@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:oxen_wallet/generated/l10n.dart';
+import 'package:oxen_wallet/l10n.dart';
 import 'package:oxen_wallet/src/widgets/primary_button.dart';
 import 'package:oxen_wallet/src/screens/base_page.dart';
 import 'package:oxen_wallet/src/screens/seed_language/widgets/seed_language_picker.dart';
@@ -25,7 +24,7 @@ class SeedLanguage extends BasePage {
                 children: <Widget>[
                   imageSeed,
                   Text(
-                    S.of(context).seed_language_choose,
+                    tr(context).seed_language_choose,
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 16.0),
                   ),
@@ -40,11 +39,11 @@ class SeedLanguage extends BasePage {
           PrimaryButton(
               onPressed: () =>
                   Navigator.of(context).popAndPushNamed(seedLanguageStore.currentRoute),
-              text: S.of(context).seed_language_next,
+              text: tr(context).seed_language_next,
               color:
-              Theme.of(context).primaryTextTheme.button.backgroundColor,
+              Theme.of(context).primaryTextTheme.button?.backgroundColor,
               borderColor:
-              Theme.of(context).primaryTextTheme.button.decorationColor),
+              Theme.of(context).primaryTextTheme.button?.decorationColor),
         ],
       ),
     );

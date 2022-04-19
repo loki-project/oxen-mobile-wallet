@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
 import 'package:oxen_wallet/routes.dart';
 import 'package:oxen_wallet/palette.dart';
-import 'package:oxen_wallet/generated/l10n.dart';
+import 'package:oxen_wallet/l10n.dart';
 import 'package:oxen_wallet/src/widgets/primary_button.dart';
 import 'package:oxen_wallet/src/wallet/wallet_description.dart';
 import 'package:oxen_wallet/src/screens/base_page.dart';
@@ -16,7 +15,7 @@ import 'package:oxen_wallet/src/widgets/picker.dart';
 class WalletListPage extends BasePage {
 
   @override
-  String get title => S.current.wallet_list_title;
+  String getTitle(AppLocalizations t) => t.wallet_list_title;
 
   @override
   Widget body(BuildContext context) => WalletListBody();
@@ -28,24 +27,20 @@ class WalletListBody extends StatefulWidget {
 }
 
 class WalletListBodyState extends State<WalletListBody> {
-  WalletListStore _walletListStore;
+  WalletListStore? _walletListStore;
 
   void presetMenuForWallet(WalletDescription wallet, BuildContext bodyContext) {
-    final isCurrentWallet = false;
     final walletMenu = WalletMenu(bodyContext);
-    final items = walletMenu.generateItemsForWalletMenu(isCurrentWallet);
+    final items = walletMenu.generateItemsForWalletMenu();
 
     showDialog<void>(
       context: bodyContext,
-      builder: (_) =>
-          Picker(
-              items: items,
-              selectedAtIndex: -1,
-              title: S.of(context).wallet_menu,
-              onItemSelected: (String item) =>
-                  walletMenu.action(
-                      walletMenu.listItems.indexOf(item), wallet,
-                      isCurrentWallet)),
+      builder: (_) => Picker(
+        items: items,
+        selectedAtIndex: -1,
+        title: tr(context).wallet_menu,
+        onItemSelected: (String item) => walletMenu.action(items.indexOf(item), wallet),
+      ),
     );
   }
 
@@ -66,11 +61,11 @@ class WalletListBodyState extends State<WalletListBody> {
                                 .of(context)
                                 .dividerTheme
                                 .color, height: 1.0),
-                    itemCount: _walletListStore.wallets.length,
+                    itemCount: _walletListStore!.wallets.length,
                     itemBuilder: (__, index) {
-                      final wallet = _walletListStore.wallets[index];
+                      final wallet = _walletListStore!.wallets[index];
                       final isCurrentWallet =
-                      _walletListStore.isCurrentWallet(wallet);
+                          _walletListStore!.isCurrentWallet(wallet);
 
                       return InkWell(
                           onTap: () =>
@@ -84,11 +79,7 @@ class WalletListBodyState extends State<WalletListBody> {
                                     style: TextStyle(
                                         color: isCurrentWallet
                                             ? OxenPalette.teal
-                                            : Theme
-                                            .of(context)
-                                            .primaryTextTheme
-                                            .headline5
-                                            .color,
+                                            : Theme.of(context).primaryTextTheme.headline5?.color,
                                         fontSize: 18.0,
                                         fontWeight: FontWeight.w600),
                                   ),
@@ -107,53 +98,21 @@ class WalletListBodyState extends State<WalletListBody> {
               onPressed: () =>
                   Navigator.of(context).pushNamed(Routes.newWallet),
               iconData: Icons.add_rounded,
-              color: Theme
-                  .of(context)
-                  .primaryTextTheme
-                  .button
-                  .backgroundColor,
-              borderColor:
-              Theme
-                  .of(context)
-                  .primaryTextTheme
-                  .button
-                  .decorationColor,
+              color: Theme.of(context).primaryTextTheme.button?.backgroundColor,
+              borderColor: Theme.of(context).primaryTextTheme.button?.decorationColor,
               iconColor: OxenPalette.teal,
-              iconBackgroundColor: Theme
-                  .of(context)
-                  .primaryIconTheme
-                  .color,
-              text: S
-                  .of(context)
-                  .wallet_list_create_new_wallet),
+              iconBackgroundColor: Theme.of(context).primaryIconTheme.color,
+              text: tr(context).wallet_list_create_new_wallet),
           SizedBox(height: 10.0),
           PrimaryIconButton(
               onPressed: () =>
                   Navigator.of(context).pushNamed(Routes.restoreWalletOptions),
               iconData: Icons.refresh_rounded,
-              text: S
-                  .of(context)
-                  .wallet_list_restore_wallet,
-              color: Theme
-                  .of(context)
-                  .accentTextTheme
-                  .button
-                  .backgroundColor,
-              borderColor:
-              Theme
-                  .of(context)
-                  .accentTextTheme
-                  .button
-                  .decorationColor,
-              iconColor: Theme
-                  .of(context)
-                  .primaryTextTheme
-                  .caption
-                  .color,
-              iconBackgroundColor: Theme
-                  .of(context)
-                  .accentIconTheme
-                  .color)
+              text: tr(context).wallet_list_restore_wallet,
+              color: Theme.of(context).accentTextTheme.button?.backgroundColor,
+              borderColor: Theme.of(context).accentTextTheme.button?.decorationColor,
+              iconColor: Theme.of(context).primaryTextTheme.caption?.color,
+              iconBackgroundColor: Theme.of(context).accentIconTheme.color)
         ]));
   }
 }

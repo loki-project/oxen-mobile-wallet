@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:oxen_wallet/src/node/node.dart';
@@ -8,9 +7,9 @@ import 'package:oxen_wallet/src/node/node_list.dart';
 import 'package:oxen_wallet/src/wallet/oxen/transaction/transaction_priority.dart';
 
 Future defaultSettingsMigration(
-    {@required int version,
-    @required SharedPreferences sharedPreferences,
-    @required Box<Node> nodes}) async {
+    {required int version,
+    required SharedPreferences sharedPreferences,
+    required Box<Node> nodes}) async {
   final currentVersion =
       sharedPreferences.getInt('current_default_settings_migration_version') ??
           0;
@@ -60,13 +59,12 @@ Future defaultSettingsMigration(
       'current_default_settings_migration_version', version);
 }
 
-Future<void> replaceNodesMigration({@required Box<Node> nodes}) async {
+Future<void> replaceNodesMigration({required Box<Node> nodes}) async {
   final replaceNodes = <String, Node>{
-    'public.loki.foundation:22023':
-        Node(uri: 'public.loki.foundation:22023'),
-    'nodes.hashvault.pro:22023':
-        Node(uri: 'nodes.hashvault.pro:22023'),
-    'node.loki-pool.com:18081': Node(uri: 'node.loki-pool.com:18081')
+    /*
+    'OLD-public.loki.foundation:22023':
+        Node(uri: 'NEW-public.loki.foundation:22023'),
+    */
   };
 
   nodes.values.forEach((Node node) async {
@@ -82,42 +80,39 @@ Future<void> replaceNodesMigration({@required Box<Node> nodes}) async {
 }
 
 Future<void> changeCurrentNodeToDefault(
-    {@required SharedPreferences sharedPreferences,
-    @required Box<Node> nodes}) async {
-  final timeZone = DateTime.now().timeZoneOffset.inHours;
-  var nodeUri = '';
+    {required SharedPreferences sharedPreferences,
+    required Box<Node> nodes}) async {
+  late String nodeUri;
 
-  if (timeZone >= 1) { // Eurasia
+  final timeZone = DateTime.now().timeZoneOffset.inHours;
+  if (timeZone >= -1) { // Europe, Africa, Asia, Australia -- prefer OPTF EU public server
     nodeUri = 'public.loki.foundation:22023';
-  } else if (timeZone <= -4) { // America
+  } else { // Americas -- prefer OPTF NA public server
     nodeUri = 'freyr.imaginary.stream:22023';
   }
 
-  final node = nodes.values.firstWhere((Node node) => node.uri == nodeUri) ??
-      nodes.values.first;
-  final nodeId = node != null ? node.key as int : 0; // 0 - England
+  final node = nodes.values.firstWhere((Node node) => node.uri == nodeUri,
+    orElse: () => nodes.values.first);
 
-  await sharedPreferences.setInt('current_node_id', nodeId);
+  await sharedPreferences.setInt('current_node_id', node.key as int);
 }
 
 Future<void> replaceDefaultNode(
-    {@required SharedPreferences sharedPreferences,
-    @required Box<Node> nodes}) async {
+    {required SharedPreferences sharedPreferences,
+    required Box<Node> nodes}) async {
   const nodesForReplace = <String>[
+    /*
     'public.loki.foundation:22023',
-    'nodes.hashvault.pro:22023',
-    'node.loki-pool.com:18081'
+    */
   ];
   final currentNodeId = sharedPreferences.getInt('current_node_id');
-  final currentNode =
-      nodes.values.firstWhere((Node node) => node.key == currentNodeId);
-  final needToReplace =
-      currentNode == null ? true : nodesForReplace.contains(currentNode.uri);
-
-  if (!needToReplace) {
-    return;
+  Node? currentNode;
+  try {
+    currentNode =
+        nodes.values.firstWhere((Node node) => node.key == currentNodeId);
+  } catch (_) {}
+  if (currentNode == null || nodesForReplace.contains(currentNode.uri)) {
+    await changeCurrentNodeToDefault(
+        sharedPreferences: sharedPreferences, nodes: nodes);
   }
-
-  await changeCurrentNodeToDefault(
-      sharedPreferences: sharedPreferences, nodes: nodes);
 }

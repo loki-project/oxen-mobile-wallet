@@ -1,15 +1,14 @@
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:oxen_wallet/palette.dart';
 import 'package:oxen_wallet/src/stores/settings/settings_store.dart';
-import 'package:oxen_wallet/generated/l10n.dart';
+import 'package:oxen_wallet/l10n.dart';
 
 abstract class PinCodeWidget extends StatefulWidget {
-  PinCodeWidget({Key key, this.onPinCodeEntered, this.hasLengthSwitcher})
+  PinCodeWidget({Key? key, this.onPinCodeEntered, required this.hasLengthSwitcher})
       : super(key: key);
 
-  final Function(List<int> pin, PinCodeState state) onPinCodeEntered;
+  final Function(List<int> pin, PinCodeState state)? onPinCodeEntered;
   final bool hasLengthSwitcher;
 }
 
@@ -27,29 +26,24 @@ class PinCode extends PinCodeWidget {
 
 class PinCodeState<T extends PinCodeWidget> extends State<T> {
   static const defaultPinLength = 4;
-  static const sixPinLength = 6;
-  static const fourPinLength = 4;
   static final deleteIcon = Icon(Icons.backspace, color: Palette.blueGrey);
   final _gridViewKey = GlobalKey();
 
   int pinLength = defaultPinLength;
-  List<int> pin = List<int>.filled(defaultPinLength, null);
-  String title = S.current.enter_your_pin;
+  List<int> pin = <int>[];
+  String title = '';
   double _aspectRatio = 0;
 
   void setTitle(String title) => setState(() => this.title = title);
 
-  void clear() => setState(() => pin = List<int>.filled(pinLength, null));
+  void clear() => setState(() => pin.clear());
 
-  void onPinCodeEntered(PinCodeState state) =>
-      widget.onPinCodeEntered(state.pin, this);
+  void onPinCodeEntered(PinCodeState state) => widget.onPinCodeEntered?.call(state.pin, this);
 
   void changePinLength(int length) {
-    final newPin = List<int>.filled(length, null);
-
     setState(() {
       pinLength = length;
-      pin = newPin;
+      pin.clear();
     });
   }
 
@@ -61,8 +55,12 @@ class PinCodeState<T extends PinCodeWidget> extends State<T> {
   }
 
   void calculateAspectRatio() {
+    if (_gridViewKey.currentContext == null) {
+      _aspectRatio = 0;
+      return;
+    }
     final renderBox =
-        _gridViewKey.currentContext.findRenderObject() as RenderBox;
+        _gridViewKey.currentContext!.findRenderObject() as RenderBox;
     final cellWidth = renderBox.size.width / 3;
     final cellHeight = renderBox.size.height / 4;
 
@@ -76,7 +74,7 @@ class PinCodeState<T extends PinCodeWidget> extends State<T> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback(afterLayout);
+    WidgetsBinding.instance?.addPostFrameCallback(afterLayout);
   }
 
   void afterLayout(dynamic _) {
@@ -94,7 +92,7 @@ class PinCodeState<T extends PinCodeWidget> extends State<T> {
       padding: EdgeInsets.only(left: 40.0, right: 40.0, bottom: 40.0),
       child: Column(children: <Widget>[
         Spacer(flex: 2),
-        Text(title,
+        Text(title.isNotEmpty ? title : tr(context).enter_your_pin,
             style: TextStyle(fontSize: 24, color: Palette.wildDarkBlue)),
         Spacer(flex: 3),
         Container(
@@ -103,7 +101,7 @@ class PinCodeState<T extends PinCodeWidget> extends State<T> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: List.generate(pinLength, (index) {
               const size = 10.0;
-              final isFilled = pin[index] != null;
+              final isFilled = index < pin.length;
 
               return Container(
                   width: size,
@@ -120,12 +118,10 @@ class PinCodeState<T extends PinCodeWidget> extends State<T> {
         if (widget.hasLengthSwitcher) ...[
           FlatButton(
               onPressed: () {
-                changePinLength(pinLength == PinCodeState.fourPinLength
-                    ? PinCodeState.sixPinLength
-                    : PinCodeState.fourPinLength);
+                changePinLength(pinLength == 4 ? 6 : 4);
               },
               child: Text(
-                _changePinLengthText(),
+                _changePinLengthText(tr(context)),
                 style: TextStyle(fontSize: 16.0, color: Palette.wildDarkBlue),
               ))
         ],
@@ -190,52 +186,24 @@ class PinCodeState<T extends PinCodeWidget> extends State<T> {
   }
 
   void _push(int num) {
-    if (currentPinLength() >= pinLength) {
+    if (pin.length >= pinLength)
       return;
-    }
 
-    for (var i = 0; i < pin.length; i++) {
-      if (pin[i] == null) {
-        setState(() => pin[i] = num);
-        break;
-      }
-    }
+    setState(() => pin.add(num));
 
-    final _currentPinLength = currentPinLength();
-
-    if (_currentPinLength == pinLength) {
+    // ignore: invariant_booleans
+    if (pin.length == pinLength)
       onPinCodeEntered(this);
-    }
   }
 
   void _pop() {
-    if (currentPinLength() == 0) {
+    if (pin.isEmpty)
       return;
-    }
 
-    for (var i = pin.length - 1; i >= 0; i--) {
-      if (pin[i] != null) {
-        setState(() => pin[i] = null);
-        break;
-      }
-    }
+    pin.removeLast();
   }
 
-  int currentPinLength() {
-    return pin.fold(0, (v, e) {
-      if (e != null) {
-        return v + 1;
-      }
-
-      return v;
-    });
-  }
-
-  String _changePinLengthText() {
-    return S.current.use +
-        (pinLength == PinCodeState.fourPinLength
-            ? '${PinCodeState.sixPinLength}'
-            : '${PinCodeState.fourPinLength}') +
-        S.current.digit_pin;
+  String _changePinLengthText(AppLocalizations l10n) {
+    return l10n.use_n_digit_pin(pinLength == 4 ? '6' : '4');
   }
 }

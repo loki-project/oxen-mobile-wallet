@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:oxen_wallet/palette.dart';
 
 class StandartListRow extends StatelessWidget {
-  StandartListRow({this.title, this.value});
+  StandartListRow({required this.title, required this.value});
 
   final String title;
   final String value;
@@ -17,7 +17,7 @@ class StandartListRow extends StatelessWidget {
             Text(title,
                 style: TextStyle(
                     fontSize: 14,
-                    color: Theme.of(context).primaryTextTheme.overline.color),
+                    color: Theme.of(context).primaryTextTheme.overline?.color),
                 textAlign: TextAlign.left),
             Padding(
               padding: const EdgeInsets.only(top: 5),

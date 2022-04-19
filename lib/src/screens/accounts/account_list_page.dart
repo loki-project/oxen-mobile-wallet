@@ -1,18 +1,17 @@
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:oxen_wallet/palette.dart';
 import 'package:oxen_wallet/routes.dart';
-import 'package:oxen_wallet/generated/l10n.dart';
+import 'package:oxen_wallet/l10n.dart';
 import 'package:oxen_wallet/src/stores/account_list/account_list_store.dart';
 import 'package:oxen_wallet/src/stores/wallet/wallet_store.dart';
 import 'package:oxen_wallet/src/screens/base_page.dart';
 
 class AccountListPage extends BasePage {
   @override
-  String get title => S.current.accounts;
+  String getTitle(AppLocalizations t) => t.accounts;
 
   @override
   Widget trailing(BuildContext context) {
@@ -56,7 +55,7 @@ class AccountListPage extends BasePage {
       child: Observer(builder: (_) {
         final accounts = accountListStore.accounts;
         return ListView.builder(
-            itemCount: accounts == null ? 0 : accounts.length,
+            itemCount: accounts.length,
             itemBuilder: (BuildContext context, int index) {
               final account = accounts[index];
 
@@ -65,7 +64,24 @@ class AccountListPage extends BasePage {
 
                 return Slidable(
                   key: Key(account.id.toString()),
-                  actionPane: SlidableDrawerActionPane(),
+                  endActionPane: ActionPane(
+                    motion: const DrawerMotion(),
+                    children: [
+                      SlidableAction(
+                        label: tr(context).edit,
+                        backgroundColor: Colors.blue,
+                        icon: Icons.edit,
+                        onPressed: (context) async {
+                          await Navigator.of(context).pushNamed(
+                              Routes.accountCreation,
+                              arguments: account);
+                          // await accountListStore.updateAccountList().then((_) {
+                          //   if (isCurrent) walletStore.setAccount(accountListStore.accounts[index]);
+                          // });
+                        },
+                      )
+                    ],
+                  ),
                   child: Container(
                     color: isCurrent ? currentColor : notCurrentColor,
                     child: Column(
@@ -78,7 +94,7 @@ class AccountListPage extends BasePage {
                                 color: Theme.of(context)
                                     .primaryTextTheme
                                     .headline5
-                                    .color),
+                                    ?.color),
                           ),
                           onTap: () {
                             if (isCurrent) return;
@@ -94,21 +110,6 @@ class AccountListPage extends BasePage {
                       ],
                     ),
                   ),
-                  secondaryActions: <Widget>[
-                    IconSlideAction(
-                      caption: S.of(context).edit,
-                      color: Colors.blue,
-                      icon: Icons.edit,
-                      onTap: () async {
-                        await Navigator.of(context).pushNamed(
-                            Routes.accountCreation,
-                            arguments: account);
-                        // await accountListStore.updateAccountList().then((_) {
-                        //   if (isCurrent) walletStore.setAccount(accountListStore.accounts[index]);
-                        // });
-                      },
-                    )
-                  ],
                 );
               });
             });

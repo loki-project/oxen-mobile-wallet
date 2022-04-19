@@ -28,19 +28,21 @@ PendingTransactionDescription _createStakeSync(Map args) {
 }
 
 Future<PendingTransactionDescription> createStake(
-        String serviceNodeKey, String amount) =>
+        String serviceNodeKey, String? amount) =>
     compute(_createStakeSync,
         {'service_node_key': serviceNodeKey, 'amount': amount});
 
 bool canRequestUnstake(String serviceNodeKey) {
-  final serviceNodeKeyPointer = Utf8.toUtf8(serviceNodeKey);
-  return stake_native.canRequestUnstakeNative(serviceNodeKeyPointer) != 0;
+  final serviceNodeKeyPointer = serviceNodeKey.toNativeUtf8();
+  final result = stake_native.canRequestUnstakeNative(serviceNodeKeyPointer) != 0;
+  calloc.free(serviceNodeKeyPointer);
+  return result;
 }
 
-PendingTransactionDescription _submitStakeUnlockSync(Map args) {
+void _submitStakeUnlockSync(Map args) {
   final serviceNodeKey = args['service_node_key'] as String;
-  return stake_native.submitStakeUnlockSync(serviceNodeKey);
+  stake_native.submitStakeUnlockSync(serviceNodeKey);
 }
 
-Future<PendingTransactionDescription> submitStakeUnlock(String serviceNodeKey) =>
+Future<void> submitStakeUnlock(String serviceNodeKey) =>
     compute(_submitStakeUnlockSync, {'service_node_key': serviceNodeKey});

@@ -7,10 +7,10 @@ import 'package:oxen_wallet/src/screens/auth/auth_page.dart';
 import 'package:oxen_wallet/src/stores/auth/auth_store.dart';
 
 Widget createUnlockPage(
-          {@required SharedPreferences sharedPreferences,
-          @required UserService userService,
-          @required WalletService walletService,
-          @required Function(bool, AuthPageState) onAuthenticationFinished}) =>
+          {required SharedPreferences sharedPreferences,
+          required UserService userService,
+          required WalletService walletService,
+          required Function(bool, AuthPageState) onAuthenticationFinished}) =>
       WillPopScope(
           onWillPop: () async => false,
           child: Provider(

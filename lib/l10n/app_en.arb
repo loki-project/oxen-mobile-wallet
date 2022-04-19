@@ -20,15 +20,19 @@
   "contact_name" : "Contact Name",
   "reset" : "Reset",
   "save" : "Save",
+  "remove_contact" : "Remove Contact",
+  "remove_contact_confirm" : "Are you sure that you want to remove the selected contact?",
 
 
   "authenticated" : "Authenticated",
   "authentication" : "Authentication",
   "failed_authentication" : "Failed authentication. {state_error}",
+  "@failed_authentication" : { "placeholders": { "state_error": {} } },
 
 
   "wallet_menu" : "Menu",
-  "Blocks_remaining" : "{status} Blocks Remaining",
+  "blocks_remaining" : "{status} Blocks Remaining",
+  "@blocks_remaining" : { "placeholders": { "status": {} } },
   "please_try_to_connect_to_another_node" : "Please try to connect to another node",
   "oxen_hidden" : "OXEN Hidden",
   "oxen_available_balance" : "OXEN Available Balance",
@@ -44,6 +48,7 @@
   "yesterday" : "Yesterday",
   "received" : "Received",
   "sent" : "Sent",
+  "stake" : "Stake",
   "pending" : " (pending)",
   "rescan" : "Rescan",
   "reconnect" : "Reconnect",
@@ -67,7 +72,9 @@
   "status" : "Status: ",
   "confirm" : "Confirm",
   "confirm_sending" : "Confirm sending",
-  "commit_transaction_amount_fee" : "Commit transaction\nAmount: {amount}\nFee: {fee}",
+  "confirm_stake" : "Confirm stake",
+  "confirm_transaction_amount_fee" : "Amount: {amount}\nFee: {fee}",
+  "@confirm_transaction_amount_fee" : { "placeholders": { "amount": {}, "fee": {} } },
   "sending" : "Sending",
   "transaction_sent" : "Transaction sent!",
   "send_oxen" : "Send OXEN",
@@ -85,6 +92,10 @@
   "continue_text" : "Continue",
 
 
+  "remove_wallet_confirmation": "Are you sure you want to delete this wallet?",
+  "dangerzone_remove_wallet_warning": "If you have not saved your seed phrase then any funds sent to this wallet will be lost forever!",
+
+
   "node_new" : "New Node",
   "node_address" : "Node Address",
   "node_port" : "Node port",
@@ -94,6 +105,7 @@
   "node_reset_settings_title" : "Reset settings",
   "nodes_list_reset_to_default_message" : "Are you sure that you want to reset settings to default?",
   "change_current_node" : "Are you sure to change current node to {node}?",
+  "@change_current_node" : { "placeholders": { "node": {} }},
   "change" : "Change",
   "remove_node" : "Remove node",
   "remove_node_message" : "Are you sure that you want to remove selected node?",
@@ -101,8 +113,8 @@
   "delete" : "Delete",
 
 
-  "use" : "Switch to ",
-  "digit_pin" : "-digit PIN",
+  "use_n_digit_pin" : "Switch to {n}-digit PIN",
+  "@use_n_digit_pin" : { "placeholders": { "n": {} }},
 
 
   "share_address" : "Share address",
@@ -118,7 +130,7 @@
   "restore_description_from_backup" : "You can restore the whole Oxen Wallet app from your back-up file",
   "restore_seed_keys_restore" : "Seed/Keys Restore",
   "restore_title_from_seed" : "Restore from seed",
-  "restore_description_from_seed" : "Restore your wallet from either the 25 word or 13 word combination code",
+  "restore_description_from_seed" : "Restore your wallet from the 25 word combination code",
   "restore_title_from_keys" : "Restore from keys",
   "restore_description_from_keys" : "Restore your wallet from generated keystrokes saved from your private keys",
   "restore_wallet_name" : "Wallet name",
@@ -155,6 +167,7 @@
   "send_error_currency" : "Currency can only contain numbers",
   "send_estimated_fee" : "Estimated fee:",
   "send_priority" : "Currently the fee is set at {transactionPriority} priority.\nTransaction priority can be adjusted in the settings",
+  "@send_priority" : { "placeholders": { "transactionPriority": {} }},
   "send_creating_transaction" : "Creating transaction",
 
 
@@ -168,6 +181,7 @@
   "stake_oxen": "Stake Oxen",
   "title_confirm_unlock_stake": "Unlock Stake",
   "body_confirm_unlock_stake": "Do you really want to unlock your stake from {serviceNodeKey}?",
+  "@body_confirm_unlock_stake" : { "placeholders": { "serviceNodeKey": {} }},
   "unlock_stake_requested": "Stake unlock requested",
   "unable_unlock_stake": "Unable to unlock stake",
 
@@ -202,7 +216,7 @@
 
 
   "setup_pin" : "Setup PIN",
-  "enter_your_pin_again" : "Enter your pin again",
+  "enter_your_pin_again" : "Enter your PIN again",
   "setup_successful" : "Your PIN has been set up successfully!",
 
 
@@ -212,6 +226,7 @@
   "spend_key_private" : "Spend key (private)",
   "spend_key_public" : "Spend key (public)",
   "copied_key_to_clipboard" : "Copied {key} to Clipboard",
+  "@copied_key_to_clipboard" : { "placeholders": { "key": {} }},
 
 
   "new_subaddress_title" : "New subaddress",
@@ -228,6 +243,7 @@
   "transaction_details_height" : "Height",
   "transaction_details_amount" : "Amount",
   "transaction_details_copied" : "{title} copied to Clipboard",
+  "@transaction_details_copied" : { "placeholders": { "title": {} }},
   "transaction_details_recipient_address" : "Recipient address",
 
 
@@ -236,9 +252,13 @@
   "wallet_list_restore_wallet" : "Restore Wallet",
   "wallet_list_load_wallet" : "Load wallet",
   "wallet_list_loading_wallet" : "Loading {wallet_name} wallet",
+  "@wallet_list_loading_wallet" : { "placeholders": { "wallet_name": {} }},
   "wallet_list_failed_to_load" : "Failed to load {wallet_name} wallet. {error}",
+  "@wallet_list_failed_to_load" : { "placeholders": { "wallet_name": {}, "error": {} }},
   "wallet_list_removing_wallet" : "Removing {wallet_name} wallet",
-  "wallet_list_failed_to_remove" : "Failed to remove {wallet_name} wallet. {error}",
+  "@wallet_list_removing_wallet" : { "placeholders": { "wallet_name": {} }},
+  "wallet_list_failed_to_remove" : "Failed to remove {wallet_name} wallet: {error}",
+  "@wallet_list_failed_to_remove" : { "placeholders": { "wallet_name": {}, "error": {} }},
 
 
   "widgets_address" : "Address",
@@ -249,27 +269,24 @@
 
 
   "router_no_route" : "No route defined for {name}",
+  "@router_no_route" : { "placeholders": { "name": {} }},
 
 
-  "error_text_account_name" : "Account name can only contain letters, numbers\nand must be between 1 and 15 characters long",
-  "error_text_contact_name" : "Contact name can't contain ` , ' \" symbols\nand must be between 1 and 32 characters long",
-  "error_text_address" : "Wallet address must correspond to the type\nof cryptocurrency",
-  "error_text_node_address" : "Please enter a iPv4 address",
-  "error_text_node_port" : "Node port can only contain numbers between 0 and 65535",
+  "error_text_empty": "Cannot be empty",
+  "error_text_address" : "Invalid OXEN wallet address!",
+  "error_text_node_address" : "Please enter a valid hostname or IP address",
+  "error_text_node_port" : "Node port can only contain numbers between 1 and 65535",
   "error_text_payment_id" : "Payment ID can only contain from 16 to 64 chars in hex",
-  "error_text_oxen" : "OXEN value can't exceed available balance.\nThe number of fraction digits must be less or equal to 12",
+  "error_text_oxen" : "OXEN value can't exceed available balance.\nThe number of fraction digits must be less or equal to 9",
   "error_text_fiat" : "Value of amount can't exceed available balance.\nThe number of fraction digits must be less or equal to 2",
-  "error_text_subaddress_name" : "Subaddress name can't contain ` , ' \" symbols\nand must be between 1 and 20 characters long",
   "error_text_amount" : "Amount can only contain numbers",
-  "error_text_wallet_name" : "Wallet name can only contain letters, numbers\nand must be between 1 and 15 characters long",
   "error_text_keys" : "Wallet keys can only contain 64 chars in hex",
-  "error_text_crypto_currency" : "The number of fraction digits\nmust be less or equal to 12",
+  "error_text_crypto_currency" : "The number of fraction digits\nmust be less or equal to 9",
   "error_text_service_node" : "A Service Node key can only contain 64 chars in hex",
 
 
-  "auth_store_ban_timeout" : "ban_timeout",
-  "auth_store_banned_for" : "Banned for ",
-  "auth_store_banned_minutes" : " minutes",
+  "auth_store_banned_for" : "Banned for {mins} minutes",
+  "@auth_store_banned_for": { "placeholders": {"mins": {}}},
   "auth_store_incorrect_password" : "Wrong PIN",
   "wallet_restoration_store_incorrect_seed_length" : "Incorrect seed length",
 
@@ -294,21 +311,28 @@
 
   "change_language" : "Change language",
   "change_language_to" : "Change language to {language}?",
+  "@change_language_to" : { "placeholders": { "language": {} }},
 
   "paste" : "Paste",
   "restore_from_seed_placeholder" : "Please enter or paste your seed here",
   "add_new_word" : "Add new word",
   "incorrect_seed" : "The text entered is not valid.",
+  "invalid_seed_words" : "\nInvalid seed words: {words}.",
+  "@invalid_seed_words" : { "placeholders": {"words": {}}},
 
   "biometric_auth_reason" : "Scan your fingerprint to authenticate",
   "version" : "Version {currentVersion}",
+  "@version" : { "placeholders": { "currentVersion": {} }},
 
   "openalias_alert_title" : "OXEN Recipient Detected",
   "openalias_alert_content" : "You will be sending funds to\n{recipient_name}",
+  "@openalias_alert_content" : { "placeholders": { "recipient_name": {} }},
 
   "dangerzone": "Dangerzone",
   "yes_im_sure": "Yes, I'm sure!",
   "never_give_your": "NEVER give your Oxen wallet {item} to ANYONE!",
+  "@never_give_your" : { "placeholders": { "item": {} }},
   "dangerzone_warning": "NEVER input your Oxen wallet {item} into any software or website other than the OFFICIAL Oxen wallets downloaded directly from the {app_store}, the Oxen website, or the Oxen GitHub.\nAre you sure you want to access your wallet {item}?",
+  "@dangerzone_warning" : { "placeholders": { "item": {}, "app_store": {} }},
   "keys_title": "Keys"
 }
