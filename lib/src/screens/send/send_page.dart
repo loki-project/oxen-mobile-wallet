@@ -54,31 +54,6 @@ class SendFormState extends State<SendForm> {
   final _formKey = GlobalKey<FormState>();
 
   @override
-  void initState() {
-    _focusNodeAddress.addListener(() {
-      if (!_focusNodeAddress.hasFocus && _addressController.text.isNotEmpty) {
-        getOpenAliasRecord(context);
-      }
-    });
-
-    super.initState();
-  }
-
-  Future<void> getOpenAliasRecord(BuildContext context) async {
-    final sendStore = Provider.of<SendStore>(context);
-    final isOpenAlias =
-        await sendStore.isOpenaliasRecord(_addressController.text);
-
-    if (isOpenAlias) {
-      _addressController.text = sendStore.recordAddress ?? '';
-
-      await showSimpleOxenDialog(context, tr(context).openalias_alert_title,
-          tr(context).openalias_alert_content(sendStore.recordName ?? ''),
-          onPressed: (_) => Navigator.of(context).pop());
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     final settingsStore = Provider.of<SettingsStore>(context);
     final sendStore = Provider.of<SendStore>(context);

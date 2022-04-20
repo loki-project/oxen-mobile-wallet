@@ -2,7 +2,6 @@ import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:mobx/mobx.dart';
 import 'package:oxen_wallet/l10n.dart';
-import 'package:oxen_wallet/src/domain/common/openalias_record.dart';
 import 'package:oxen_wallet/src/domain/services/wallet_service.dart';
 import 'package:oxen_wallet/src/stores/price/price_store.dart';
 import 'package:oxen_wallet/src/stores/send/sending_state.dart';
@@ -161,16 +160,6 @@ abstract class SendStoreBase with Store {
     } catch (e) {
       cryptoAmount = '0.00';
     }
-  }
-
-  Future<bool> isOpenaliasRecord(String name) async {
-    final _openaliasRecord = await OpenaliasRecord.fetchAddressAndName(
-        OpenaliasRecord.formatDomainName(name));
-
-    recordAddress = _openaliasRecord.address;
-    recordName = _openaliasRecord.name;
-
-    return recordAddress != name;
   }
 
   void validateAddress(String value, {required AppLocalizations l10n}) {
