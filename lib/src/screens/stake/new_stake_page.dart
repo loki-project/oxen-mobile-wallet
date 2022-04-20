@@ -283,10 +283,9 @@ class NewStakeFormState extends State<NewStakeForm> {
         WidgetsBinding.instance?.addPostFrameCallback((_) {
           showConfirmOxenDialog(
             context,
-            tr(context).confirm_stake,
-            tr(context).confirm_transaction_amount_fee(
-                sendStore.pendingTransaction!.amount,
-                sendStore.pendingTransaction!.fee),
+            t.confirm_stake,
+            t.amount(sendStore.pendingTransaction!.amount) + " OXEN\n"
+                + t.fee(sendStore.pendingTransaction!.fee) + " OXEN",
             onConfirm: (_) {
               Navigator.of(context).pop();
               sendStore.commitTransaction();

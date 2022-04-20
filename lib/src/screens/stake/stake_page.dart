@@ -19,7 +19,7 @@ const double fullSNStake = isTestnet ? 100 : 15000;
 
 extension StakeParsing on StakeRow {
   double get ownedPercentage {
-    final percentage = oxenAmountToDouble(amount) / fullSNStake;
+    final percentage = amount / OXEN_DIVISOR / fullSNStake;
     if (percentage > 1) return 1;
     return percentage;
   }
@@ -64,7 +64,7 @@ class StakePageBodyState extends State<StakePageBody> {
             for (final stake in allStakes) {
               totalAmountStaked += stake.amount;
             }
-            final stakePercentage = allStakes.isEmpty ? 1.0 : min(oxenAmountToDouble(totalAmountStaked) / fullSNStake, 1.0);
+            final stakePercentage = allStakes.isEmpty ? 1.0 : min(totalAmountStaked / OXEN_DIVISOR / fullSNStake, 1.0);
             return ListView(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),

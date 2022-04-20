@@ -160,7 +160,7 @@ class ReceiveBodyState extends State<ReceiveBody> {
                                     inputFormatters: [
                                       FilteringTextInputFormatter.deny(RegExp('[- ]'))
                                     ],
-                                    hintText: tr(context).amount,
+                                    hintText: tr(context).receive_amount,
                                     validator: (value) {
                                       walletStore.validateAmount(value ?? '', tr(context));
                                       return walletStore.errorMessage;

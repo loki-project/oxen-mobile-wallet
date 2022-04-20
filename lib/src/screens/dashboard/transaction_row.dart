@@ -8,7 +8,7 @@ class TransactionRow extends StatelessWidget {
       {required this.direction,
       required this.formattedDate,
       required this.formattedAmount,
-      required this.formattedFiatAmount,
+      required this.formattedFee,
       required this.isPending,
       required this.isStake,
       required this.onTap});
@@ -17,7 +17,7 @@ class TransactionRow extends StatelessWidget {
   final TransactionDirection direction;
   final String formattedDate;
   final String formattedAmount;
-  final String formattedFiatAmount;
+  final String formattedFee;
   final bool isPending;
   final bool isStake;
 
@@ -65,18 +65,14 @@ class TransactionRow extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         Text(
-                            (direction == TransactionDirection.incoming
-                                    ? tr(context).received
-                                    : isStake
-                                      ? tr(context).stake
-                                      : tr(context).sent) +
-                                (isPending ? tr(context).pending : ''),
+                            (
+                             direction == TransactionDirection.incoming ? tr(context).received :
+                             isStake ? tr(context).stake :
+                             tr(context).sent
+                            ) + (isPending ? tr(context).pending : ''),
                             style: TextStyle(
                                 fontSize: 16,
-                                color: Theme.of(context)
-                                    .primaryTextTheme
-                                    .subtitle1
-                                    ?.color)),
+                                color: Theme.of(context).primaryTextTheme.subtitle1?.color)),
                         Text(formattedAmount,
                             style: const TextStyle(
                                 fontSize: 16, color: Palette.purpleBlue))
@@ -88,9 +84,9 @@ class TransactionRow extends StatelessWidget {
                         Text(formattedDate,
                             style: const TextStyle(
                                 fontSize: 13, color: Palette.blueGrey)),
-                        Text(formattedFiatAmount,
+                        Text(direction == TransactionDirection.incoming ? '' : tr(context).fee(formattedFee),
                             style: const TextStyle(
-                                fontSize: 14, color: Palette.blueGrey))
+                                fontSize: 13, color: Palette.blueGrey))
                       ]),
                 ],
               ),

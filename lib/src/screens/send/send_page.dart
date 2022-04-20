@@ -315,6 +315,8 @@ class SendFormState extends State<SendForm> {
 
     final sendStore = Provider.of<SendStore>(context);
 
+    final t = tr(context);
+
     reaction((_) => sendStore.fiatAmount, (String amount) {
       if (amount != _fiatAmountController.text) {
         _fiatAmountController.text = amount;
@@ -346,7 +348,7 @@ class SendFormState extends State<SendForm> {
     reaction((_) => sendStore.state, (SendingState state) {
       if (state is SendingFailed) {
         WidgetsBinding.instance?.addPostFrameCallback((_) {
-          showSimpleOxenDialog(context, tr(context).error, state.error,
+          showSimpleOxenDialog(context, t.error, state.error,
               onPressed: (_) => Navigator.of(context).pop());
         });
       }
@@ -355,10 +357,8 @@ class SendFormState extends State<SendForm> {
         WidgetsBinding.instance?.addPostFrameCallback((_) {
           showConfirmOxenDialog(
             context,
-            tr(context).confirm_sending,
-            tr(context).confirm_transaction_amount_fee(
-                sendStore.pendingTransaction!.amount,
-                sendStore.pendingTransaction!.fee),
+            t.confirm_sending,
+            t.amount(sendStore.pendingTransaction!.amount) + " OXEN\n" + t.fee(sendStore.pendingTransaction!.fee) + "OXEN",
             onConfirm: (_) {
               Navigator.of(context).pop();
               sendStore.commitTransaction();
@@ -370,7 +370,7 @@ class SendFormState extends State<SendForm> {
       if (state is TransactionCommitted) {
         WidgetsBinding.instance?.addPostFrameCallback((_) {
           showSimpleOxenDialog(
-              context, tr(context).sending, tr(context).transaction_sent,
+              context, t.sending, t.transaction_sent,
               onPressed: (_) {
             _addressController.text = '';
             _cryptoAmountController.text = '';

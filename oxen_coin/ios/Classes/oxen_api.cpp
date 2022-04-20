@@ -149,7 +149,14 @@ extern "C"
         int8_t direction;
         int8_t isPending;
         int8_t isStake;
-        
+
+        // The actual amount of transfers; unlike `amount`, this is *not* net of amounts received in
+        // the same transaction; in particular this is useful for stakes (since a stake is a
+        // transfers to the same wallet) and sweeps (again which go to the same wallet).  This info,
+        // however, is only available in the cache (i.e. it is not synced to the blockchain) so a 0
+        // here should be treated as a "don't know" value.
+        uint64_t transferAmount;
+
         char *hash;
         char *paymentId;
 
@@ -166,6 +173,9 @@ extern "C"
             direction = transaction->direction();
             isPending = static_cast<int8_t>(transaction->isPending());
             isStake = static_cast<int8_t>(transaction->isStake());
+            transferAmount = 0;
+            for (auto& t : transaction->transfers())
+                transferAmount += t.amount;
             std::string *hash_str = new std::string(transaction->hash());
             hash = strdup(hash_str->c_str());
             paymentId = strdup(transaction->paymentId().c_str());
