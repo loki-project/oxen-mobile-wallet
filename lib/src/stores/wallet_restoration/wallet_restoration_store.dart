@@ -43,8 +43,6 @@ abstract class WalletRestorationStoreBase with Store {
       await walletListService.restoreFromSeed(name, _seed, restoreHeight);
       authStore.restored();
       state = WalletRestoredSuccessfully();
-    } on WalletRestoreFromSeedException catch (e) {
-      state = WalletRestorationFailure(error: e.message);
     } catch (e) {
       state = WalletRestorationFailure(error: e.toString());
     }
