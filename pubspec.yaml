@@ -12,7 +12,7 @@ publish_to: none
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.9+11
+version: 1.0.9+12
 
 
 # keytool -genkey -v -keystore c:\Users\konst\key.jks -storetype JKS -keyalg RSA -keysize 2048 -validity 10000 -alias key
