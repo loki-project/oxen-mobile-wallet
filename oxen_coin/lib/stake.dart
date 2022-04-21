@@ -22,7 +22,7 @@ Future<List<StakeRow>> getAllStakes() =>
 
 PendingTransactionDescription _createStakeSync(Map args) {
   final serviceNodeKey = args['service_node_key'] as String;
-  final amount = args['amount'] as String;
+  final amount = args['amount'] as String?;
 
   return stake_native.createStakeSync(serviceNodeKey, amount);
 }
