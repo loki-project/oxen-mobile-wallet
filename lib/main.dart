@@ -31,6 +31,7 @@ import 'package:oxen_wallet/src/domain/common/default_settings_migration.dart';
 import 'package:oxen_wallet/src/domain/common/fiat_currency.dart';
 import 'package:oxen_wallet/src/wallet/wallet_type.dart';
 import 'package:oxen_wallet/src/domain/services/wallet_service.dart';
+import 'package:oxen_wallet/l10n.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:oxen_wallet/src/stores/seed_language/seed_language_store.dart';
 
@@ -160,10 +161,13 @@ class OxenWalletApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final settingsStore = Provider.of<SettingsStore>(context);
 
-    return ChangeNotifierProvider<ThemeChanger>(
-        create: (_) => ThemeChanger(
-            settingsStore.isDarkTheme ? Themes.darkTheme : Themes.lightTheme),
-        child: MaterialAppWithTheme());
+    return ChangeNotifierProvider(
+        create: (_) => ThemeChanger(settingsStore.isDarkTheme ? Themes.darkTheme : Themes.lightTheme),
+        builder: (context, child) => ChangeNotifierProvider(
+          create: (_) => LanguageNotifier(),
+          builder: (context, child) => MaterialAppWithTheme(),
+        )
+    );
   }
 }
 
@@ -182,6 +186,7 @@ class MaterialAppWithTheme extends StatelessWidget {
     final theme = Provider.of<ThemeChanger>(context);
     final statusBarColor =
         settingsStore.isDarkTheme ? Colors.black : Colors.white;
+    final languageNotifier = Provider.of<LanguageNotifier>(context);
     final contacts = Provider.of<Box<Contact>>(context);
     final nodes = Provider.of<Box<Node>>(context);
     final transactionDescriptions =
@@ -193,6 +198,17 @@ class MaterialAppWithTheme extends StatelessWidget {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: theme.getTheme(),
+        localeListResolutionCallback: (List<Locale>? userLocales, Iterable<Locale> supported) {
+            for (var userLocale in userLocales ?? <Locale>[]) {
+                for (var locale in supported) {
+                    if (locale.languageCode == userLocale.languageCode &&
+                        (locale.countryCode == null || locale.countryCode! == userLocale.countryCode))
+                        return userLocale;
+                }
+            }
+            return Locale('en');
+        },
+        locale: settingsStore.languageOverride != null ? Locale(settingsStore.languageOverride!) : null,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         onGenerateRoute: (settings) => oxenroute.Router.generateRoute(

@@ -315,6 +315,7 @@
   "change_language" : "Change language",
   "change_language_to" : "Change language to {language}?",
   "@change_language_to" : { "placeholders": { "language": {} }},
+  "change_language_system_default" : "System default",
 
   "paste" : "Paste",
   "restore_from_seed_placeholder" : "Please enter or paste your seed here",

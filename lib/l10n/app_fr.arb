@@ -298,6 +298,7 @@
 
   "change_language" : "changer la langue",
   "change_language_to" : "Changez la langue en {language}?",
+  "change_language_system_default" : "préréglage du système",
 
   "paste" : "Coller",
   "restore_from_seed_placeholder" : "Veuillez entrer votre code ici",

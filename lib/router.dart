@@ -40,6 +40,7 @@ import 'package:oxen_wallet/src/screens/seed/create_seed_page.dart';
 import 'package:oxen_wallet/src/screens/seed_language/seed_language_page.dart';
 import 'package:oxen_wallet/src/screens/send/send_page.dart';
 import 'package:oxen_wallet/src/screens/settings/settings.dart';
+import 'package:oxen_wallet/src/screens/settings/change_language.dart';
 import 'package:oxen_wallet/src/screens/setup_pin_code/setup_pin_code.dart';
 import 'package:oxen_wallet/src/screens/show_keys/show_keys_page.dart';
 import 'package:oxen_wallet/src/screens/stake/new_stake_page.dart';
@@ -430,6 +431,9 @@ class Router {
 
       case Routes.changelog:
         return MaterialPageRoute<void>(builder: (_) => ChangelogPage());
+
+      case Routes.changeLanguage:
+        return MaterialPageRoute<void>(builder: (_) => ChangeLanguage());
 
       case Routes.profile:
         return MaterialPageRoute<void>(builder: (_) => ProfilePage());

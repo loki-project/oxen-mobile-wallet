@@ -28,7 +28,8 @@ abstract class SettingsStoreBase with Store {
       required bool allowBiometricAuthenticationKey,
       required bool enableFiatCurrencyKey,
       required bool initialDarkTheme,
-      required int initialPinLength}) :
+      required int initialPinLength,
+      required String? initialLanguageOverride}) :
     fiatCurrency = initialFiatCurrency,
     transactionPriority = initialTransactionPriority,
     balanceDisplayMode = initialBalanceDisplayMode,
@@ -39,7 +40,8 @@ abstract class SettingsStoreBase with Store {
     allowBiometricAuthentication = allowBiometricAuthenticationKey,
     enableFiatCurrency = enableFiatCurrencyKey,
     isDarkTheme = initialDarkTheme,
-    defaultPinLength = initialPinLength
+    defaultPinLength = initialPinLength,
+    languageOverride = initialLanguageOverride
   {
     PackageInfo.fromPlatform().then(
         (PackageInfo packageInfo) => currentVersion = packageInfo.version);
@@ -55,6 +57,7 @@ abstract class SettingsStoreBase with Store {
       'allow_biometric_authentication';
   static const currentDarkTheme = 'dark_theme';
   static const currentPinLength = 'current_pin_length';
+  static const currentLanguageOverride = 'language_code';
   static const enableFiatCurrencyKey = 'enable_fiat_currency';
 
   static Future<SettingsStore> load(
@@ -84,6 +87,7 @@ abstract class SettingsStoreBase with Store {
         sharedPreferences.getBool(currentDarkTheme) ?? initialCurrentDarkMode;
 
     final defaultPinLength = sharedPreferences.getInt(currentPinLength) ?? 4;
+    final savedLanguageOverride = sharedPreferences.getString(currentLanguageOverride);
 
     final store = SettingsStore(
         sharedPreferences: sharedPreferences,
@@ -96,7 +100,8 @@ abstract class SettingsStoreBase with Store {
         allowBiometricAuthenticationKey: allowBiometricAuthentication,
         enableFiatCurrencyKey: enableFiatCurrency,
         initialDarkTheme: savedDarkTheme,
-        initialPinLength: defaultPinLength);
+        initialPinLength: defaultPinLength,
+        initialLanguageOverride: savedLanguageOverride);
 
     await store.loadSettings();
 
@@ -133,6 +138,9 @@ abstract class SettingsStoreBase with Store {
   @observable
   int defaultPinLength;
 
+  @observable
+  String? languageOverride;
+
   final SharedPreferences _sharedPreferences;
   final Box<Node> _nodes;
   late String currentVersion;
@@ -157,6 +165,15 @@ abstract class SettingsStoreBase with Store {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
         statusBarColor: isDarkTheme ? Colors.black : Colors.white));
     await _sharedPreferences.setBool(currentDarkTheme, isDarkTheme);
+  }
+
+  @action
+  Future saveLanguageOverride({required String? language}) async {
+    this.languageOverride = language;
+    if (language == null)
+        await _sharedPreferences.remove(currentLanguageOverride);
+    else
+        await _sharedPreferences.setString(currentLanguageOverride, language);
   }
 
   @action

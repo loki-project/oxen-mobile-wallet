@@ -297,6 +297,7 @@
 
   "change_language" : "Sprache ändern",
   "change_language_to" : "Ändern Sie die Sprache zu {language}?",
+  "change_language_system_default" : "Systemvoreinstellung",
   
   "paste" : "Einfügen",
   "restore_from_seed_placeholder" : "Bitte geben Sie hier Ihren Code ein",
