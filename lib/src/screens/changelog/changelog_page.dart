@@ -14,6 +14,8 @@ class ChangelogPage extends BasePage {
   Widget body(BuildContext context) {
     return FutureBuilder(
       builder: (context, snapshot) {
+        if (!snapshot.hasData)
+          return Container();
         final changelogs = loadYaml(snapshot.data.toString()) as YamlList;
 
         return ListView.separated(
