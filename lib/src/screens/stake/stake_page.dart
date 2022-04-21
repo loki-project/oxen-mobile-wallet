@@ -42,10 +42,10 @@ class StakePageBody extends StatefulWidget {
 class StakePageBodyState extends State<StakePageBody> {
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: FutureBuilder<List<StakeRow>>(
+    return FutureBuilder<List<StakeRow>>(
         future: getAllStakes(),
         builder: (BuildContext context, AsyncSnapshot<List<StakeRow>> snapshot) {
+          final t = tr(context);
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.hasError || !snapshot.hasData) {
               return Center(
@@ -59,35 +59,38 @@ class StakePageBodyState extends State<StakePageBody> {
               );
             }
             final allStakes = snapshot.data!;
-            final stakeColor = allStakes.isEmpty ? OxenPalette.lightRed : OxenPalette.lime;
+            final goodColor = OxenPalette.lime;
+            final badColor = OxenPalette.lightRed;
             var totalAmountStaked = 0;
             for (final stake in allStakes) {
               totalAmountStaked += stake.amount;
             }
             final stakePercentage = allStakes.isEmpty ? 1.0 : min(totalAmountStaked / OXEN_DIVISOR / fullSNStake, 1.0);
             return ListView(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
               children: [
                 SizedBox(
-                  height: 220.0,
+                  height: 160.0,
                   child: Stack(
                     children: <Widget>[
                       Center(
                         child: Container(
-                          width: 200,
-                          height: 200,
+                          width: 140,
+                          height: 140,
                           child: CircularProgressIndicator(
                             strokeWidth: 15,
                             value: stakePercentage,
-                            valueColor: AlwaysStoppedAnimation<Color>(stakeColor),
+                            valueColor: AlwaysStoppedAnimation<Color>(allStakes.isEmpty ? badColor : goodColor),
                           ),
                         ),
                       ),
                       Center(
                           child: Text(allStakes.isNotEmpty
-                              ? oxenAmountToString(totalAmountStaked, detail: AmountDetail.none)
-                              : tr(context).nothing_staked)),
+                              ? oxenAmountToString(totalAmountStaked, detail: AmountDetail.none) + '\nOXEN'
+                              : t.nothing_staked,
+                              style: TextStyle(fontSize: 24, color: Palette.blueGrey, fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.center,
+                          )
+                      ),
                     ],
                   ),
                 ),
@@ -102,29 +105,21 @@ class StakePageBodyState extends State<StakePageBody> {
                             .pushNamed(Routes.newStake),
                       ),
                       Text(allStakes.isEmpty
-                          ? tr(context).start_staking
-                          : tr(context).stake_more)
+                          ? t.start_staking
+                          : t.stake_more)
                     ],
                   ),
                 ),
                 if (allStakes.isNotEmpty)
-                  NavListHeader(title: tr(context).your_contributions),
+                  NavListHeader(title: t.your_contributions),
                 if (allStakes.isNotEmpty)
-                  ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: allStakes.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final stake = allStakes[index];
-                        final serviceNodeKey = stake.serviceNodeKey;
-                        final nodeName =
-                            '${serviceNodeKey.substring(0, 10)}...${serviceNodeKey.substring(serviceNodeKey.length - 3)}';
-
-                        return Dismissible(
+                  for (var stake in allStakes)
+                        Dismissible(
                             key: Key(stake.serviceNodeKey),
                             confirmDismiss: (direction) async {
                               if (!canRequestUnstake(stake.serviceNodeKey)) {
                                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                  content: Text(tr(context).unable_unlock_stake),
+                                  content: Text(t.unable_unlock_stake),
                                   backgroundColor: Colors.red,
                                 ));
                                 return false;
@@ -144,8 +139,8 @@ class StakePageBodyState extends State<StakePageBody> {
                               if (isAuthenticated) {
                                 await showConfirmOxenDialog(
                                     context,
-                                    tr(context).title_confirm_unlock_stake,
-                                    tr(context).body_confirm_unlock_stake(stake.serviceNodeKey),
+                                    t.title_confirm_unlock_stake,
+                                    t.body_confirm_unlock_stake(stake.serviceNodeKey),
                                     onDismiss: (buildContext) {
                                       isSuccessful = false;
                                       Navigator.of(buildContext).pop();
@@ -162,7 +157,7 @@ class StakePageBodyState extends State<StakePageBody> {
                             onDismissed: (direction) async {
                               await submitStakeUnlock(stake.serviceNodeKey);
                               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                content: Text(tr(context).unlock_stake_requested),
+                                content: Text(t.unlock_stake_requested),
                                 backgroundColor: Colors.green,
                               ));
                             },
@@ -181,13 +176,29 @@ class StakePageBodyState extends State<StakePageBody> {
                                   ],
                                 )),
                             child: NavListTrailing(
-                              leading: CircularProgressIndicator(
-                                  valueColor:
-                                  AlwaysStoppedAnimation<Color>(stakeColor),
-                                  value: stake.ownedPercentage),
-                              text: nodeName,
-                            ));
-                      }),
+                              leading: SizedBox(
+                                height: 50,
+                                width: 50,
+                                child: Stack(
+                                  children: [
+                                    Center(child: CircularProgressIndicator(
+                                        valueColor: AlwaysStoppedAnimation<Color>(stake.decommissioned ? badColor : goodColor),
+                                        value: stake.ownedPercentage)),
+                                    Center(child: Text(
+                                        stake.decommissioned ? '⚠' :
+                                        stake.unlockHeight != null && stake.unlockHeight! > 0 ? '🔓' :
+                                        stake.awaiting ? '📬' :
+                                        '👍',
+                                        style: TextStyle(fontSize: 16, color: Palette.blueGrey, fontWeight: FontWeight.bold)
+                                    )),
+                                  ]
+                                )
+                              ),
+                              text: '${stake.serviceNodeKey.substring(0, 10)}...${stake.serviceNodeKey.substring(stake.serviceNodeKey.length - 3)}',
+                              trailing: Text('${oxenAmountToString(stake.amount)} OXEN',
+                                    style: TextStyle(fontSize: 16, color: Palette.blueGrey)),
+                            ),
+                        )
               ],
             );
           } else {
@@ -202,7 +213,6 @@ class StakePageBodyState extends State<StakePageBody> {
             );
           }
         },
-      )
     );
   }
 }
