@@ -14,6 +14,8 @@ class ChangelogPage extends BasePage {
   Widget body(BuildContext context) {
     return FutureBuilder(
       builder: (context, snapshot) {
+        if (!snapshot.hasData)
+          return Container();
         final changelogs = loadYaml(snapshot.data.toString()) as YamlList;
 
         return ListView.separated(
@@ -27,15 +29,11 @@ class ChangelogPage extends BasePage {
             return ExpansionTile(
               title: Text(versionTitle),
               children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Expanded(
-                        child: Container(
-                            padding: EdgeInsets.only(left: 15.0, right: 15.0),
-                            child: Text('$versionChangesText\n')))
-                  ],
-                )
+                for (var e in versionChanges)
+                  ListTile(
+                    leading: Icon(Icons.arrow_right),
+                    title: new Text(e),
+                  )
               ],
             );
           },

@@ -2,7 +2,6 @@ import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:mobx/mobx.dart';
 import 'package:oxen_wallet/l10n.dart';
-import 'package:oxen_wallet/src/domain/common/openalias_record.dart';
 import 'package:oxen_wallet/src/domain/services/wallet_service.dart';
 import 'package:oxen_wallet/src/stores/price/price_store.dart';
 import 'package:oxen_wallet/src/stores/send/sending_state.dart';
@@ -47,7 +46,7 @@ abstract class SendStoreBase with Store {
   PendingTransaction? _pendingTransaction;
   final NumberFormat _cryptoNumberFormat;
   final NumberFormat _fiatNumberFormat;
-  String _lastRecipientAddress = '';
+  String? _lastRecipientAddress;
 
   @action
   Future createStake({required String snPubkey, String? amount, required AppLocalizations l10n}) async {
@@ -98,7 +97,7 @@ abstract class SendStoreBase with Store {
       await _pendingTransaction!.commit();
       state = TransactionCommitted();
 
-      if (settingsStore.shouldSaveRecipientAddress) {
+      if (settingsStore.shouldSaveRecipientAddress && _lastRecipientAddress != null) {
         await transactionDescriptions.add(TransactionDescription(
             id: transactionId, recipientAddress: _lastRecipientAddress));
       }
@@ -161,16 +160,6 @@ abstract class SendStoreBase with Store {
     } catch (e) {
       cryptoAmount = '0.00';
     }
-  }
-
-  Future<bool> isOpenaliasRecord(String name) async {
-    final _openaliasRecord = await OpenaliasRecord.fetchAddressAndName(
-        OpenaliasRecord.formatDomainName(name));
-
-    recordAddress = _openaliasRecord.address;
-    recordName = _openaliasRecord.name;
-
-    return recordAddress != name;
   }
 
   void validateAddress(String value, {required AppLocalizations l10n}) {

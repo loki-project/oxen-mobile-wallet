@@ -87,7 +87,7 @@ abstract class ActionListBase with Store {
 
     _transactions.forEach((item) {
       final amount = calculateFiatAmountRaw(
-          cryptoAmount: oxenAmountToDouble(item.transaction.amount),
+          cryptoAmount: item.transaction.amount / OXEN_DIVISOR,
           price: price);
       item.transaction.changeFiatAmount(amount);
     });

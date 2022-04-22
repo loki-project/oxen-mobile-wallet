@@ -6,6 +6,7 @@ import 'package:oxen_wallet/src/stores/wallet_restoration/wallet_restoration_sta
 import 'package:oxen_wallet/src/stores/authentication/authentication_store.dart';
 import 'package:oxen_wallet/l10n.dart';
 import 'package:oxen_wallet/src/util/validators.dart';
+import 'package:oxen_coin/src/exceptions/wallet_restore_from_seed_exception.dart';
 
 part 'wallet_restoration_store.g.dart';
 

@@ -12,5 +12,5 @@ class TransactionDescription extends HiveObject {
   String id;
 
   @HiveField(1)
-  String recipientAddress;
+  String? recipientAddress;
 }

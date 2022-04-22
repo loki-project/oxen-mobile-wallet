@@ -40,7 +40,7 @@ class TransactionDetailsForm extends StatefulWidget {
 class TransactionDetailsFormState extends State<TransactionDetailsForm> {
 
   List<StandartListItem> getItems(AppLocalizations t) {
-    final _dateFormat = DateFormat.yMMMd(t.localeName).add_jm();
+    final _dateFormat = DateFormat.yMMMMEEEEd(t.localeName).add_jm();
     final items = <StandartListItem>[
       StandartListItem(
           title: t.transaction_details_transaction_id,
@@ -51,10 +51,23 @@ class TransactionDetailsFormState extends State<TransactionDetailsForm> {
       StandartListItem(
           title: t.transaction_details_height,
           value: '${widget.transactionInfo.height}'),
-      StandartListItem(
-          title: t.transaction_details_amount,
-          value: widget.transactionInfo.amountFormatted())
     ];
+
+    final staked = widget.transactionInfo.stakeFormatted(includeInsignificant: true);
+    if (staked != null)
+        items.add(StandartListItem(
+            title: t.transaction_details_stake,
+            value: staked));
+
+    if (staked == null || widget.transactionInfo.amount != 0)
+        items.add(StandartListItem(
+          title: t.transaction_details_amount,
+          value: widget.transactionInfo.amountFormatted(includeInsignificant: true)));
+
+    if (widget.transactionInfo.fee != 0)
+        items.add(StandartListItem(
+            title: t.transaction_details_fee,
+            value: widget.transactionInfo.feeFormatted(includeInsignificant: true)));
 
     if (widget.settingsStore.shouldSaveRecipientAddress &&
         widget.transactionInfo.recipientAddress != null) {

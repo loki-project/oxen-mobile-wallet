@@ -19,7 +19,7 @@ class WalletIsExistException implements Exception {
   String name;
 
   @override
-  String toString() => 'Wallet with name $name is already exist!';
+  String toString() => 'Wallet with name $name already exists!';
 }
 
 class WalletListService {

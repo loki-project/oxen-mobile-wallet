@@ -115,7 +115,7 @@ class DashboardPageBodyState extends State<DashboardPageBody> {
     final syncStore = Provider.of<SyncStore>(context);
     final settingsStore = Provider.of<SettingsStore>(context);
     final t = tr(context);
-    final transactionDateFormat = DateFormat.yMMMMd(t.localeName).add_jm();
+    final transactionDateFormat = DateFormat.yMMMd(t.localeName).add_jm();
 
     return Observer(
         key: _listObserverKey,
@@ -418,13 +418,8 @@ class DashboardPageBodyState extends State<DashboardPageBody> {
                   final transaction = item.transaction;
                   final savedDisplayMode = settingsStore.balanceDisplayMode;
                   final formattedAmount =
-                      savedDisplayMode == BalanceDisplayMode.hiddenBalance
-                          ? '---'
-                          : transaction.amountFormatted();
-                  final formattedFiatAmount =
-                      savedDisplayMode == BalanceDisplayMode.hiddenBalance
-                          ? '---'
-                          : transaction.fiatAmount();
+                      savedDisplayMode == BalanceDisplayMode.hiddenBalance ? '---' :
+                      transaction.stakeFormatted() ?? transaction.amountFormatted();
 
                   return TransactionRow(
                       onTap: () => Navigator.of(context).pushNamed(
@@ -434,7 +429,7 @@ class DashboardPageBodyState extends State<DashboardPageBody> {
                       formattedDate:
                           transactionDateFormat.format(transaction.date),
                       formattedAmount: formattedAmount,
-                      formattedFiatAmount: formattedFiatAmount,
+                      formattedFee: transaction.feeFormatted(),
                       isPending: transaction.isPending,
                       isStake: transaction.isStake);
                 }

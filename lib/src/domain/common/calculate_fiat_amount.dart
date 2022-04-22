@@ -3,7 +3,7 @@ import 'package:oxen_wallet/src/wallet/oxen/oxen_amount_format.dart';
 String calculateFiatAmount({required double price, required int cryptoAmount}) {
   if (price.isNaN || price <= 0.0 || cryptoAmount <= 0)
     return '0.00';
-  final result = price * oxenAmountToDouble(cryptoAmount);
+  final result = price * cryptoAmount / OXEN_DIVISOR;
 
   if (result == 0.0) {
     return '0.00';

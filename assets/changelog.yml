@@ -1,7 +1,43 @@
 -
+  version: 1.0.9
+  changes:
+    - Fix crash at startup experienced by some users.
+    - Fall back to english transaction if local language not found
+    - Re-add language override setting that was disabled in 1.0.8
+    - French wording fix on seed word input error message
+    - Add fees and stake amounts to transactions list and info pages
+    - Fixed some errors not properly showing an error message
+    - Fixed scrolling on Stakes page
+    - Added staked OXEN amount and current SN status indicators to stake page
+
+-
+  version: 1.0.8
+  changes:
+    - Show warning screen before deleting a wallet.
+    - Updated entire codebase to modern "null safe" dart.
+    - Updated all dependencies to newer versions (which required the above changes)
+    - Fixed a bug in PIN setup that didn't properly check the two pins were the same (and always used the second one).
+    - Various translation fixes and wording updates.
+    - Use more appropriate locale-specific date displays.
+    - Fixes several small memory leaks.
+    - Stylized the "receive" QR code with an embedded Oxen logo and Oxen colouring.
+    - Added QR code scanning to the New Stake page (to allow scanning QR code pubkeys from awaiting contribution nodes on https://oxen.observer/).
+    - Made the multi-option settings on the Settings page default to current value instead of resetting to the first value when tapped.
+    - Removed character restrictions from wallet, account, subaccount, and address book names.
+    - Service Nodes stakes now properly lists only the wallet's actual stakes for staked service node rather than everyone's stakes in the service node.
+    - Label staking transactions as "Stake" rather than "Sent"
+    - Don't show fiat input on the send page if fiat lookups not enabled
+    - Show which words are wrong in the seed input widget, and make it editable.
+
+-
+  version: 1.0.7
+  changes:
+    - Various crash fixes while syncing
+
+-
   version: 1.0.6
   changes:
-    - Fix crash while syncing
+    - Fix crash while fetching balance
 -
   version: 1.0.5
   changes:
