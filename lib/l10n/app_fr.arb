@@ -278,11 +278,6 @@
   "wallet_restoration_store_incorrect_seed_length" : "mauvaise longueur du Seed",
 
 
-  "full_balance" : "Solde complet",
-  "available_balance" : "Solde disponible",
-  "hidden_balance" : "solde caché",
-
-
   "sync_status_synchronizing" : "SYNCHRONISATION",
   "sync_status_synchronized" : "SYNCHRONISÉ",
   "sync_status_not_connected" : "PAS CONNECTÉ",
