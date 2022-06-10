@@ -9,7 +9,7 @@ import 'package:oxen_wallet/src/domain/common/fiat_currency.dart';
 import 'package:oxen_wallet/src/node/node.dart';
 import 'package:oxen_wallet/src/wallet/crypto_amount_format.dart';
 import 'package:oxen_wallet/src/wallet/oxen/transaction/transaction_priority.dart';
-import 'package:package_info/package_info.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 part 'settings_store.g.dart';
@@ -82,7 +82,7 @@ abstract class SettingsStoreBase with Store {
         sharedPreferences.getBool(enableFiatCurrencyKey) ?? false;
 
     final initialCurrentDarkMode =
-        SchedulerBinding.instance?.window.platformBrightness == Brightness.dark;
+        SchedulerBinding.instance.window.platformBrightness == Brightness.dark;
     final savedDarkTheme =
         sharedPreferences.getBool(currentDarkTheme) ?? initialCurrentDarkMode;
 

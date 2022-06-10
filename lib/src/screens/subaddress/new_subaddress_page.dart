@@ -26,7 +26,7 @@ class NewSubaddressPage extends BasePage {
         (SubaddressCreationState state) {
       if (state is SubaddressCreatedSuccessfully) {
         WidgetsBinding.instance
-            ?.addPostFrameCallback((_) => Navigator.of(context).pop());
+            .addPostFrameCallback((_) => Navigator.of(context).pop());
       }
     });
 

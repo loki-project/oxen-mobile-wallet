@@ -35,7 +35,7 @@ class RootState extends State<Root> with WidgetsBindingObserver {
   void initState() {
     _isInactive = false;
     _postFrameCallback = false;
-    WidgetsBinding.instance?.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
     super.initState();
   }
 
@@ -74,7 +74,7 @@ class RootState extends State<Root> with WidgetsBindingObserver {
     if (_isInactive && !_postFrameCallback) {
       _postFrameCallback = true;
 
-      WidgetsBinding.instance?.addPostFrameCallback((_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         Navigator.of(context).pushNamed(Routes.unlock,
             arguments: (bool isAuthenticatedSuccessfully, AuthPageState auth) {
           if (!isAuthenticatedSuccessfully) return;

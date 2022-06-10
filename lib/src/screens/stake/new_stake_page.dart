@@ -262,7 +262,7 @@ class NewStakeFormState extends State<NewStakeForm> {
 
     reaction((_) => sendStore.state, (SendingState state) {
       if (state is SendingFailed) {
-        WidgetsBinding.instance?.addPostFrameCallback((_) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
           showDialog<void>(
               context: context,
               builder: (BuildContext context) {
@@ -280,7 +280,7 @@ class NewStakeFormState extends State<NewStakeForm> {
       }
 
       if (state is TransactionCreatedSuccessfully && sendStore.pendingTransaction != null) {
-        WidgetsBinding.instance?.addPostFrameCallback((_) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
           showConfirmOxenDialog(
             context,
             t.confirm_stake,
@@ -296,7 +296,7 @@ class NewStakeFormState extends State<NewStakeForm> {
       }
 
       if (state is TransactionCommitted) {
-        WidgetsBinding.instance?.addPostFrameCallback((_) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
           showDialog<void>(
               context: context,
               builder: (BuildContext context) {

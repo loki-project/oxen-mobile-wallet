@@ -8,10 +8,11 @@ class BiometricAuth {
 
     try {
       return await _localAuth.authenticate(
-          biometricOnly: true,
           localizedReason: t.biometric_auth_reason,
-          useErrorDialogs: true,
-          stickyAuth: false);
+          options: const AuthenticationOptions(
+            biometricOnly: true,
+            useErrorDialogs: true,
+            stickyAuth: false));
     } on PlatformException catch (e) {
       print(e);
     }

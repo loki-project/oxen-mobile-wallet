@@ -77,7 +77,7 @@ class DisclaimerBodyState extends State<DisclaimerPageBody> {
   void initState() {
     super.initState();
     getFileLines();
-    if (_isAccepted) WidgetsBinding.instance?.addPostFrameCallback(_afterLayout);
+    if (_isAccepted) WidgetsBinding.instance.addPostFrameCallback(_afterLayout);
   }
 
   @override

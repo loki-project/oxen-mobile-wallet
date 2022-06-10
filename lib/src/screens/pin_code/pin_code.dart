@@ -74,7 +74,7 @@ class PinCodeState<T extends PinCodeWidget> extends State<T> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance?.addPostFrameCallback(afterLayout);
+    WidgetsBinding.instance.addPostFrameCallback(afterLayout);
   }
 
   void afterLayout(dynamic _) {
