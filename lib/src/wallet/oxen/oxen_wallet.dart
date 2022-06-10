@@ -251,8 +251,6 @@ class OxenWallet extends Wallet {
       _setInitialHeight();
     } catch (_) {}
 
-    print('Starting from height: ${getCurrentHeight()}');
-
     try {
       _syncStatus.value = StartingSyncStatus();
       oxen_wallet.startRefresh();
@@ -388,7 +386,6 @@ class OxenWallet extends Wallet {
     }
 
     final currentHeight = getCurrentHeight();
-    print('setInitialHeight() $currentHeight');
 
     if (currentHeight <= 1) {
       final height = _getHeightByDate(walletInfo.date);
