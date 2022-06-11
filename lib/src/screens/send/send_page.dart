@@ -117,12 +117,9 @@ class SendFormState extends State<SendForm> {
                             ]);
                       }),
                       Observer(builder: (context) {
-                        final savedDisplayMode =
-                            settingsStore.balanceDisplayMode;
                         final availableBalance =
-                            savedDisplayMode == BalanceDisplayMode.hiddenBalance
-                                ? '---'
-                                : balanceStore.unlockedBalanceString;
+                            settingsStore.balanceShowFull || settingsStore.balanceShowAvailable
+                            ? balanceStore.unlockedBalanceString : '---';
 
                         return Column(
                             mainAxisAlignment: MainAxisAlignment.center,

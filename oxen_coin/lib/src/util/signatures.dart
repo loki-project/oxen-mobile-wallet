@@ -32,9 +32,13 @@ typedef get_seed = Pointer<Utf8> Function();
 
 typedef get_address = Pointer<Utf8> Function(Int32, Int32);
 
-typedef get_full_balanace = Int64 Function(Int32);
+typedef get_full_balance = Int64 Function(Int32);
 
-typedef get_unlocked_balanace = Int64 Function(Int32);
+typedef get_unlocked_balance = Int64 Function(Int32);
+
+typedef get_pending_rewards = Int64 Function();
+
+typedef get_pending_rewards_height = Int64 Function();
 
 typedef get_current_height = Int64 Function();
 

@@ -151,14 +151,22 @@ class OxenWallet extends Wallet {
 
   @override
   Future<int> getFullBalance() async {
-    final balance = await oxen_wallet.getFullBalance(accountIndex: _account.value.id);
-    return balance;
+    return await oxen_wallet.getFullBalance(accountIndex: _account.value.id);
   }
 
   @override
   Future<int> getUnlockedBalance() async {
-    final balance = await oxen_wallet.getUnlockedBalance(accountIndex: _account.value.id);
-    return balance;
+    return await oxen_wallet.getUnlockedBalance(accountIndex: _account.value.id);
+  }
+
+  @override
+  Future<int> getPendingRewards() async {
+    return await oxen_wallet.getPendingRewards();
+  }
+
+  @override
+  Future<int> getPendingRewardsHeight() async {
+    return await oxen_wallet.getPendingRewardsHeight();
   }
 
   @override
@@ -318,16 +326,20 @@ class OxenWallet extends Wallet {
   Future askForUpdateBalance() async {
     final fullBalance = await getFullBalance();
     final unlockedBalance = await getUnlockedBalance();
+    final pendingRewards = await getPendingRewards();
+    final pendingRewardsHeight = await getPendingRewardsHeight();
     final needToChange = !_onBalanceChange.hasValue ? true :
         _onBalanceChange.value.fullBalance != fullBalance ||
-        _onBalanceChange.value.unlockedBalance != unlockedBalance;
+        _onBalanceChange.value.unlockedBalance != unlockedBalance ||
+        _onBalanceChange.value.pendingRewards != pendingRewards ||
+        _onBalanceChange.value.pendingRewardsHeight != pendingRewardsHeight;
 
-    if (!needToChange) {
-      return;
-    }
-
-    _onBalanceChange.add(OxenBalance(
-        fullBalance: fullBalance, unlockedBalance: unlockedBalance));
+    if (needToChange)
+      _onBalanceChange.add(OxenBalance(
+            fullBalance: fullBalance,
+            unlockedBalance: unlockedBalance,
+            pendingRewards: pendingRewards,
+            pendingRewardsHeight: pendingRewardsHeight));
   }
 
   Future askForUpdateTransactionHistory() async {

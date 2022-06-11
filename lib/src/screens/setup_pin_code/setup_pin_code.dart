@@ -49,7 +49,7 @@ class _SetupPinCodeFormState<WidgetType extends SetupPinCodeForm>
       if (listEquals<int>(state.pin, _originalPin)) {
         final pin = state.pin.join();
         _userStore?.set(password: pin);
-        _settingsStore?.setDefaultPinLength(pinLength: state.pinLength);
+        _settingsStore?.setDefaultPinLength(state.pinLength);
 
         showDialog<void>(
             context: context,

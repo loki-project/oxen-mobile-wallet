@@ -14,53 +14,88 @@ class SettingsSwitchListRow extends StatelessWidget {
 
   Widget? _getSwitch(BuildContext context) {
     final settingsStore = Provider.of<SettingsStore>(context);
-    final _themeChanger = Provider.of<ThemeChanger>(context);
 
-    if (title == tr(context).settings_save_recipient_address) {
+    if (title == tr(context).settings_save_recipient_address)
       return Observer(
           builder: (_) => StandartSwitch(
               value: settingsStore.shouldSaveRecipientAddress,
               onTaped: () {
-                final _currentValue = !settingsStore.shouldSaveRecipientAddress;
-                settingsStore.setSaveRecipientAddress(
-                    shouldSaveRecipientAddress: _currentValue);
-              }));
-    }
+                settingsStore.setSaveRecipientAddress(!settingsStore.shouldSaveRecipientAddress);
+              }
+          )
+      );
 
-    if (title == tr(context).settings_allow_biometric_authentication) {
+    if (title == tr(context).settings_allow_biometric_authentication)
       return Observer(
           builder: (_) => StandartSwitch(
               value: settingsStore.allowBiometricAuthentication,
               onTaped: () {
-                final _currentValue =
-                    !settingsStore.allowBiometricAuthentication;
-                settingsStore.setAllowBiometricAuthentication(
-                    allowBiometricAuthentication: _currentValue);
-              }));
-    }
+                settingsStore.setAllowBiometricAuthentication(!settingsStore.allowBiometricAuthentication);
+              }
+          )
+      );
 
-    if (title == tr(context).settings_dark_mode) {
+    if (title == tr(context).settings_dark_mode)
       return Observer(
           builder: (_) => StandartSwitch(
               value: settingsStore.isDarkTheme,
               onTaped: () {
-                final _currentValue = !settingsStore.isDarkTheme;
-                settingsStore.saveDarkTheme(isDarkTheme: _currentValue);
-                _themeChanger.setTheme(
-                    _currentValue ? Themes.darkTheme : Themes.lightTheme);
-              }));
-    }
+                final dark = !settingsStore.isDarkTheme;
+                settingsStore.saveDarkTheme(dark);
+                Provider.of<ThemeChanger>(context).setTheme(dark ? Themes.darkTheme : Themes.lightTheme);
+              }
+          )
+      );
 
-    if (title == tr(context).settings_enable_fiat_currency) {
+    if (title == tr(context).settings_enable_fiat_currency)
       return Observer(
           builder: (_) => StandartSwitch(
               value: settingsStore.enableFiatCurrency,
               onTaped: () {
-                final _currentValue = !settingsStore.enableFiatCurrency;
-                settingsStore.setEnableFiatCurrency(
-                    enableFiatCurrency: _currentValue);
-              }));
-    }
+                settingsStore.setEnableFiatCurrency(!settingsStore.enableFiatCurrency);
+              }
+          )
+      );
+
+    if (title == tr(context).settings_show_full)
+      return Observer(
+          builder: (_) => StandartSwitch(
+              value: settingsStore.balanceShowFull,
+              onTaped: () {
+                settingsStore.setBalanceShowFull(!settingsStore.balanceShowFull);
+              }
+          )
+      );
+
+    if (title == tr(context).settings_show_available)
+      return Observer(
+          builder: (_) => StandartSwitch(
+              value: settingsStore.balanceShowAvailable,
+              onTaped: () {
+                settingsStore.setBalanceShowAvailable(!settingsStore.balanceShowAvailable);
+              }
+          )
+      );
+
+    if (title == tr(context).settings_show_pending)
+      return Observer(
+          builder: (_) => StandartSwitch(
+              value: settingsStore.balanceShowPending,
+              onTaped: () {
+                settingsStore.setBalanceShowPending(!settingsStore.balanceShowPending);
+              }
+          )
+      );
+
+    if (title == tr(context).settings_full_incl_pending)
+      return Observer(
+          builder: (_) => StandartSwitch(
+              value: settingsStore.balanceFullIncludesPending,
+              onTaped: () {
+                settingsStore.setBalanceFullIncludesPending(!settingsStore.balanceFullIncludesPending);
+              }
+          )
+      );
 
     return null;
   }

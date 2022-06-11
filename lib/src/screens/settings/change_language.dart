@@ -51,7 +51,7 @@ class ChangeLanguage extends BasePage {
                       t.change_language,
                       t.change_language_to(lang.name),
                       onPressed: (context) {
-                        settingsStore.saveLanguageOverride(language: lang.code == '' ? null : lang.code);
+                        settingsStore.saveLanguageOverride(lang.code == '' ? null : lang.code);
                         langNotifier.trigger();
                         Navigator.of(context).pop();
                       },

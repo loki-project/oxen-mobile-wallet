@@ -27,12 +27,20 @@ final getAddressNative = oxenApi
     .asFunction<GetAddress>();
 
 final getFullBalanceNative = oxenApi
-    .lookup<NativeFunction<get_full_balanace>>('get_full_balance')
+    .lookup<NativeFunction<get_full_balance>>('get_full_balance')
     .asFunction<GetFullBalance>();
 
 final getUnlockedBalanceNative = oxenApi
-    .lookup<NativeFunction<get_unlocked_balanace>>('get_unlocked_balance')
+    .lookup<NativeFunction<get_unlocked_balance>>('get_unlocked_balance')
     .asFunction<GetUnlockedBalance>();
+
+final getPendingRewardsNative = oxenApi
+    .lookup<NativeFunction<get_pending_rewards>>('get_pending_rewards')
+    .asFunction<GetPendingRewards>();
+
+final getPendingRewardsHeightNative = oxenApi
+    .lookup<NativeFunction<get_pending_rewards_height>>('get_pending_rewards_height')
+    .asFunction<GetPendingRewardsHeight>();
 
 final getCurrentHeightNative = oxenApi
     .lookup<NativeFunction<get_current_height>>('get_current_height')

@@ -39,6 +39,10 @@ abstract class Wallet {
 
   Future<int> getUnlockedBalance();
 
+  Future<int> getPendingRewards();
+
+  Future<int> getPendingRewardsHeight();
+
   int getCurrentHeight();
 
   bool isRefreshing();

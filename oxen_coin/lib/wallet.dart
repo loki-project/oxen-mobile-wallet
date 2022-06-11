@@ -38,8 +38,20 @@ Future<int> getFullBalance({int accountIndex = 0}) =>
 int _getUnlockedBalanceSync(int accountIndex) =>
     oxen_wallet.getUnlockedBalanceNative(accountIndex);
 
+int _getPendingRewardsSync(int _) =>
+    oxen_wallet.getPendingRewardsNative();
+
+int _getPendingRewardsHeightSync(int _) =>
+    oxen_wallet.getPendingRewardsHeightNative();
+
 Future<int> getUnlockedBalance({int accountIndex = 0}) =>
     compute<int, int>(_getUnlockedBalanceSync, accountIndex);
+
+Future<int> getPendingRewards() =>
+    compute<int, int>(_getPendingRewardsSync, 0);
+
+Future<int> getPendingRewardsHeight() =>
+    compute<int, int>(_getPendingRewardsHeightSync, 0);
 
 int getCurrentHeight() => oxen_wallet.getCurrentHeightNative();
 
