@@ -238,7 +238,7 @@ class DashboardPageBodyState extends State<DashboardPageBody> {
                             c.addAll([
                               Text(t.oxen_pending_rewards, style: oxen_balance_label_style),
                               Text(balanceStore.pendingRewardsString, style: oxen_balance_style),
-                              Text(t.next_reward_height(balanceStore.pendingRewardsHeight), style: fiat_balance_style),
+                              Text(t.next_payout_height(balanceStore.pendingRewardsHeight), style: fiat_balance_style),
                             ]);
 
                             need_space = true;
