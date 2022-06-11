@@ -104,7 +104,7 @@ String getPublicSpendKey() =>
 class SyncListener {
   SyncListener(this.onNewBlock, this.onNewTransaction);
 
-  void Function(int, int, double, bool) onNewBlock;
+  void Function(int, int, bool) onNewBlock;
   void Function() onNewTransaction;
 
   Timer? _updateSyncInfoTimer;
@@ -145,12 +145,8 @@ class SyncListener {
       }
 
       _lastKnownBlockHeight = syncHeight;
-      final track = bchHeight - _initialSyncHeight;
-      final diff = track - (bchHeight - syncHeight);
-      final ptc = diff <= 0 ? 0.0 : diff / track;
-      final left = bchHeight - syncHeight;
 
-      if (syncHeight < 0 || left < 0) {
+      if (syncHeight < 0 || bchHeight < syncHeight) {
         return;
       }
 
@@ -162,14 +158,14 @@ class SyncListener {
       }
 
       // 1. Actual new height; 2. Blocks left to finish; 3. Progress in percents;
-      onNewBlock.call(syncHeight, left, ptc, refreshing);
+      onNewBlock.call(syncHeight, bchHeight, refreshing);
     });
   }
 
   void stop() => _updateSyncInfoTimer?.cancel();
 }
 
-SyncListener setListeners(void Function(int, int, double, bool) onNewBlock,
+SyncListener setListeners(void Function(int, int, bool) onNewBlock,
     void Function() onNewTransaction) {
   final listener = SyncListener(onNewBlock, onNewTransaction);
   oxen_wallet.setListenerNative();

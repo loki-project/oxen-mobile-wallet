@@ -278,8 +278,8 @@
   "wallet_restoration_store_incorrect_seed_length" : "mauvaise longueur du Seed",
 
 
-  "sync_status_synchronizing" : "SYNCHRONISATION",
-  "sync_status_synchronized" : "SYNCHRONISÉ",
+  "sync_status_synchronizing" : "SYNCHRONISATION ({currHeight}/{targetHeight})",
+  "sync_status_synchronized" : "SYNCHRONISÉ ({currHeight})",
   "sync_status_not_connected" : "PAS CONNECTÉ",
   "sync_status_starting_sync" : "DÉBUT DE LA SYNCHRONISATION",
   "sync_status_failed_connect" : "ÉCHEC DE LA CONNEXION AU NODE",

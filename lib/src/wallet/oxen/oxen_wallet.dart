@@ -221,12 +221,12 @@ class OxenWallet extends Wallet {
   Future<void> connectToNode(
       {required Node node, bool useSSL = false, bool isLightWallet = false}) async {
     try {
-      _syncStatus.value = ConnectingSyncStatus();
+      _syncStatus.value = ConnectingSyncStatus(getCurrentHeight());
 
       // Check if node is online to avoid crash
       final nodeIsOnline = await node.isOnline();
       if (!nodeIsOnline) {
-        _syncStatus.value = FailedSyncStatus();
+        _syncStatus.value = FailedSyncStatus(getCurrentHeight());
         return;
       }
 
@@ -238,9 +238,9 @@ class OxenWallet extends Wallet {
           */
           useSSL: useSSL,
           isLightWallet: isLightWallet);
-      _syncStatus.value = ConnectedSyncStatus();
+      _syncStatus.value = ConnectedSyncStatus(getCurrentHeight());
     } catch (e) {
-      _syncStatus.value = FailedSyncStatus();
+      _syncStatus.value = FailedSyncStatus(getCurrentHeight());
       print(e);
     }
   }
@@ -252,12 +252,12 @@ class OxenWallet extends Wallet {
     } catch (_) {}
 
     try {
-      _syncStatus.value = StartingSyncStatus();
+      _syncStatus.value = StartingSyncStatus(getCurrentHeight());
       oxen_wallet.startRefresh();
       _setListeners();
       _listener?.start();
     } catch (e) {
-      _syncStatus.value = FailedSyncStatus();
+      _syncStatus.value = FailedSyncStatus(getCurrentHeight());
       print(e);
       rethrow;
     }
@@ -298,10 +298,10 @@ class OxenWallet extends Wallet {
 
   @override
   Future rescan({int restoreHeight = 0}) async {
-    _syncStatus.value = StartingSyncStatus();
+    _syncStatus.value = StartingSyncStatus(getCurrentHeight());
     setRefreshFromBlockHeight(height: restoreHeight);
     oxen_wallet.rescanBlockchainAsync();
-    _syncStatus.value = StartingSyncStatus();
+    _syncStatus.value = StartingSyncStatus(getCurrentHeight());
   }
 
   void setRecoveringFromSeed() =>
@@ -349,25 +349,21 @@ class OxenWallet extends Wallet {
   oxen_wallet.SyncListener setListeners() =>
       oxen_wallet.setListeners(_onNewBlock, _onNewTransaction);
 
-  Future _onNewBlock(int height, int blocksLeft, double ptc, bool isRefreshing) async {
+  Future _onNewBlock(int height, int target, bool isRefreshing) async {
     try {
       if (isRefreshing) {
-        _syncStatus.add(SyncingSyncStatus(blocksLeft, ptc));
+        _syncStatus.add(SyncingSyncStatus(height, target));
       } else {
         await askForUpdateTransactionHistory();
         await askForUpdateBalance();
 
-        if (blocksLeft < 100) {
-          _syncStatus.add(SyncedSyncStatus());
+        if (target - height <= 2) {
+          _syncStatus.add(SyncedSyncStatus(height));
           await oxen_wallet.store();
 
           if (walletInfo.isRecovery) {
             await setAsRecovered();
           }
-        }
-
-        if (blocksLeft <= 1) {
-          oxen_wallet.setRefreshFromBlockHeight(height: height);
         }
       }
     } catch (e) {

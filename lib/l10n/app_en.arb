@@ -294,13 +294,20 @@
   "wallet_restoration_store_incorrect_seed_length" : "Incorrect seed length",
 
 
-  "sync_status_synchronizing" : "SYNCHRONIZING",
-  "sync_status_synchronized" : "SYNCHRONIZED",
+  "sync_status_synchronizing" : "SYNCHRONIZING ({currHeight}/{targetHeight})",
+  "@sync_status_synchronizing" : { "placeholders": { "currHeight": {}, "targetHeight": {} } },
+  "sync_status_synchronized" : "SYNCHRONIZED ({currHeight})",
+  "@sync_status_synchronized" : { "placeholders": { "currHeight": {} } },
   "sync_status_not_connected" : "NOT CONNECTED",
+  "@sync_status_not_connected" : { "placeholders": { "currHeight": {} } },
   "sync_status_starting_sync" : "STARTING SYNC",
-  "sync_status_failed_connect" : "FAILED CONNECT TO THE NODE",
+  "@sync_status_starting_sync" : { "placeholders": { "currHeight": {} } },
+  "sync_status_failed_connect" : "CONNECTION FAILED",
+  "@sync_status_failed_connect" : { "placeholders": { "currHeight": {} } },
   "sync_status_connecting" : "CONNECTING",
+  "@sync_status_connecting" : { "placeholders": { "currHeight": {} } },
   "sync_status_connected" : "CONNECTED",
+  "@sync_status_connected" : { "placeholders": { "currHeight": {} } },
 
 
   "transaction_priority_slow" : "Slow",
