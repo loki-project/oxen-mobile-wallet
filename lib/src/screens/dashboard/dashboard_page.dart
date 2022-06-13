@@ -154,8 +154,8 @@ class DashboardPageBodyState extends State<DashboardPageBody> {
 
                               var descriptionText = '';
 
-                              if (status is SyncingSyncStatus) {
-                                descriptionText = t.blocks_remaining(syncStore.status.toString());
+                              if (status is SyncingSyncStatus && status.targetHeight >= status.currHeight) {
+                                descriptionText = t.blocks_remaining(status.targetHeight - status.currHeight);
                               }
 
                               if (status is FailedSyncStatus) {
