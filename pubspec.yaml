@@ -12,7 +12,10 @@ publish_to: none
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.9+12
+#
+# Starting with 1.10.0, we use the minor version to track the associated oxen version the wallet is
+# meant for (e.g. 1.10.x are releases built from oxen 10.x stable releases).
+version: 1.10.0+13
 
 
 # keytool -genkey -v -keystore c:\Users\konst\key.jks -storetype JKS -keyalg RSA -keysize 2048 -validity 10000 -alias key

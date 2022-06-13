@@ -53,5 +53,8 @@ The Oxen Wallet is a Fork of the Cake Wallet.
   ```
 
 ## Copyright
-Copyright (c) 2020 Konstantin Ullrich.\
-Copyright (c) 2020 Cake Technologies LLC.
+Copyright © 2021-2022 The Oxen Project
+
+Copyright © 2020 Konstantin Ullrich
+
+Copyright © 2020 Cake Technologies LLC
