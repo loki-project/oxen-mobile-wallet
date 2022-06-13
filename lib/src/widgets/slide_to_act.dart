@@ -266,7 +266,7 @@ class SlideToActState extends State<SlideToAct> with TickerProviderStateMixin {
       duration: widget.animationDuration,
     );
 
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       final containerBox = _containerKey.currentContext!.findRenderObject() as RenderBox;
       _containerWidth = containerBox.size.width;
 

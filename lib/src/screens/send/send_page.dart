@@ -117,12 +117,9 @@ class SendFormState extends State<SendForm> {
                             ]);
                       }),
                       Observer(builder: (context) {
-                        final savedDisplayMode =
-                            settingsStore.balanceDisplayMode;
                         final availableBalance =
-                            savedDisplayMode == BalanceDisplayMode.hiddenBalance
-                                ? '---'
-                                : balanceStore.unlockedBalanceString;
+                            settingsStore.balanceShowFull || settingsStore.balanceShowAvailable
+                            ? balanceStore.unlockedBalanceString : '---';
 
                         return Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -347,14 +344,14 @@ class SendFormState extends State<SendForm> {
 
     reaction((_) => sendStore.state, (SendingState state) {
       if (state is SendingFailed) {
-        WidgetsBinding.instance?.addPostFrameCallback((_) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
           showSimpleOxenDialog(context, t.error, state.error,
               onPressed: (_) => Navigator.of(context).pop());
         });
       }
 
       if (state is TransactionCreatedSuccessfully && sendStore.pendingTransaction != null) {
-        WidgetsBinding.instance?.addPostFrameCallback((_) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
           showConfirmOxenDialog(
             context,
             t.confirm_sending,
@@ -368,7 +365,7 @@ class SendFormState extends State<SendForm> {
       }
 
       if (state is TransactionCommitted) {
-        WidgetsBinding.instance?.addPostFrameCallback((_) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
           showSimpleOxenDialog(
               context, t.sending, t.transaction_sent,
               onPressed: (_) {

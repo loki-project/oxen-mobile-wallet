@@ -34,6 +34,10 @@ typedef GetFullBalance = int Function(int);
 
 typedef GetUnlockedBalance = int Function(int);
 
+typedef GetPendingRewards = int Function();
+
+typedef GetPendingRewardsHeight = int Function();
+
 typedef GetCurrentHeight = int Function();
 
 typedef GetNodeHeight = int Function();

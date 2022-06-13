@@ -79,10 +79,7 @@ void main() async {
 
     final settingsStore = await SettingsStoreBase.load(
         nodes: nodes,
-        sharedPreferences: sharedPreferences,
-        initialFiatCurrency: FiatCurrency.usd,
-        initialTransactionPriority: OxenTransactionPriority.blink,
-        initialBalanceDisplayMode: BalanceDisplayMode.availableBalance);
+        sharedPreferences: sharedPreferences);
     final priceStore = PriceStore();
     final walletStore =
         WalletStore(walletService: walletService, settingsStore: settingsStore);

@@ -35,6 +35,8 @@
   "oxen_hidden" : "OXEN caché",
   "oxen_available_balance" : "OXEN solde disponible",
   "oxen_full_balance" : "OXEN solde complet",
+  "oxen_pending_rewards" : "OXEN en instance de récompense",
+  "next_payout_height" : "Prochain versement: bloc {height}",
   "send" : "envoyer",
   "receive" : "recevoir",
   "transactions" : "transactions",
@@ -183,7 +185,10 @@
   "settings_nodes" : "Node",
   "settings_current_node" : "Node actuel",
   "settings_wallets" : "Portefeuilles",
-  "settings_display_balance_as" : "Afficher la balance comme",
+  "settings_show_full": "Afficher le solde total",
+  "settings_show_available": "Afficher le solde disponible",
+  "settings_show_pending": "Afficher les récompenses de SN en attente",
+  "settings_full_incl_pending": "Inclure les fonds en attente dans le solde",
   "settings_balance_detail": "Décimales",
   "settings_currency" : "Devise",
   "settings_fee_priority" : "Priorité des frais",
@@ -278,13 +283,8 @@
   "wallet_restoration_store_incorrect_seed_length" : "mauvaise longueur du Seed",
 
 
-  "full_balance" : "Solde complet",
-  "available_balance" : "Solde disponible",
-  "hidden_balance" : "solde caché",
-
-
-  "sync_status_synchronizing" : "SYNCHRONISATION",
-  "sync_status_synchronized" : "SYNCHRONISÉ",
+  "sync_status_synchronizing" : "SYNCHRONISATION ({currHeight}/{targetHeight})",
+  "sync_status_synchronized" : "SYNCHRONISÉ ({currHeight})",
   "sync_status_not_connected" : "PAS CONNECTÉ",
   "sync_status_starting_sync" : "DÉBUT DE LA SYNCHRONISATION",
   "sync_status_failed_connect" : "ÉCHEC DE LA CONNEXION AU NODE",

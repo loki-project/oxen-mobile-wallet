@@ -56,7 +56,7 @@ class _RestoreFromKeysFromState extends State<RestoreFromKeysFrom> {
       }
 
       if (state is WalletRestorationFailure) {
-        WidgetsBinding.instance?.addPostFrameCallback((_) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
           showDialog<void>(
               context: context,
               builder: (BuildContext context) {

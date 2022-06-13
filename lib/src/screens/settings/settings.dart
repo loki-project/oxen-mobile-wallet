@@ -88,19 +88,10 @@ class SettingsFormState extends State<SettingsForm> {
           attribute: Attributes.widget),
       SettingsItem(
           title: t.settings_wallets, attribute: Attributes.header),
-      SettingsItem(
-          onTaped: () => _setBalance(context),
-          title: t.settings_display_balance_as,
-          widget: Observer(
-              builder: (_) => Text(
-                    settingsStore.balanceDisplayMode.getTitle(t),
-                    textAlign: TextAlign.right,
-                    style: TextStyle(
-                        fontSize: 16.0,
-                        color:
-                            Theme.of(context).primaryTextTheme.subtitle2?.color),
-                  )),
-          attribute: Attributes.widget),
+      SettingsItem(title: t.settings_show_full, attribute: Attributes.switcher),
+      SettingsItem(title: t.settings_show_available, attribute: Attributes.switcher),
+      SettingsItem(title: t.settings_show_pending, attribute: Attributes.switcher),
+      SettingsItem(title: t.settings_full_incl_pending, attribute: Attributes.switcher),
       SettingsItem(
           onTaped: () => _setBalanceDetail(context),
           title: t.settings_balance_detail,
@@ -229,7 +220,7 @@ class SettingsFormState extends State<SettingsForm> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance?.addPostFrameCallback(_afterLayout);
+    WidgetsBinding.instance.addPostFrameCallback(_afterLayout);
   }
 
   Widget _getWidget(SettingsItem item) {
@@ -319,23 +310,12 @@ class SettingsFormState extends State<SettingsForm> {
     ));
   }
 
-  Future<void> _setBalance(BuildContext context) async {
-    final settingsStore = context.read<SettingsStore>();
-    final selectedDisplayMode =
-        await presentPicker(context, BalanceDisplayMode.all, initial: settingsStore.balanceDisplayMode);
-
-    if (selectedDisplayMode != null) {
-      await settingsStore.setCurrentBalanceDisplayMode(
-          balanceDisplayMode: selectedDisplayMode);
-    }
-  }
-
   Future<void> _setBalanceDetail(BuildContext context) async {
     final settingsStore = context.read<SettingsStore>();
     final balanceDetail = await presentPicker(context, AmountDetail.all, initial: settingsStore.balanceDetail);
 
     if (balanceDetail != null) {
-      await settingsStore.setCurrentBalanceDetail(balanceDetail: balanceDetail);
+      await settingsStore.setBalanceDetail(balanceDetail);
     }
   }
 
@@ -344,7 +324,7 @@ class SettingsFormState extends State<SettingsForm> {
     final selectedCurrency = await presentPicker(context, FiatCurrency.all, initial: settingsStore.fiatCurrency);
 
     if (selectedCurrency != null) {
-      await settingsStore.setCurrentFiatCurrency(currency: selectedCurrency);
+      await settingsStore.setCurrentFiatCurrency(selectedCurrency);
     }
   }
 
@@ -354,8 +334,7 @@ class SettingsFormState extends State<SettingsForm> {
         await presentPicker(context, OxenTransactionPriority.all, initial: settingsStore.transactionPriority);
 
     if (selectedPriority != null) {
-      await settingsStore.setCurrentTransactionPriority(
-          priority: selectedPriority);
+      await settingsStore.setCurrentTransactionPriority(selectedPriority);
     }
   }
 }

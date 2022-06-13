@@ -19,8 +19,7 @@ abstract class BalanceStoreBase with Store {
       required WalletService walletService,
       required SettingsStore settingsStore,
       required PriceStore priceStore})
-      : isReversing = false,
-        _walletService = walletService,
+      : _walletService = walletService,
         _settingsStore = settingsStore,
         _priceStore = priceStore {
 
@@ -38,34 +37,38 @@ abstract class BalanceStoreBase with Store {
   @observable
   int unlockedBalance = 0;
 
-  @computed
-  String get fullBalanceString {
-    return oxenAmountToString(fullBalance, detail: _settingsStore.balanceDetail);
-  }
-
-  @computed
-  String get unlockedBalanceString {
-    return oxenAmountToString(unlockedBalance, detail: _settingsStore.balanceDetail);
-  }
-
-  @computed
-  String get fiatFullBalance {
-    final symbol = PriceStoreBase.generateSymbolForFiat(
-        fiat: _settingsStore.fiatCurrency);
-    final price = _priceStore.prices[symbol] ?? double.nan;
-    return calculateFiatAmount(price: price, cryptoAmount: fullBalance);
-  }
-
-  @computed
-  String get fiatUnlockedBalance {
-    final symbol = PriceStoreBase.generateSymbolForFiat(
-        fiat: _settingsStore.fiatCurrency);
-    final price = _priceStore.prices[symbol] ?? double.nan;
-    return calculateFiatAmount(price: price, cryptoAmount: unlockedBalance);
-  }
+  @observable
+  int pendingRewards = 0;
 
   @observable
-  bool isReversing;
+  int pendingRewardsHeight = 0;
+
+  @computed
+  String get fullBalanceString => oxenAmountToString(
+    fullBalance + (_settingsStore.balanceFullIncludesPending ? pendingRewards : 0),
+    detail: _settingsStore.balanceDetail);
+
+  @computed
+  String get unlockedBalanceString => oxenAmountToString(unlockedBalance, detail: _settingsStore.balanceDetail);
+
+  @computed
+  String get pendingRewardsString => oxenAmountToString(pendingRewards, detail: _settingsStore.balanceDetail);
+
+  String _fiatBalanceString(int oxen) {
+    final symbol = PriceStoreBase.generateSymbolForFiat(
+        fiat: _settingsStore.fiatCurrency);
+    final price = _priceStore.prices[symbol] ?? double.nan;
+    return calculateFiatAmount(price: price, cryptoAmount: oxen);
+  }
+
+  @computed
+  String get fiatFullBalance => _fiatBalanceString(fullBalance);
+
+  @computed
+  String get fiatUnlockedBalance => _fiatBalanceString(unlockedBalance);
+
+  @computed
+  String get fiatPendingRewards => _fiatBalanceString(pendingRewards);
 
   final WalletService _walletService;
   late StreamSubscription<Wallet> _onWalletChangeSubscription;
@@ -87,13 +90,17 @@ abstract class BalanceStoreBase with Store {
   Future _onBalanceChange(Balance balance) async {
     final _balance = balance as OxenBalance;
 
-    if (fullBalance != _balance.fullBalance) {
+    if (fullBalance != _balance.fullBalance)
       fullBalance = _balance.fullBalance;
-    }
 
-    if (unlockedBalance != _balance.unlockedBalance) {
+    if (unlockedBalance != _balance.unlockedBalance)
       unlockedBalance = _balance.unlockedBalance;
-    }
+
+    if (pendingRewards != _balance.pendingRewards)
+      pendingRewards = _balance.pendingRewards;
+
+    if (pendingRewardsHeight != _balance.pendingRewardsHeight)
+      pendingRewardsHeight = _balance.pendingRewardsHeight;
   }
 
   Future _onWalletChanged(Wallet? wallet) async {
@@ -114,6 +121,8 @@ abstract class BalanceStoreBase with Store {
 
     fullBalance = await _walletService.getFullBalance();
     unlockedBalance = await _walletService.getUnlockedBalance();
+    pendingRewards = await _walletService.getPendingRewards();
+    pendingRewardsHeight = await _walletService.getPendingRewardsHeight();
     await updateFiatBalance();
   }
 

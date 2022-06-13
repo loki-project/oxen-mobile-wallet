@@ -423,6 +423,18 @@ extern "C"
     }
 
     EXPORT
+    uint64_t get_pending_rewards()
+    {
+        return get_current_wallet()->accruedBalance();
+    }
+
+    EXPORT
+    uint64_t get_pending_rewards_height()
+    {
+        return get_current_wallet()->nextAccruedPaymentHeight();
+    }
+
+    EXPORT
     uint64_t get_current_height()
     {
         return get_current_wallet()->blockChainHeight();

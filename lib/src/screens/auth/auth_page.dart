@@ -41,7 +41,7 @@ class AuthPageState extends State<AuthPage> {
     final settingsStore = Provider.of<SettingsStore>(context);
 
     if (settingsStore.allowBiometricAuthentication) {
-      WidgetsBinding.instance?.addPostFrameCallback((_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         final biometricAuth = BiometricAuth();
         biometricAuth.isAuthenticated(tr(context)).then(
                 (isAuth) {
@@ -61,7 +61,7 @@ class AuthPageState extends State<AuthPage> {
 
     reaction((_) => authStore.state, (AuthState state) {
       if (state is AuthenticatedSuccessfully) {
-        WidgetsBinding.instance?.addPostFrameCallback((_) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
           if (widget.onAuthenticationFinished != null) {
             widget.onAuthenticationFinished!(true, this);
           } else {
@@ -74,7 +74,7 @@ class AuthPageState extends State<AuthPage> {
           }
         });
       } else if (state is AuthenticationFailure) {
-        WidgetsBinding.instance?.addPostFrameCallback((_) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
           _pinCodeKey.currentState?.clear();
           ScaffoldMessenger.of(context).hideCurrentSnackBar();
           ScaffoldMessenger.of(context).showSnackBar(
@@ -89,7 +89,7 @@ class AuthPageState extends State<AuthPage> {
           }
         });
       } else if (state is AuthenticationBanned) {
-        WidgetsBinding.instance?.addPostFrameCallback((_) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
           _pinCodeKey.currentState?.clear();
           ScaffoldMessenger.of(context).hideCurrentSnackBar();
           ScaffoldMessenger.of(context).showSnackBar(

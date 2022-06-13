@@ -118,11 +118,9 @@ class NewStakeFormState extends State<NewStakeForm> {
                           ]);
                     }),
                     Observer(builder: (context) {
-                      final savedDisplayMode = settingsStore.balanceDisplayMode;
                       final availableBalance =
-                          savedDisplayMode == BalanceDisplayMode.hiddenBalance
-                              ? '---'
-                              : balanceStore.unlockedBalanceString;
+                          settingsStore.balanceShowFull || settingsStore.balanceShowAvailable
+                          ? balanceStore.unlockedBalanceString : '---';
 
                       return Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -262,7 +260,7 @@ class NewStakeFormState extends State<NewStakeForm> {
 
     reaction((_) => sendStore.state, (SendingState state) {
       if (state is SendingFailed) {
-        WidgetsBinding.instance?.addPostFrameCallback((_) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
           showDialog<void>(
               context: context,
               builder: (BuildContext context) {
@@ -280,7 +278,7 @@ class NewStakeFormState extends State<NewStakeForm> {
       }
 
       if (state is TransactionCreatedSuccessfully && sendStore.pendingTransaction != null) {
-        WidgetsBinding.instance?.addPostFrameCallback((_) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
           showConfirmOxenDialog(
             context,
             t.confirm_stake,
@@ -296,7 +294,7 @@ class NewStakeFormState extends State<NewStakeForm> {
       }
 
       if (state is TransactionCommitted) {
-        WidgetsBinding.instance?.addPostFrameCallback((_) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
           showDialog<void>(
               context: context,
               builder: (BuildContext context) {

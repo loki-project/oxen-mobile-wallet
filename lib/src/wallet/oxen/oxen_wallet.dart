@@ -151,14 +151,22 @@ class OxenWallet extends Wallet {
 
   @override
   Future<int> getFullBalance() async {
-    final balance = await oxen_wallet.getFullBalance(accountIndex: _account.value.id);
-    return balance;
+    return await oxen_wallet.getFullBalance(accountIndex: _account.value.id);
   }
 
   @override
   Future<int> getUnlockedBalance() async {
-    final balance = await oxen_wallet.getUnlockedBalance(accountIndex: _account.value.id);
-    return balance;
+    return await oxen_wallet.getUnlockedBalance(accountIndex: _account.value.id);
+  }
+
+  @override
+  Future<int> getPendingRewards() async {
+    return await oxen_wallet.getPendingRewards();
+  }
+
+  @override
+  Future<int> getPendingRewardsHeight() async {
+    return await oxen_wallet.getPendingRewardsHeight();
   }
 
   @override
@@ -221,12 +229,12 @@ class OxenWallet extends Wallet {
   Future<void> connectToNode(
       {required Node node, bool useSSL = false, bool isLightWallet = false}) async {
     try {
-      _syncStatus.value = ConnectingSyncStatus();
+      _syncStatus.value = ConnectingSyncStatus(getCurrentHeight());
 
       // Check if node is online to avoid crash
       final nodeIsOnline = await node.isOnline();
       if (!nodeIsOnline) {
-        _syncStatus.value = FailedSyncStatus();
+        _syncStatus.value = FailedSyncStatus(getCurrentHeight());
         return;
       }
 
@@ -238,9 +246,9 @@ class OxenWallet extends Wallet {
           */
           useSSL: useSSL,
           isLightWallet: isLightWallet);
-      _syncStatus.value = ConnectedSyncStatus();
+      _syncStatus.value = ConnectedSyncStatus(getCurrentHeight());
     } catch (e) {
-      _syncStatus.value = FailedSyncStatus();
+      _syncStatus.value = FailedSyncStatus(getCurrentHeight());
       print(e);
     }
   }
@@ -251,15 +259,13 @@ class OxenWallet extends Wallet {
       _setInitialHeight();
     } catch (_) {}
 
-    print('Starting from height: ${getCurrentHeight()}');
-
     try {
-      _syncStatus.value = StartingSyncStatus();
+      _syncStatus.value = StartingSyncStatus(getCurrentHeight());
       oxen_wallet.startRefresh();
       _setListeners();
       _listener?.start();
     } catch (e) {
-      _syncStatus.value = FailedSyncStatus();
+      _syncStatus.value = FailedSyncStatus(getCurrentHeight());
       print(e);
       rethrow;
     }
@@ -300,10 +306,10 @@ class OxenWallet extends Wallet {
 
   @override
   Future rescan({int restoreHeight = 0}) async {
-    _syncStatus.value = StartingSyncStatus();
+    _syncStatus.value = StartingSyncStatus(getCurrentHeight());
     setRefreshFromBlockHeight(height: restoreHeight);
     oxen_wallet.rescanBlockchainAsync();
-    _syncStatus.value = StartingSyncStatus();
+    _syncStatus.value = StartingSyncStatus(getCurrentHeight());
   }
 
   void setRecoveringFromSeed() =>
@@ -320,16 +326,20 @@ class OxenWallet extends Wallet {
   Future askForUpdateBalance() async {
     final fullBalance = await getFullBalance();
     final unlockedBalance = await getUnlockedBalance();
+    final pendingRewards = await getPendingRewards();
+    final pendingRewardsHeight = await getPendingRewardsHeight();
     final needToChange = !_onBalanceChange.hasValue ? true :
         _onBalanceChange.value.fullBalance != fullBalance ||
-        _onBalanceChange.value.unlockedBalance != unlockedBalance;
+        _onBalanceChange.value.unlockedBalance != unlockedBalance ||
+        _onBalanceChange.value.pendingRewards != pendingRewards ||
+        _onBalanceChange.value.pendingRewardsHeight != pendingRewardsHeight;
 
-    if (!needToChange) {
-      return;
-    }
-
-    _onBalanceChange.add(OxenBalance(
-        fullBalance: fullBalance, unlockedBalance: unlockedBalance));
+    if (needToChange)
+      _onBalanceChange.add(OxenBalance(
+            fullBalance: fullBalance,
+            unlockedBalance: unlockedBalance,
+            pendingRewards: pendingRewards,
+            pendingRewardsHeight: pendingRewardsHeight));
   }
 
   Future askForUpdateTransactionHistory() async {
@@ -351,25 +361,21 @@ class OxenWallet extends Wallet {
   oxen_wallet.SyncListener setListeners() =>
       oxen_wallet.setListeners(_onNewBlock, _onNewTransaction);
 
-  Future _onNewBlock(int height, int blocksLeft, double ptc, bool isRefreshing) async {
+  Future _onNewBlock(int height, int target, bool isRefreshing) async {
     try {
       if (isRefreshing) {
-        _syncStatus.add(SyncingSyncStatus(blocksLeft, ptc));
+        _syncStatus.add(SyncingSyncStatus(height, target));
       } else {
         await askForUpdateTransactionHistory();
         await askForUpdateBalance();
 
-        if (blocksLeft < 100) {
-          _syncStatus.add(SyncedSyncStatus());
+        if (target - height <= 2) {
+          _syncStatus.add(SyncedSyncStatus(height));
           await oxen_wallet.store();
 
           if (walletInfo.isRecovery) {
             await setAsRecovered();
           }
-        }
-
-        if (blocksLeft <= 1) {
-          oxen_wallet.setRefreshFromBlockHeight(height: height);
         }
       }
     } catch (e) {
@@ -388,7 +394,6 @@ class OxenWallet extends Wallet {
     }
 
     final currentHeight = getCurrentHeight();
-    print('setInitialHeight() $currentHeight');
 
     if (currentHeight <= 1) {
       final height = _getHeightByDate(walletInfo.date);

@@ -101,8 +101,6 @@ class DashboardPageBody extends StatefulWidget {
 }
 
 class DashboardPageBodyState extends State<DashboardPageBody> {
-  final _connectionStatusObserverKey = GlobalKey();
-  final _balanceObserverKey = GlobalKey();
   final _balanceTitleObserverKey = GlobalKey();
   final _syncingObserverKey = GlobalKey();
   final _listObserverKey = GlobalKey();
@@ -116,6 +114,11 @@ class DashboardPageBodyState extends State<DashboardPageBody> {
     final settingsStore = Provider.of<SettingsStore>(context);
     final t = tr(context);
     final transactionDateFormat = DateFormat.yMMMd(t.localeName).add_jm();
+
+    final oxen_balance_label_style = TextStyle(color: OxenPalette.teal, fontSize: 16);
+    final oxen_balance_style = TextStyle(
+        color: Theme.of(context).primaryTextTheme.caption?.color, fontSize: 28);
+    final fiat_balance_style = TextStyle(color: Palette.wildDarkBlue, fontSize: 16);
 
     return Observer(
         key: _listObserverKey,
@@ -188,95 +191,64 @@ class DashboardPageBodyState extends State<DashboardPageBody> {
                                   ],
                                 ),
                               );
-                            }),
-                        GestureDetector(
-                          onTapUp: (_) => balanceStore.isReversing = false,
-                          onTapDown: (_) => balanceStore.isReversing = true,
-                          child: Container(
-                            padding: EdgeInsets.only(top: 40, bottom: 40),
-                            color: Colors.transparent,
-                            child: Column(
-                              children: <Widget>[
-                                Container(width: double.infinity),
-                                Observer(
-                                    key: _balanceTitleObserverKey,
-                                    builder: (_) {
-                                      final savedDisplayMode =
-                                          settingsStore.balanceDisplayMode;
-                                      final displayMode = balanceStore
-                                              .isReversing
-                                          ? (savedDisplayMode == BalanceDisplayMode.availableBalance
-                                              ? BalanceDisplayMode.fullBalance
-                                              : BalanceDisplayMode.availableBalance)
-                                          : savedDisplayMode;
-
-                                      return Text(displayMode.getTitle(t),
-                                          style: TextStyle(
-                                              color: OxenPalette.teal,
-                                              fontSize: 16));
-                                    }),
-                                Observer(
-                                    key: _connectionStatusObserverKey,
-                                    builder: (_) {
-                                      final savedDisplayMode =
-                                          settingsStore.balanceDisplayMode;
-                                      var balance = '---';
-                                      final displayMode = balanceStore.isReversing
-                                          ? (savedDisplayMode == BalanceDisplayMode.availableBalance
-                                              ? BalanceDisplayMode.fullBalance
-                                              : BalanceDisplayMode.availableBalance)
-                                          : savedDisplayMode;
-
-                                      if (displayMode == BalanceDisplayMode.availableBalance)
-                                        balance = balanceStore.unlockedBalanceString;
-                                      else if (displayMode == BalanceDisplayMode.fullBalance)
-                                        balance = balanceStore.fullBalanceString;
-
-                                      return Text(
-                                        balance,
-                                        style: TextStyle(
-                                            color: Theme.of(context)
-                                                .primaryTextTheme
-                                                .caption
-                                                ?.color,
-                                            fontSize: 42),
-                                      );
-                                    }),
-                                Padding(
-                                    padding: EdgeInsets.only(top: 7),
-                                    child: Observer(
-                                        key: _balanceObserverKey,
-                                        builder: (_) {
-                                          final savedDisplayMode =
-                                              settingsStore.balanceDisplayMode;
-                                          final displayMode = settingsStore
-                                                  .enableFiatCurrency
-                                              ? (balanceStore.isReversing
-                                                  ? (savedDisplayMode == BalanceDisplayMode.availableBalance
-                                                      ? BalanceDisplayMode.fullBalance
-                                                      : BalanceDisplayMode.availableBalance)
-                                                  : savedDisplayMode)
-                                              : BalanceDisplayMode.hiddenBalance;
-                                          final symbol = settingsStore.fiatCurrency.toString();
-                                          var balance = '---';
-
-                                          if (displayMode == BalanceDisplayMode.availableBalance) {
-                                            balance = '${balanceStore.fiatUnlockedBalance} $symbol';
-                                          }
-
-                                          if (displayMode == BalanceDisplayMode.fullBalance) {
-                                            balance = '${balanceStore.fiatFullBalance} $symbol';
-                                          }
-
-                                          return Text(balance,
-                                              style: TextStyle(
-                                                  color: Palette.wildDarkBlue,
-                                                  fontSize: 16));
-                                        }))
-                              ],
-                            ),
-                          ),
+                            }
                         ),
+                        Observer(builder: (_) {
+                          var c = <Widget>[
+                              Container(width: double.infinity, padding: EdgeInsets.only(top: 25)),
+                          ];
+
+                          if (!(settingsStore.balanceShowFull || settingsStore.balanceShowAvailable
+                                || (settingsStore.balanceShowPending && balanceStore.pendingRewards > 0))) {
+                            c.add(Text(t.oxen_hidden, style: oxen_balance_label_style));
+                          }
+
+                          bool need_space = false;
+                          if (settingsStore.balanceShowFull) {
+                            c.addAll([
+                              Text(t.oxen_full_balance, style: oxen_balance_label_style),
+                              Text(balanceStore.fullBalanceString, style: oxen_balance_style),
+                            ]);
+                            if (settingsStore.enableFiatCurrency)
+                              c.add(Text('${balanceStore.fiatFullBalance} ${settingsStore.fiatCurrency}',
+                                  style: fiat_balance_style));
+
+                            need_space = true;
+                          }
+
+                          if (settingsStore.balanceShowAvailable) {
+                            if (need_space)
+                              c.add(Container(width: double.infinity, padding: EdgeInsets.only(top: 25)));
+
+                            c.addAll([
+                              Text(t.oxen_available_balance, style: oxen_balance_label_style),
+                              Text(balanceStore.unlockedBalanceString, style: oxen_balance_style),
+                            ]);
+                            if (settingsStore.enableFiatCurrency)
+                              c.add(Text('${balanceStore.fiatUnlockedBalance} ${settingsStore.fiatCurrency}',
+                                  style: fiat_balance_style));
+
+                            need_space = true;
+                          }
+
+                          if (settingsStore.balanceShowPending && balanceStore.pendingRewards > 0) {
+                            if (need_space)
+                              c.add(Container(width: double.infinity, padding: EdgeInsets.only(top: 25)));
+
+                            c.addAll([
+                              Text(t.oxen_pending_rewards, style: oxen_balance_label_style),
+                              Text(balanceStore.pendingRewardsString, style: oxen_balance_style),
+                              Text(t.next_payout_height(balanceStore.pendingRewardsHeight), style: fiat_balance_style),
+                            ]);
+
+                            need_space = true;
+                          }
+
+                          if (need_space)
+                            c.add(Container(width: double.infinity, padding: EdgeInsets.only(top: 25)));
+
+                          return Column(children: c);
+                        }),
                         Padding(
                             padding: const EdgeInsets.only(
                                 left: 20, right: 20, bottom: 30),
@@ -416,10 +388,10 @@ class DashboardPageBodyState extends State<DashboardPageBody> {
 
                 if (item is TransactionListItem) {
                   final transaction = item.transaction;
-                  final savedDisplayMode = settingsStore.balanceDisplayMode;
                   final formattedAmount =
-                      savedDisplayMode == BalanceDisplayMode.hiddenBalance ? '---' :
-                      transaction.stakeFormatted() ?? transaction.amountFormatted();
+                      settingsStore.balanceShowFull || settingsStore.balanceShowAvailable
+                          ? transaction.stakeFormatted() ?? transaction.amountFormatted()
+                          : '---';
 
                   return TransactionRow(
                       onTap: () => Navigator.of(context).pushNamed(

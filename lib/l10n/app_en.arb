@@ -37,6 +37,10 @@
   "oxen_hidden" : "OXEN Hidden",
   "oxen_available_balance" : "OXEN Available Balance",
   "oxen_full_balance" : "OXEN Full Balance",
+  "oxen_pending_rewards" : "OXEN Pending Rewards",
+  "next_payout_height" : "Next payout: block {height}",
+  "@next_payout_height": { "placeholders": { "height": {} } },
+
   "send" : "Send",
   "receive" : "Receive",
   "transactions" : "Transactions",
@@ -191,7 +195,10 @@
   "settings_nodes" : "Nodes",
   "settings_current_node" : "Current node",
   "settings_wallets" : "Wallets",
-  "settings_display_balance_as" : "Display balance as",
+  "settings_show_full": "Show full balance",
+  "settings_show_available": "Show available balance",
+  "settings_show_pending": "Show pending SN rewards",
+  "settings_full_incl_pending": "Include pending rewards in full balance",
   "settings_balance_detail": "Decimals",
   "settings_currency" : "Currency",
   "settings_fee_priority" : "Fee priority",
@@ -294,18 +301,20 @@
   "wallet_restoration_store_incorrect_seed_length" : "Incorrect seed length",
 
 
-  "full_balance" : "Full Balance",
-  "available_balance" : "Available Balance",
-  "hidden_balance" : "Hidden Balance",
-
-
-  "sync_status_synchronizing" : "SYNCHRONIZING",
-  "sync_status_synchronized" : "SYNCHRONIZED",
+  "sync_status_synchronizing" : "SYNCHRONIZING ({currHeight}/{targetHeight})",
+  "@sync_status_synchronizing" : { "placeholders": { "currHeight": {}, "targetHeight": {} } },
+  "sync_status_synchronized" : "SYNCHRONIZED ({currHeight})",
+  "@sync_status_synchronized" : { "placeholders": { "currHeight": {} } },
   "sync_status_not_connected" : "NOT CONNECTED",
+  "@sync_status_not_connected" : { "placeholders": { "currHeight": {} } },
   "sync_status_starting_sync" : "STARTING SYNC",
-  "sync_status_failed_connect" : "FAILED CONNECT TO THE NODE",
+  "@sync_status_starting_sync" : { "placeholders": { "currHeight": {} } },
+  "sync_status_failed_connect" : "CONNECTION FAILED",
+  "@sync_status_failed_connect" : { "placeholders": { "currHeight": {} } },
   "sync_status_connecting" : "CONNECTING",
+  "@sync_status_connecting" : { "placeholders": { "currHeight": {} } },
   "sync_status_connected" : "CONNECTED",
+  "@sync_status_connected" : { "placeholders": { "currHeight": {} } },
 
 
   "transaction_priority_slow" : "Slow",

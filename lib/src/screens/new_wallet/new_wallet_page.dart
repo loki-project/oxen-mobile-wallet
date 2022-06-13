@@ -63,7 +63,7 @@ class _WalletNameFormState extends State<WalletNameForm> {
       }
 
       if (state is WalletCreationFailure) {
-        WidgetsBinding.instance?.addPostFrameCallback((_) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
           showDialog<void>(
               context: context,
               builder: (BuildContext context) {
