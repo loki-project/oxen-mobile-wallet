@@ -1,6 +1,6 @@
-# Graft Wallet
+# JOSH graft wallet
 
-The Graft Wallet is a Fork of the Cake/Oxen Wallet.
+This is Josh's Fork now.
 
 ## Build
 
