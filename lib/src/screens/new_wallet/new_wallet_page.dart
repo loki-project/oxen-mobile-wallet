@@ -70,7 +70,7 @@ class _WalletNameFormState extends State<WalletNameForm> {
                 return AlertDialog(
                   content: Text(state.error),
                   actions: <Widget>[
-                    FlatButton(
+                    TextButton(
                       child: Text(tr(context).ok),
                       onPressed: () => Navigator.of(context).pop(),
                     ),

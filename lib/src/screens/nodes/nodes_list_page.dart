@@ -27,7 +27,7 @@ class NodeListPage extends BasePage {
       children: <Widget>[
         ButtonTheme(
           minWidth: double.minPositive,
-          child: FlatButton(
+          child: TextButton(
               onPressed: () async {
                 await showConfirmOxenDialog(
                     context,
@@ -60,8 +60,8 @@ class NodeListPage extends BasePage {
                 ButtonTheme(
                   minWidth: 28.0,
                   height: 28.0,
-                  child: FlatButton(
-                      shape: CircleBorder(),
+                  child: TextButton(
+                      style: TextButton.styleFrom(shape: CircleBorder()),
                       onPressed: () async =>
                           await Navigator.of(context).pushNamed(Routes.newNode),
                       child: Offstage()),

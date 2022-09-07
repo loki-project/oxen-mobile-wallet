@@ -23,14 +23,15 @@ class PrimaryButton extends StatelessWidget {
     return ButtonTheme(
         minWidth: double.infinity,
         height: 56.0,
-        child: FlatButton(
+        child: TextButton(
           onPressed: isDisabled
               ? onDisabledPressed
               : onPressed,
-          color: isDisabled ? Colors.transparent : color ?? OxenPalette.tealWithOpacity,
-          shape: RoundedRectangleBorder(
-              side: BorderSide(color: borderColor ?? OxenPalette.teal),
-              borderRadius: BorderRadius.circular(10.0)),
+          style: TextButton.styleFrom(
+              primary: isDisabled ? Colors.transparent : color ?? OxenPalette.tealWithOpacity,
+              shape: RoundedRectangleBorder(
+                  side: BorderSide(color: borderColor ?? OxenPalette.teal),
+                  borderRadius: BorderRadius.circular(10.0))),
           child: Text(text,
               style: TextStyle(
                   fontSize: 16.0,
@@ -62,12 +63,13 @@ class LoadingPrimaryButton extends StatelessWidget {
     return ButtonTheme(
         minWidth: double.infinity,
         height: 56.0,
-        child: FlatButton(
+        child: TextButton(
           onPressed: (isLoading || isDisabled) ? null : onPressed,
-          color: color ?? OxenPalette.tealWithOpacity,
-          shape: RoundedRectangleBorder(
-              side: BorderSide(color: borderColor ?? OxenPalette.teal),
-              borderRadius: BorderRadius.circular(10.0)),
+          style: TextButton.styleFrom(
+              primary: color ?? OxenPalette.tealWithOpacity,
+              shape: RoundedRectangleBorder(
+                  side: BorderSide(color: borderColor ?? OxenPalette.teal),
+                  borderRadius: BorderRadius.circular(10.0))),
           child: isLoading
               ? CupertinoActivityIndicator(animating: true)
               : Text(text,
@@ -102,12 +104,13 @@ class PrimaryIconButton extends StatelessWidget {
     return ButtonTheme(
         minWidth: double.infinity,
         height: 56.0,
-        child: FlatButton(
+        child: TextButton(
           onPressed: onPressed,
-          color: color ?? OxenPalette.tealWithOpacity,
-          shape: RoundedRectangleBorder(
-              side: BorderSide(color: borderColor ?? OxenPalette.teal),
-              borderRadius: BorderRadius.circular(10.0)),
+          style: TextButton.styleFrom(
+              primary: color ?? OxenPalette.tealWithOpacity,
+              shape: RoundedRectangleBorder(
+                  side: BorderSide(color: borderColor ?? OxenPalette.teal),
+                  borderRadius: BorderRadius.circular(10.0))),
           child: Stack(
             children: <Widget>[
               Row(
@@ -159,12 +162,13 @@ class PrimaryImageButton extends StatelessWidget {
     return ButtonTheme(
         minWidth: double.infinity,
         height: 58.0,
-        child: FlatButton(
+        child: TextButton(
           onPressed: onPressed,
-          color: color,
-          shape: RoundedRectangleBorder(
-              side: BorderSide(color: borderColor),
-              borderRadius: BorderRadius.circular(12.0)),
+          style: TextButton.styleFrom(
+              primary: color,
+              shape: RoundedRectangleBorder(
+                  side: BorderSide(color: borderColor),
+                  borderRadius: BorderRadius.circular(12.0))),
           child: Row(
             children: <Widget>[
               Container(

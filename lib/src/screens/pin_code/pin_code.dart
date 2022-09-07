@@ -116,7 +116,7 @@ class PinCodeState<T extends PinCodeWidget> extends State<T> {
         ),
         Spacer(flex: 2),
         if (widget.hasLengthSwitcher) ...[
-          FlatButton(
+          TextButton(
               onPressed: () {
                 changePinLength(pinLength == 4 ? 6 : 4);
               },
@@ -155,10 +155,11 @@ class PinCodeState<T extends PinCodeWidget> extends State<T> {
                             return Container(
                               margin: EdgeInsets.only(
                                   left: marginLeft, right: marginRight),
-                              child: FlatButton(
+                              child: TextButton(
                                 onPressed: () => _pop(),
-                                color: Colors.transparent,
-                                shape: CircleBorder(),
+                                style: TextButton.styleFrom(
+                                    primary: Colors.transparent,
+                                    shape: CircleBorder()),
                                 child: deleteIcon,
                               ),
                             );
@@ -169,10 +170,11 @@ class PinCodeState<T extends PinCodeWidget> extends State<T> {
                           return Container(
                             margin: EdgeInsets.only(
                                 left: marginLeft, right: marginRight),
-                            child: FlatButton(
+                            child: TextButton(
                               onPressed: () => _push(index),
-                              color: Colors.transparent,
-                              shape: CircleBorder(),
+                              style: TextButton.styleFrom(
+                                  primary: Colors.transparent,
+                                  shape: CircleBorder()),
                               child: Text('$index',
                                   style: TextStyle(
                                       fontSize: 23.0, color: Palette.blueGrey)),

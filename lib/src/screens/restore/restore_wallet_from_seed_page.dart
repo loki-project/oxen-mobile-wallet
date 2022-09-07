@@ -29,8 +29,8 @@ class RestoreWalletFromSeedPage extends BasePage {
   Widget trailing(BuildContext context) => SizedBox(
       width: 80,
       height: 20,
-      child: FlatButton(
-          padding: EdgeInsets.all(0),
+      child: TextButton(
+          style: TextButton.styleFrom(padding: EdgeInsets.all(0)),
           onPressed: () => formKey.currentState?.clear(),
           child: Text(tr(context).clear)));
 

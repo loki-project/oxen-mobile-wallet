@@ -27,8 +27,8 @@ class DashboardPage extends BasePage {
   Widget leading(BuildContext context) {
     return SizedBox(
         width: 30,
-        child: FlatButton(
-            padding: EdgeInsets.all(0),
+        child: TextButton(
+            style: TextButton.styleFrom(padding: EdgeInsets.all(0)),
             onPressed: () => _presentWalletMenu(context),
             child: Icon(Icons.sync_rounded,
                 color: Theme.of(context).primaryTextTheme.caption?.color,
@@ -66,8 +66,8 @@ class DashboardPage extends BasePage {
   Widget trailing(BuildContext context) {
     return SizedBox(
       width: 30,
-      child: FlatButton(
-          padding: EdgeInsets.all(0),
+      child: TextButton(
+          style: TextButton.styleFrom(padding: EdgeInsets.all(0)),
           onPressed: () => Navigator.of(context).pushNamed(Routes.profile),
           child: Icon(Icons.account_circle_rounded,
               color: Theme.of(context).primaryTextTheme.caption?.color,

@@ -268,7 +268,7 @@ class NewStakeFormState extends State<NewStakeForm> {
                   title: Text(t.error),
                   content: Text(state.error),
                   actions: <Widget>[
-                    FlatButton(
+                    TextButton(
                         child: Text(t.ok),
                         onPressed: () => Navigator.of(context).pop())
                   ],
@@ -302,7 +302,7 @@ class NewStakeFormState extends State<NewStakeForm> {
                   title: Text(t.sending),
                   content: Text(t.transaction_sent),
                   actions: <Widget>[
-                    FlatButton(
+                    TextButton(
                         child: Text(t.ok),
                         onPressed: () {
                           _snpkController.text = '';

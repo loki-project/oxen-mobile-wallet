@@ -42,7 +42,7 @@ class SettingsSwitchListRow extends StatelessWidget {
               onTaped: () {
                 final dark = !settingsStore.isDarkTheme;
                 settingsStore.saveDarkTheme(dark);
-                Provider.of<ThemeChanger>(context).setTheme(dark ? Themes.darkTheme : Themes.lightTheme);
+                Provider.of<ThemeChanger>(context, listen: false).setTheme(dark ? Themes.darkTheme : Themes.lightTheme);
               }
           )
       );

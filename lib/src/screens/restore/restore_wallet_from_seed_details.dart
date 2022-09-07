@@ -48,7 +48,7 @@ class _RestoreFromSeedDetailsFormState
                 return AlertDialog(
                   content: Text(state.error),
                   actions: <Widget>[
-                    FlatButton(
+                    TextButton(
                       child: Text(tr(context).ok),
                       onPressed: () => Navigator.of(context).pop(),
                     ),

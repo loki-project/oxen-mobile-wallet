@@ -37,8 +37,8 @@ class AddressBookPage extends BasePage {
             ButtonTheme(
               minWidth: 28.0,
               height: 28.0,
-              child: FlatButton(
-                  shape: CircleBorder(),
+              child: TextButton(
+                  style: TextButton.styleFrom(shape: CircleBorder()),
                   onPressed: () async {
                     await Navigator.of(context)
                         .pushNamed(Routes.addressBookAddContact);

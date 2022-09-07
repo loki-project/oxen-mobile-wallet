@@ -58,7 +58,7 @@ class _SetupPinCodeFormState<WidgetType extends SetupPinCodeForm>
               return AlertDialog(
                 content: Text(tr(context).setup_successful),
                 actions: <Widget>[
-                  FlatButton(
+                  TextButton(
                     child: Text(tr(context).ok),
                     onPressed: () {
                       Navigator.of(context).pop();
@@ -76,7 +76,7 @@ class _SetupPinCodeFormState<WidgetType extends SetupPinCodeForm>
               return AlertDialog(
                 content: Text(tr(context).pin_is_incorrect),
                 actions: <Widget>[
-                  FlatButton(
+                  TextButton(
                     child: Text(tr(context).ok),
                     onPressed: () {
                       Navigator.of(context).pop();

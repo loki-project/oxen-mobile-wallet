@@ -28,10 +28,10 @@ class ReceivePage extends BasePage {
       width: 37.0,
       child: ButtonTheme(
         minWidth: double.minPositive,
-        child: FlatButton(
-            highlightColor: Colors.transparent,
-            splashColor: Colors.transparent,
-            padding: EdgeInsets.all(0),
+        child: TextButton(
+            style: ButtonStyle(
+                overlayColor: MaterialStateProperty.all(Colors.transparent),
+                padding: MaterialStateProperty.all(EdgeInsets.all(0))),
             onPressed: () => Share.share(walletStore.subaddress.address),
             child: Icon(
               Icons.share,

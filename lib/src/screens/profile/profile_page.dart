@@ -13,8 +13,8 @@ class ProfilePage extends BasePage {
   Widget trailing(BuildContext context) {
     return SizedBox(
       width: 25,
-      child: FlatButton(
-          padding: EdgeInsets.all(0),
+      child: TextButton(
+          style: TextButton.styleFrom(padding: EdgeInsets.all(0)),
           onPressed: () => Navigator.of(context).pushNamed(Routes.settings),
           child: Icon(Icons.settings_rounded,
               color: Theme.of(context).primaryTextTheme.caption?.color,

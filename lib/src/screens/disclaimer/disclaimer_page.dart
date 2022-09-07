@@ -61,7 +61,7 @@ class DisclaimerBodyState extends State<DisclaimerPageBody> {
               textAlign: TextAlign.center,
             ),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
                   },

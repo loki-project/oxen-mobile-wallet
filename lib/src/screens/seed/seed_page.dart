@@ -122,7 +122,7 @@ class SeedPage extends BasePage {
                                       onPressed: () {
                                         Clipboard.setData(
                                             ClipboardData(text: _seed));
-                                        Scaffold.of(context).showSnackBar(
+                                        ScaffoldMessenger.of(context).showSnackBar(
                                           SnackBar(
                                             content: Text(tr(context).copied_to_clipboard),
                                             backgroundColor: Colors.green,
