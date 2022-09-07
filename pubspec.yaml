@@ -15,7 +15,14 @@ publish_to: none
 #
 # Starting with 1.10.0, we use the minor version to track the associated oxen version the wallet is
 # meant for (e.g. 1.10.x are releases built from oxen 10.x stable releases).
-version: 1.10.0+13
+#
+# NB: Apple's tools suck and don't always properly update the apple build info if we use
+# $(FLUTTER_BUILD_NAME) and $(FLUTTER_BUILD_NUMBER) in the project file, so we set it manually.
+# (Gee thanks Apple for your broken crap.)  This means when updating this version you also need to
+# change 6 lines in ios/Runner.xcodeproj/project.pbxproj (Three each of: CURRENT_PROJECT_VERSION,
+# which should be the build number; and MARKETING_VERSION which should be the wallet version.
+version: 1.10.1+14
+
 
 
 # keytool -genkey -v -keystore c:\Users\konst\key.jks -storetype JKS -keyalg RSA -keysize 2048 -validity 10000 -alias key
