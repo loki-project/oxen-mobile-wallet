@@ -166,25 +166,19 @@ abstract class SendStoreBase with Store {
     errorMessage = isValidOxenAddress(value) ? null : l10n.error_text_address;
   }
 
-  final oxenAmountRE = RegExp('^([0-9]+([.][0-9]{0,9})?|[.][0-9]{1,9})\$');
   void validateOXEN(String amount, int availableBalance, AppLocalizations l10n) {
-    final value = amount.replaceAll(',', '.');
-
     var isValid = false;
     if (value == l10n.all) {
       isValid = true;
-    } else if (oxenAmountRE.hasMatch(value)) {
+    } else {
       try {
-        final dValue = double.parse(value);
+        final dValue = _cryptoNumberFormat.parse(value);
         final maxAvailable = availableBalance;
         isValid = (dValue <= maxAvailable && dValue > 0);
       } catch (e) {
         isValid = false;
       }
-    } else {
-      isValid = false;
     }
-
     errorMessage = isValid ? null : l10n.error_text_oxen;
   }
 }
