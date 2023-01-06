@@ -32,7 +32,7 @@ class Routes {
   static const addressBookAddContact = '/address_book_add_contact';
   static const dangerzoneKeys = '/dangerzone/keys';
   static const dangerzoneSeed = '/dangerzone/seed';
-  static const dangerzoneRemoveWallet = '//dangerzone/remove_wallet';
+  static const dangerzoneRemoveWallet = '/dangerzone/remove_wallet';
   static const showKeys = '/dangerzone/show/keys';
   static const subaddressList = '/subaddress_list';
   static const restoreWalletFromSeedDetails = '/restore_from_seed_details';

@@ -6,6 +6,7 @@
 #include <iostream>
 #include <unistd.h>
 #include <thread>
+#include <mutex>
 // #include "OxenWalletListener.h"
 #ifdef ANDROID
 #include "../External/android/oxen/include/wallet2_api.h"
@@ -17,6 +18,37 @@ namespace Oxen = Wallet;
 
 // Macro to force symbol visibility, and prevent the symbol being stripped
 #define EXPORT __attribute__((visibility("default"))) __attribute__((used))
+
+
+#ifdef __ANDROID_API__
+extern "C" int __android_log_write(int prio, const char* tag, const char* text);
+static bool start_logger()
+{
+    // Set stdout/stderr to the typical line-buffered and unbuffered:
+    setvbuf(stdout, 0, _IOLBF, 0);
+    setvbuf(stderr, 0, _IONBF, 0);
+
+    // Create a pipe and redirect both stdout/stderr into it:
+    int pipe_fd[2];
+    pipe(pipe_fd);
+    dup2(pipe_fd[1], 1);
+    dup2(pipe_fd[1], 2);
+
+    // Spawn and detach a logging thread that forever captures stderr (via the pipe) and redirects
+    // it into the android log subsystem:
+    std::thread{[](int fd) {
+        ssize_t sz;
+        char buf[4096];
+        while ((sz = read(fd, buf, sizeof(buf) - 1)) > 0) {
+            if (buf[sz - 1] == '\n') --sz; // strip trailing newline (android_log_write adds one)
+            buf[sz] = 0; // null terminate
+            __android_log_write(4 /*ANDROID_LOG_INFO*/, "oxen-wallet", buf);
+        }
+    }, pipe_fd[0]}.detach();
+    return true;
+}
+static bool started_logger = start_logger();
+#endif
 
 extern "C"
 {

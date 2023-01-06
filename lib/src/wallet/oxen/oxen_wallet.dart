@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:hive/hive.dart';
 import 'package:oxen_coin/stake.dart' as oxen_stake;
 import 'package:oxen_coin/transaction_history.dart' as transaction_history;
@@ -55,7 +56,20 @@ class OxenWallet extends Wallet {
   static Future<OxenWallet> load(
       Box<WalletInfo> walletInfoSource, String name, WalletType type) async {
     final id = (walletTypeToString(type)?.toLowerCase() ?? 'unknown') + '_' + name;
-    final walletInfo = walletInfoSource.values.firstWhere((info) => info.id == id);
+    print('Loading wallet $id');
+
+    var walletInfo = walletInfoSource.values.firstWhereOrNull((info) => info.id == id);
+    if (walletInfo == null) {
+        walletInfo = WalletInfo(
+            id: id,
+            name: name,
+            type: type,
+            timestamp: DateTime.now().millisecondsSinceEpoch,
+            // We don't know what these were, so use conservative values:
+            isRecovery: false,
+            restoreHeight: 0);
+        walletInfoSource.add(walletInfo);
+    }
     return await configured(
         walletInfoSource: walletInfoSource, walletInfo: walletInfo);
   }
