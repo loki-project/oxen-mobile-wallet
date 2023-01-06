@@ -21,5 +21,5 @@ set_target_properties(wallet_api PROPERTIES IMPORTED_LOCATION
 
 include_directories( ${EXTERNAL_LIBS_DIR}/oxen/include )
 
-target_link_libraries( oxen_coin PRIVATE wallet_api )
+target_link_libraries( oxen_coin PRIVATE wallet_api log )
 target_include_directories( oxen_coin PRIVATE wallet_api )

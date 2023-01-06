@@ -121,7 +121,7 @@ class OxenWalletsManager extends WalletsManager {
 
   @override
   Future<Wallet> openWallet(String name, String password) async {
-    print('opening a Wallet with nettype $nettype');
+    print('opening Wallet $name with nettype $nettype');
     try {
       final path = await pathForWallet(name: name);
       oxen_wallet_manager.openWallet(path: path, password: password, nettype: nettype);

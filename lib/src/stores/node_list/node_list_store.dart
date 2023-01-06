@@ -68,7 +68,7 @@ abstract class NodeListBase with Store {
     }
   }
 
-  static final nodeAddrRE = RegExp('^[0-9a-zA-Z.]+\$');
+  static final nodeAddrRE = RegExp('^[0-9a-zA-Z.-]{1,253}\$');
   static final nodePortRE = RegExp('^[0-9]{1,5}\$');
 
   void validateNodeAddress(String value, AppLocalizations l10n) {
