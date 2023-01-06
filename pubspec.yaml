@@ -21,7 +21,7 @@ publish_to: none
 # (Gee thanks Apple for your broken crap.)  This means when updating this version you also need to
 # change 6 lines in ios/Runner.xcodeproj/project.pbxproj (Three each of: CURRENT_PROJECT_VERSION,
 # which should be the build number; and MARKETING_VERSION which should be the wallet version.
-version: 1.10.1+14
+version: 1.10.2+15
 
 
 
